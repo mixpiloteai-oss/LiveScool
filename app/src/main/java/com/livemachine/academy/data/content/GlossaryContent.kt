@@ -15,6 +15,9 @@ import com.livemachine.academy.data.model.ManualRef
  */
 object GlossaryContent {
     val terms: List<GlossaryTerm> = listOf(
+        GlossaryTerm("Last Step", "Dernier pas joué par une part (1 à 16) : permet des parts plus courtes que les autres, donc des polyrythmies.", MACHINE, ManualRef("2. PART PARAMETERS › LAST STEP", "4", PARAMETER_GUIDE)),
+        GlossaryTerm("STEP EDIT", "Édition pas par pas : note (jusqu'à 4), gate time (00 à 96 ou TIE), vélocité (001 à 127).", MACHINE, ManualRef("3. STEP EDIT", "5", PARAMETER_GUIDE)),
+        GlossaryTerm("Groove (GROOVE TYPE / DEPTH)", "Placement « joué » appliqué à une part : 25 types, intensité 0 à 127.", MACHINE, ManualRef("2. PART PARAMETERS", "4", PARAMETER_GUIDE)),
         GlossaryTerm("KNOB MODE", "Réglage Global : Jump (la valeur saute à la commande), Catch (la valeur ne bouge qu'une fois rejointe), Value Scale (relatif).", MACHINE, ManualRef("6. GLOBAL PARAMETERS › KNOB MODE", "8", PARAMETER_GUIDE)),
         GlossaryTerm("Oscillateur (OSC)", "Source sonore d'une part : 421 types d'usine en catégories (Analog, Audio In, Kick, Snare… PCM), plus les samples utilisateur.", MACHINE, ManualRef("9. Appendix › OSC Type List", "12–14", PARAMETER_GUIDE)),
         GlossaryTerm("Sample utilisateur", "Sample créé ou importé sur la machine. Jusqu'à 499, environ 270 s au total (mono). Perdu à l'extinction s'il n'est pas exporté sur carte.", MACHINE, ManualRef("Fonctions de l'electribe sampler", "34")),

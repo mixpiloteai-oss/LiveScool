@@ -6,7 +6,7 @@ pas de WebView, fonctionne hors ligne.
 
 Styles visés : mentalcore, tribe, tribeCore, hardtek, acidcore.
 
-## État actuel (v0.4.0)
+## État actuel (v0.5.0)
 
 - Architecture, navigation et les 11 écrans de base en place.
 - **Module 1 (Interface et navigation) rédigé** : 6 leçons complètes, avec exercices et quiz, d'après
@@ -15,7 +15,9 @@ Styles visés : mentalcore, tribe, tribeCore, hardtek, acidcore.
   copier/couper/effacer, rééchantillonnage), d'après le manuel (p. 23–38).
 - **Module 3 (Paramètres sonores) rédigé** : 6 leçons (pattern de travail et KNOB MODE, oscillateurs,
   hauteur et glide, enveloppe, polyphonie et priorité, dynamique), d'après le Guide des paramètres.
-- Modules 4 à 9 : définis, leçons à rédiger depuis le manuel (voir `docs/manual/README.md`).
+- **Module 4 (Séquenceur et patterns) rédigé** : 6 leçons (pas à pas, temps réel, longueur/beat/Last Step,
+  STEP EDIT, swing et groove, gammes et transposition).
+- Modules 5 à 9 : définis, leçons à rédiger depuis le manuel (voir `docs/manual/README.md`).
 - Progression (leçons, exercices, meilleurs scores de quiz) et paramètres enregistrés sur l'appareil.
 
 ## Compiler
