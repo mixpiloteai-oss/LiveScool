@@ -15,7 +15,16 @@ shot() {
 
 # Affiche les coordonnées du centre du premier élément dont le texte contient $1 (vide sinon).
 coords_of() {
-  adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+  # La lecture de l'écran échoue parfois (« could not get idle state ») : on réessaie.
+  local out
+  for _ in 1 2 3; do
+    adb shell rm -f /sdcard/ui.xml >/dev/null 2>&1
+    out=$(adb shell uiautomator dump /sdcard/ui.xml 2>&1)
+    echo "$out" | grep -q "dumped" && break
+    echo "$(date +%T) dump : $out" >> "$OUT/diagnostic.txt"
+    sleep 2
+  done
+  rm -f /tmp/ui.xml
   adb pull /sdcard/ui.xml /tmp/ui.xml >/dev/null 2>&1
   python3 - "$1" "${2:-}" <<'PY2'
 import re, sys, xml.etree.ElementTree as ET
@@ -51,7 +60,7 @@ tap_tab() {
     if [ -n "$coords" ]; then adb shell input tap $coords; sleep 2; return 0; fi
     sleep 2
   done
-  echo "ONGLET INTROUVABLE : $1"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"; FAILED=1; return 1
+  echo "ONGLET INTROUVABLE : $1"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"; { echo "$(date +%T) introuvable"; grep -o 'text="[^"]*"' /tmp/ui.xml | head -15; } >> "$OUT/diagnostic.txt"; FAILED=1; return 1
 }
 
 # Touche le premier élément dont le texte (ou la description) contient $1.
@@ -83,7 +92,7 @@ PY
     fi
     sleep 2
   done
-  echo "ÉLÉMENT INTROUVABLE : $text"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"
+  echo "ÉLÉMENT INTROUVABLE : $text"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"; { echo "$(date +%T) introuvable"; grep -o 'text="[^"]*"' /tmp/ui.xml | head -15; } >> "$OUT/diagnostic.txt"
   FAILED=1
   return 1
 }
@@ -127,7 +136,7 @@ scroll_to() {
     [ -n "$(coords_of "$1")" ] && return 0
     swipe_up
   done
-  echo "ÉLÉMENT INTROUVABLE APRÈS DÉFILEMENT : $1"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"; FAILED=1; return 1
+  echo "ÉLÉMENT INTROUVABLE APRÈS DÉFILEMENT : $1"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"; { echo "$(date +%T) introuvable"; grep -o 'text="[^"]*"' /tmp/ui.xml | head -15; } >> "$OUT/diagnostic.txt"; FAILED=1; return 1
 }
 
 # --- Test de mise à jour : progression créée dans l'ancienne version ---
