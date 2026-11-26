@@ -39,7 +39,11 @@ jobs:
           git fetch --depth=1 origin "refs/tags/${{ inputs.upgrade_from }}:refs/tags/${{ inputs.upgrade_from }}"
           git worktree add old-src "${{ inputs.upgrade_from }}"
           cp app/debug.keystore old-src/app/debug.keystore
+          # Force l'ancienne version à signer avec la même clé que la nouvelle.
+          printf '\nandroid { signingConfigs { getByName("debug") { storeFile = file("debug.keystore"); storePassword = "android"; keyAlias = "androiddebugkey"; keyPassword = "android" } } }\n' >> old-src/app/build.gradle.kts
           (cd old-src && ./gradlew --no-daemon assembleRelease)
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          "$BT/apksigner" verify --print-certs old-src/app/build/outputs/apk/release/app-release.apk | grep SHA-256
           mkdir -p old-apk && cp old-src/app/build/outputs/apk/release/app-release.apk old-apk/
       - name: Activer KVM
         run: |
