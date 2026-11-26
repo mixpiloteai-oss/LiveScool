@@ -14,6 +14,12 @@ import com.livemachine.academy.data.model.ManualRef
  */
 object GlossaryContent {
     val terms: List<GlossaryTerm> = listOf(
+        GlossaryTerm("Sample utilisateur", "Sample créé ou importé sur la machine. Jusqu'à 499, environ 270 s au total (mono). Perdu à l'extinction s'il n'est pas exporté sur carte.", MACHINE, ManualRef("Fonctions de l'electribe sampler", "34")),
+        GlossaryTerm("Rééchantillonnage", "Enregistrer la sortie de la machine (un pattern ou une part) pour en faire un nouveau sample.", MACHINE, ManualRef("Enregistrement et édition d'échantillons › 2. Rééchantillonnage", "35–36")),
+        GlossaryTerm("SAMPLE EDIT", "Menu d'édition des samples : points de départ, de fin et de boucle, accord, découpe, niveau, nom, effacement.", MACHINE, ManualRef("Enregistrement et édition d'échantillons › 3. Édition d'un échantillon", "36")),
+        GlossaryTerm("Gate Time", "Durée de lecture d'un sample, réglée par Decay/Release quand Amp EG est coupé (127 = jusqu'au bout).", MACHINE, ManualRef("Fonctions de l'electribe sampler › 2. Changements", "34")),
+        GlossaryTerm("Part Mute / Part Erase", "Part Mute coupe le son d'une part sans rien effacer ; Part Erase efface ses notes pendant la lecture.", MACHINE, ManualRef("Edition d'un motif", "32")),
+        GlossaryTerm("Voice Assign", "Réglage de la part qui détermine le jeu de plusieurs pads à la fois ; Poly 1 ou Poly 2 pour les accords.", MACHINE, ManualRef("Production de musique › 1. Jouer avec les pads", "28")),
         GlossaryTerm("Pattern (« motif »)", "Bloc de composition constitué de 16 parts et d'un effet maître. La machine en mémorise jusqu'à 250.", MACHINE, ManualRef("Pour produire du son › 3. Lecture d'un motif", "27")),
         GlossaryTerm("Part (« partie »)", "Plus petit bloc d'un pattern : son, rythmes ou phrases, état des effets, données de jeu.", MACHINE, ManualRef("Pour produire du son › 4. Sélection d'une partie", "27")),
         GlossaryTerm("Écran de sélection de pattern", "Écran affiché au démarrage, d'où l'on choisit le pattern. Deux pressions sur Exit y ramènent.", MACHINE, ManualRef("Pour produire du son › 1. Mise sous tension/hors tension", "27")),

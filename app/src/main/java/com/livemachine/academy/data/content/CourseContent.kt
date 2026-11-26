@@ -26,10 +26,10 @@ object CourseContent {
             id = "m2",
             number = 2,
             title = "Parts et samples",
-            summary = "Assigner les samples aux parts et les jouer.",
-            goal = "Construire un kit cohérent à partir de tes samples déjà importés.",
+            summary = "Assigner, régler, éditer et créer les samples de chaque part.",
+            goal = "Construire un kit cohérent, régler la lecture de chaque sample et créer tes propres samples par rééchantillonnage.",
             styleFocus = "Kick saturé, basse roulante, percus tribales : le kit fait le style.",
-            lessons = emptyList(),
+            lessons = Module2Content.lessons,
         ),
         CourseModule(
             id = "m3",

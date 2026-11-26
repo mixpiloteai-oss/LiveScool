@@ -51,10 +51,12 @@ class CourseContentTest {
     }
 
     @Test
-    fun `le module 1 est entierement verifie`() {
-        val m1 = modules.first { it.id == "m1" }
-        assertTrue(m1.lessons.isNotEmpty())
-        m1.lessons.forEach { assertEquals("${it.id} non vérifiée", ContentStatus.VERIFIED, it.status) }
+    fun `les modules 1 et 2 sont entierement verifies`() {
+        listOf("m1", "m2").forEach { id ->
+            val module = modules.first { it.id == id }
+            assertTrue("$id sans leçons", module.lessons.isNotEmpty())
+            module.lessons.forEach { assertEquals("${it.id} non vérifiée", ContentStatus.VERIFIED, it.status) }
+        }
     }
 
     /** Toutes les pages citées doivent tomber dans la partie française du manuel (p. 20 à 38). */

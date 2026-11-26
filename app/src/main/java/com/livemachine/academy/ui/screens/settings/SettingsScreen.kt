@@ -114,7 +114,7 @@ fun SettingsScreen(
             SectionCard {
                 Eyebrow("À propos")
                 Spacer(Modifier.height(8.dp))
-                Text("Live Machine Academy · version 0.2.0", style = MaterialTheme.typography.titleMedium)
+                Text("Live Machine Academy · version 0.3.0", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(6.dp))
                 Text(
                     "Application hors ligne. Source pédagogique unique : " + MachineContent.manualSource + " " +
