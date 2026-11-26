@@ -1,0 +1,2 @@
+== ancienne version au démarrage
+    topResumedActivity=ActivityRecord{e48b4b0 u0 com.livemachine.academy/.MainActivity t8}
