@@ -1,0 +1,35 @@
+package com.livemachine.academy.data.repository
+
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.livemachine.academy.data.model.AppSettings
+import com.livemachine.academy.data.model.TextSize
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
+class SettingsRepository(private val dataStore: DataStore<Preferences>) {
+
+    val settings: Flow<AppSettings> = dataStore.data.map { prefs ->
+        AppSettings(
+            textSize = prefs[TEXT_SIZE]?.let { name -> TextSize.entries.firstOrNull { it.name == name } }
+                ?: TextSize.NORMAL,
+            keepScreenOn = prefs[KEEP_SCREEN_ON] ?: true,
+        )
+    }
+
+    suspend fun setTextSize(size: TextSize) {
+        dataStore.edit { it[TEXT_SIZE] = size.name }
+    }
+
+    suspend fun setKeepScreenOn(enabled: Boolean) {
+        dataStore.edit { it[KEEP_SCREEN_ON] = enabled }
+    }
+
+    private companion object {
+        val TEXT_SIZE = stringPreferencesKey("text_size")
+        val KEEP_SCREEN_ON = booleanPreferencesKey("keep_screen_on")
+    }
+}
