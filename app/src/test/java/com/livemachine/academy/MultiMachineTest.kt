@@ -63,7 +63,7 @@ class MultiMachineTest {
     }
 
     @Test
-    fun `glossaire : termes machine seulement pour leur machine`() {
+    fun `glossaire avec termes machine seulement pour leur machine`() {
         assertTrue(repo.glossary(electribe).any { it.category == GlossaryCategory.MACHINE })
         assertTrue(repo.glossary(circuit).none { it.category == GlossaryCategory.MACHINE })
         assertTrue(repo.glossary(circuit).isNotEmpty())
