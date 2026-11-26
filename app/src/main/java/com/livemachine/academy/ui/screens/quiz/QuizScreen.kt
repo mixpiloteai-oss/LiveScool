@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.toRoute
 import com.livemachine.academy.data.repository.CourseRepository
 import com.livemachine.academy.data.repository.ProgressRepository
+import com.livemachine.academy.data.repository.SettingsRepository
 import com.livemachine.academy.domain.ProgressRules
 import com.livemachine.academy.ui.appViewModelFactory
 import com.livemachine.academy.ui.components.AppTopBar
@@ -58,6 +59,7 @@ class QuizViewModel(
     savedStateHandle: SavedStateHandle,
     private val course: CourseRepository,
     private val progressRepository: ProgressRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
     private val route = savedStateHandle.toRoute<QuizRoute>()
 
@@ -88,10 +90,11 @@ class QuizViewModel(
                 }
                 else -> {
                     val progress = progressRepository.progress.first()
+                    val machineId = settingsRepository.settings.first().selectedMachineId
                     QuizUiState(
                         title = "Révision des erreurs",
                         loading = false,
-                        session = QuizSession(ProgressRules.reviewQuestions(course.modules(), progress).take(15)),
+                        session = QuizSession(ProgressRules.reviewQuestions(course.modules(machineId), progress).take(15)),
                         emptyMessage = "Aucune erreur à réviser. Les questions ratées dans les quiz apparaîtront ici.",
                     )
                 }
@@ -122,7 +125,7 @@ class QuizViewModel(
     fun restart() = _state.update { it.copy(session = it.session.restart()) }
 
     companion object {
-        val Factory = appViewModelFactory { c, handle -> QuizViewModel(handle, c.courseRepository, c.progressRepository) }
+        val Factory = appViewModelFactory { c, handle -> QuizViewModel(handle, c.courseRepository, c.progressRepository, c.settingsRepository) }
     }
 }
 

@@ -13,14 +13,22 @@ android {
         applicationId = "com.livemachine.academy"
         minSdk = 26
         targetSdk = 35
-        versionCode = 13
-        versionName = "1.1.2"
+        versionCode = 14
+        versionName = "1.2.0"
     }
 
     // Clé release fournie par variables d'environnement (voir README). Sans elles,
     // la release est signée avec la clé debug : installable, mais pas publiable sur un store.
     val releaseKeystore = System.getenv("LMA_KEYSTORE_PATH")?.let { file(it) }?.takeIf { it.exists() }
     signingConfigs {
+        // Clé partagée versionnée (non secrète, comme une clé debug) : toutes les compilations,
+        // sur n'importe quel runner, ont la même signature, donc s'installent par-dessus.
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
         if (releaseKeystore != null) {
             create("release") {
                 storeFile = releaseKeystore

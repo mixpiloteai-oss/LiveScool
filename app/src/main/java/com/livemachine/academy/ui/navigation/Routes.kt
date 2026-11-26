@@ -20,7 +20,7 @@ object QuizKind {
 
 @Serializable data object ExercisesRoute
 @Serializable data object ChallengesRoute
-@Serializable data object PhotoRoute
+@Serializable data class PhotoRoute(val machineId: String)
 @Serializable data object ProgressRoute
 @Serializable data object GlossaryRoute
 @Serializable data object SettingsRoute

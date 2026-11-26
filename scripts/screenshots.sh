@@ -90,7 +90,28 @@ scroll_to() {
   echo "ÉLÉMENT INTROUVABLE APRÈS DÉFILEMENT : $1"; FAILED=1; return 1
 }
 
-rm -f "$OUT"/*.png
+# --- Test de mise à jour : progression créée dans l'ancienne version ---
+if [ "${1:-}" = "seed" ]; then
+  restart
+  tap_text "Parcours" && tap_text "Interface et navigation" && tap_text "Vue d'ensemble de la façade"
+  scroll_to_and_tap "Machine éteinte devant toi"
+  scroll_to_and_tap "J'ai réussi l'exercice"
+  scroll_to_and_tap "J'ai fait la leçon sur ma machine"
+  scroll_to_and_tap "Lancer le quiz"
+  tap_text "Régler le volume du casque" && tap_text "Valider"
+  restart
+  tap_text "Progrès" && shot 00a-progression-avant-mise-a-jour
+  exit $FAILED
+fi
+if [ "${1:-}" = "verify-upgrade" ]; then
+  restart
+  tap_text "Progrès" && shot 00b-progression-apres-mise-a-jour
+  for attendu in "1/54" "Réviser mes erreurs (1)"; do
+    if [ -z "$(coords_of "$attendu")" ]; then echo "PROGRESSION PERDUE : « $attendu » absent"; FAILED=1; else echo "OK après mise à jour : $attendu"; fi
+  done
+  exit $FAILED
+fi
+
 restart
 shot 01-accueil
 tap_text "Parcours" && shot 02-parcours-verrous
@@ -135,6 +156,14 @@ restart
 scroll_to_and_tap "À faire sur la vraie machine" && shot 19-exercices
 restart
 tap_text "Accès direct à chaque module" && shot 20-modules
+
+# Deuxième machine : Novation Circuit Tracks, puis retour à l'Electribe
+restart
+tap_text "Circuit Tracks" && shot 23-accueil-circuit-tracks
+tap_text "Voir la fiche machine" && shot 24-fiche-circuit-tracks
+tap_text "Commencer l'apprentissage" && shot 25-parcours-circuit-tracks
+restart
+tap_text "Electribe Sampler 2" && shot 26-retour-electribe
 
 # Taille de texte « Très grande »
 restart

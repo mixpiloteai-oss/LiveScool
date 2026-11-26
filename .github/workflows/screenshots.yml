@@ -10,6 +10,10 @@ on:
         default: debug
         type: choice
         options: [debug, release]
+      upgrade_from:
+        description: "Tag d'une Release à installer d'abord pour tester la mise à jour (ex. v1.1.2), vide sinon"
+        default: ""
+        type: string
 
 permissions:
   contents: write
@@ -27,6 +31,16 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: APK
         run: ./gradlew --no-daemon assemble${{ inputs.variant == 'release' && 'Release' || 'Debug' }}
+      - name: Ancienne version recompilée depuis son tag (test de mise à jour)
+        if: ${{ inputs.upgrade_from != '' }}
+        run: |
+          # Même clé que la nouvelle version, sinon Android refuse la mise à jour.
+          mkdir -p ~/.android && cp app/debug.keystore ~/.android/debug.keystore
+          git fetch --depth=1 origin "refs/tags/${{ inputs.upgrade_from }}:refs/tags/${{ inputs.upgrade_from }}"
+          git worktree add old-src "${{ inputs.upgrade_from }}"
+          cp app/debug.keystore old-src/app/debug.keystore
+          (cd old-src && ./gradlew --no-daemon assembleRelease)
+          mkdir -p old-apk && cp old-src/app/build/outputs/apk/release/app-release.apk old-apk/
       - name: Activer KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -42,7 +56,10 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
+            rm -f docs/screenshots/*.png
+            if [ -d old-apk ]; then adb install old-apk/*.apk && bash scripts/screenshots.sh seed; fi
             adb install -r app/build/outputs/apk/${{ inputs.variant || 'debug' }}/app-${{ inputs.variant || 'debug' }}.apk
+            if [ -d old-apk ]; then bash scripts/screenshots.sh verify-upgrade && adb shell pm clear com.livemachine.academy; fi
             bash scripts/screenshots.sh
       - uses: actions/upload-artifact@v4
         if: always()

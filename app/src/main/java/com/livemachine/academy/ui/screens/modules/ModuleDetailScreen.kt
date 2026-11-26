@@ -67,7 +67,7 @@ class ModuleDetailViewModel(
 
     val state: StateFlow<ModuleDetailState> =
         combine(progressRepository.progress, settingsRepository.settings) { progress, settings ->
-            val modules = course.modules()
+            val modules = module?.let { course.machineOfModule(it.id)?.modules }.orEmpty()
             val index = modules.indexOfFirst { it.id == module?.id }
             ModuleDetailState(
                 progress = progress,

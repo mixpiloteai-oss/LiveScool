@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.livemachine.academy.data.model.GlossaryCategory
 import com.livemachine.academy.data.model.GlossaryTerm
 import com.livemachine.academy.data.repository.CourseRepository
+import com.livemachine.academy.data.repository.SettingsRepository
 import com.livemachine.academy.ui.appViewModelFactory
 import com.livemachine.academy.ui.components.AppTopBar
 import com.livemachine.academy.ui.components.EmptyState
@@ -41,20 +42,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
-class GlossaryViewModel(course: CourseRepository) : ViewModel() {
-    private val all = course.glossary()
+class GlossaryViewModel(course: CourseRepository, settingsRepository: SettingsRepository) : ViewModel() {
     val query = MutableStateFlow("")
     val category = MutableStateFlow<GlossaryCategory?>(null)
 
-    val terms: StateFlow<List<GlossaryTerm>> = combine(query, category) { q, cat ->
-        all.filter { term ->
+    val terms: StateFlow<List<GlossaryTerm>> = combine(query, category, settingsRepository.settings) { q, cat, settings ->
+        course.glossary(settings.selectedMachineId).filter { term ->
             (cat == null || term.category == cat) &&
                 (q.isBlank() || term.term.contains(q, ignoreCase = true) || term.definition.contains(q, ignoreCase = true))
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), all)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     companion object {
-        val Factory = appViewModelFactory { c, _ -> GlossaryViewModel(c.courseRepository) }
+        val Factory = appViewModelFactory { c, _ -> GlossaryViewModel(c.courseRepository, c.settingsRepository) }
     }
 }
 

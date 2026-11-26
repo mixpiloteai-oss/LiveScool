@@ -69,5 +69,8 @@ object GlossaryContent {
         GlossaryTerm("TribeCore", "Mélange de tribe et de hardcore : plus rapide et plus saturé.", STYLE),
         GlossaryTerm("Mentalcore", "Tekno rapide et intense, aux sons acides et aux montées « mentales » qui durent.", STYLE),
         GlossaryTerm("Acidcore", "Hardcore construit autour de lignes de basse acides, filtre résonant très présent.", STYLE),
-    ).sortedBy { it.term.lowercase() }
+    )
+        // Les termes « Machine » actuels viennent tous des documents Korg de l'Electribe.
+        .map { if (it.category == MACHINE) it.copy(machineId = MachineCatalog.ELECTRIBE_ID) else it }
+        .sortedBy { it.term.lowercase() }
 }

@@ -104,6 +104,8 @@ data class GlossaryTerm(
     val definition: String,
     val category: GlossaryCategory,
     val manualRef: ManualRef? = null,
+    /** Machine concernée ; null = notion générale, affichée pour toutes les machines. */
+    val machineId: String? = null,
 )
 
 enum class GlossaryCategory(val label: String) {

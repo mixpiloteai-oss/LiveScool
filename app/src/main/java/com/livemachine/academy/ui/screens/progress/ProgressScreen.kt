@@ -51,7 +51,7 @@ fun ProgressScreen(
         LazyColumn(contentPadding = ScreenPadding, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
                 HeroBanner {
-                    Eyebrow("Global", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Eyebrow(state.machine.fullName, color = MaterialTheme.colorScheme.onPrimaryContainer)
                     Text("${(state.fraction * 100).toInt()} %", style = MaterialTheme.typography.displaySmall)
                     Spacer(Modifier.height(8.dp))
                     ProgressLine(state.fraction)

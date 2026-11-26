@@ -10,6 +10,7 @@ Pas de simulateur, pas de WebView, pas de site web, pas de permission réseau.
 Kotlin, Jetpack Compose, Material 3 (thème sombre unique, magenta), MVVM + StateFlow, Navigation Compose type-safe, DataStore (progression, paramètres), DI manuelle (`di/AppContainer`). Package `com.livemachine.academy`. minSdk 26, compileSdk 35, AGP 8.9.1, Kotlin 2.1.20, Gradle 8.14.3.
 - `data/model` : `Lesson` (8 rubriques), `ManualRef(chapter, pages, doc)`, `ContentStatus`.
 - `data/content` : `ModuleNContent.kt` (1 à 9), `CourseContent`, `MachineContent`, `GlossaryContent`.
+- `data/content/MachineCatalog.kt` : liste des machines ; `CircuitTracksContent.kt`.
 - `ui/screens` : Accueil, Parcours, Machine, Modules, Module, Leçon, Quiz, Exercices, Progression, Glossaire, Paramètres.
 
 ## Sources (obligatoires)
@@ -19,19 +20,22 @@ Kotlin, Jetpack Compose, Material 3 (thème sombre unique, magenta), MVVM + Stat
 - Divergences signalées dans les leçons : sauvegarde Global (manuel p. 32 vs guide p. 7) ; AUTO POWER OFF « Off » (manuel) / « Disable » (guide).
 - Non documenté, à faire vérifier sur la machine : moment du changement de pattern en lecture (7.1), sauvegarde des Part Mute (7.2).
 
-## Fait (v1.1.2)
+## Fait (v1.2.0)
 - 11 écrans + Défis + Photo ; 9 modules × 6 leçons = 54 leçons `VERIFIED`, pages citées.
 - Leçon : étapes cochables, exercice validable, quiz (80 %). Quiz final par module (10 q.), révision des erreurs (`wrongQuestions`).
 - Déblocage : module N ouvert si N-1 validé (leçons faites OU quiz final ≥ 80 %), mode libre dans Paramètres. Compétence = leçons + quiz final. Règles pures dans `domain/ProgressRules.kt`.
 - 8 défis par style (`ChallengeContent`), débloqués par module.
 - Photo : l'utilisateur photographie SA machine, repère les commandes (`MachineContent.identifiableControls`), puis quiz « Où est… ? ». Aucune image Korg ni schéma inventé.
 - Tests : `CourseContentTest`, `QuizSessionTest`, `ProgressRulesTest`. CI `android.yml` (tests, lint, APK debug + release) ; `screenshots.yml` (émulateur debug ou release, teste les interactions, commite `docs/screenshots/`) ; `release.yml` (vérifie et publie les APK dans une Release GitHub).
+- Multi-machine : `MachineProfile` + `MachineCatalog` (Electribe `electribe-sampler`, Circuit Tracks `circuit-tracks`, ids futurs préfixés `ct-`). Machine choisie à l'accueil (`selectedMachineId`, Electribe par défaut) ; parcours, exercices, défis, glossaire, révision, photo et fiche filtrés par machine. Progression : ids inchangés, aucune migration. Photo Electribe : anciennes clés/fichier conservés.
+- Circuit Tracks : fiche (nom, Novation, description, photo utilisateur, « Commencer l'apprentissage »), parcours vide en attente du manuel Novation.
 - APK release v1.1.2 installé et fonctionnel sur le Samsung de l'utilisateur. Texte « Très grande » vérifié sur émulateur.
-- Signature release : variables `LMA_KEYSTORE_*` / secrets GitHub, sinon clé debug. Version lue via `BuildConfig`.
+- Signature : `app/debug.keystore` versionnée (non secrète, signature stable entre runners) ; `LMA_KEYSTORE_*` prioritaire. Les APK ≤ 1.1.2 avaient une clé par runner → désinstallation unique nécessaire. Version lue via `BuildConfig`.
 
 ## Prochaines étapes
-1. Retours utilisateur sur la vraie machine : points 7.1 / 7.2, usage de l'écran Photo, étapes qui ne collent pas.
-2. Créer la clé release de l'utilisateur (README) si publication hors de son téléphone.
+1. Obtenir le manuel officiel Novation Circuit Tracks (PDF dans `docs/manual/`) et rédiger son parcours (ids `ct-…`, nouveau `ManualDoc`).
+2. Retours utilisateur Electribe : points 7.1 / 7.2, écran Photo.
+3. Clé release secrète de l'utilisateur si publication.
 
 ## Règles
 - N'inventer aucune fonction : toute info machine cite `ManualRef` ; `VERIFIED` seulement si vérifié dans le document.

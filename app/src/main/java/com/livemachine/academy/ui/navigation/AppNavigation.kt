@@ -144,7 +144,8 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
         composable<MachineRoute> {
             MachineScreen(
                 onOpenSettings = { navController.navigate(SettingsRoute) },
-                onOpenPhoto = { navController.navigate(PhotoRoute) },
+                onOpenPhoto = { navController.navigate(PhotoRoute(it)) },
+                onStartLearning = { navController.navigateTopLevel(PathRoute) },
             )
         }
         composable<ModulesRoute> { ModulesScreen(onBack = back, onOpenModule = openModule) }

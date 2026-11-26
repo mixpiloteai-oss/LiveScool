@@ -70,6 +70,14 @@ fun ChallengesScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            if (state.challenges.isEmpty()) {
+                item {
+                    Text(
+                        "Pas encore de défis pour la ${state.machine.name} : ils arriveront avec son parcours.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
             items(shown, key = { it.id }) { ch ->
                 val module = state.modules.firstOrNull { it.module.id == ch.requiredModuleId }?.module
                 val open = state.unlockAll || state.isModuleValidated(ch.requiredModuleId)

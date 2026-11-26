@@ -4,52 +4,134 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.livemachine.academy.data.content.MachineContent
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.livemachine.academy.data.content.MachineCatalog
+import com.livemachine.academy.data.model.MachineProfile
+import com.livemachine.academy.data.repository.CourseRepository
+import com.livemachine.academy.data.repository.MachinePhotoRepository
+import com.livemachine.academy.data.repository.MachinePhotoState
+import com.livemachine.academy.data.repository.SettingsRepository
+import com.livemachine.academy.ui.appViewModelFactory
 import com.livemachine.academy.ui.components.AppTopBar
+import com.livemachine.academy.ui.components.AwaitingManualNotice
 import com.livemachine.academy.ui.components.Eyebrow
 import com.livemachine.academy.ui.components.HeroBanner
 import com.livemachine.academy.ui.components.ManualRefLine
 import com.livemachine.academy.ui.components.ScreenPadding
 import com.livemachine.academy.ui.components.SectionCard
+import com.livemachine.academy.ui.components.UserMachinePhoto
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import java.io.File
 
-/** Fiche de la machine (pas de simulateur : uniquement des repères pour la vraie machine). */
+data class MachineSheetState(
+    val machine: MachineProfile = MachineCatalog.electribe,
+    val photo: MachinePhotoState = MachinePhotoState(),
+    val photoFile: File? = null,
+)
+
+/** Fiche de la machine choisie à l'accueil. */
+class MachineViewModel(
+    course: CourseRepository,
+    settingsRepository: SettingsRepository,
+    photoRepository: MachinePhotoRepository,
+) : ViewModel() {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state: StateFlow<MachineSheetState> = settingsRepository.settings
+        .flatMapLatest { settings ->
+            val machine = course.machine(settings.selectedMachineId)
+            photoRepository.state(machine.id).map { MachineSheetState(machine, it, photoRepository.photoFile(machine.id)) }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MachineSheetState())
+
+    companion object {
+        val Factory = appViewModelFactory { c, _ -> MachineViewModel(c.courseRepository, c.settingsRepository, c.photoRepository) }
+    }
+}
+
+/** Fiche machine (pas de simulateur : uniquement des repères pour la vraie machine). */
 @Composable
-fun MachineScreen(onOpenSettings: () -> Unit, onOpenPhoto: () -> Unit) {
+fun MachineScreen(
+    onOpenSettings: () -> Unit,
+    onOpenPhoto: (String) -> Unit,
+    onStartLearning: () -> Unit,
+    viewModel: MachineViewModel = viewModel(factory = MachineViewModel.Factory),
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val machine = state.machine
+
     Column(Modifier.fillMaxSize()) {
         AppTopBar(title = "La machine", onOpenSettings = onOpenSettings)
         LazyColumn(contentPadding = ScreenPadding, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
                 HeroBanner {
-                    Eyebrow(MachineContent.brand, color = MaterialTheme.colorScheme.onPrimaryContainer)
-                    Text(MachineContent.modelLabel, style = MaterialTheme.typography.headlineSmall)
-                    Spacer(Modifier.height(8.dp))
-                    Text(MachineContent.modelNote, style = MaterialTheme.typography.bodyMedium)
-                    Spacer(Modifier.height(8.dp))
-                    Text(MachineContent.manualSource, style = MaterialTheme.typography.bodySmall)
+                    Eyebrow(machine.manufacturer, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(machine.name, style = MaterialTheme.typography.headlineSmall)
+                    Spacer(Modifier.height(12.dp))
+                    state.photoFile?.let { file ->
+                        UserMachinePhoto(file, state.photo.hasPhoto, state.photo.version, onAddPhoto = { onOpenPhoto(machine.id) })
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    Text(machine.shortDescription, style = MaterialTheme.typography.bodyLarge)
+                    Spacer(Modifier.height(16.dp))
+                    Button(onClick = onStartLearning, modifier = Modifier.fillMaxWidth()) {
+                        Text("Commencer l'apprentissage")
+                        Spacer(Modifier.width(8.dp))
+                        Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = null)
+                    }
                 }
             }
             item {
-                SectionCard(onClick = onOpenPhoto) {
-                    Text("Identifier les commandes sur ta photo", style = MaterialTheme.typography.titleMedium)
+                SectionCard {
+                    Text(machine.note, style = MaterialTheme.typography.bodyMedium)
+                    Spacer(Modifier.height(8.dp))
+                    Text(machine.sourcesLabel, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+            item {
+                SectionCard(onClick = { onOpenPhoto(machine.id) }) {
+                    Text(
+                        if (machine.identifiableControls.isEmpty()) "Ajouter ou changer la photo de ta machine"
+                        else "Identifier les commandes sur ta photo",
+                        style = MaterialTheme.typography.titleMedium,
+                    )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Repère les commandes sur une photo de ta propre machine, puis entraîne-toi à les retrouver.",
+                        if (machine.identifiableControls.isEmpty()) "Ta photo sert d'image sur cette fiche."
+                        else "Repère les commandes sur une photo de ta propre machine, puis entraîne-toi à les retrouver.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
-            items(MachineContent.sections, key = { it.title }) { section ->
+            if (machine.sections.isEmpty()) {
+                item { AwaitingManualNotice(message = "La description de la façade sera rédigée à partir du manuel officiel de la machine.") }
+            }
+            items(machine.sections, key = { it.title }) { section ->
                 SectionCard {
                     Text(section.title, style = MaterialTheme.typography.titleMedium)
                     Spacer(Modifier.height(4.dp))

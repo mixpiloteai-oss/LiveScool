@@ -45,8 +45,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.livemachine.academy.data.content.MachineContent
 import com.livemachine.academy.data.model.IdentifiableControl
+import com.livemachine.academy.data.model.MachineProfile
+import com.livemachine.academy.data.repository.CourseRepository
+import com.livemachine.academy.ui.navigation.PhotoRoute
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import com.livemachine.academy.data.repository.MachinePhotoRepository
 import com.livemachine.academy.data.repository.MachinePhotoState
 import com.livemachine.academy.data.repository.PhotoMark
@@ -73,11 +77,17 @@ enum class PhotoMode { MARK, QUIZ }
 
 data class QuizAttempt(val target: IdentifiableControl, val tap: PhotoMark? = null, val hit: Boolean = false)
 
-class PhotoViewModel(private val repository: MachinePhotoRepository) : ViewModel() {
-    val controls = MachineContent.identifiableControls
-    val photoFile: File get() = repository.photoFile
+class PhotoViewModel(
+    savedStateHandle: SavedStateHandle,
+    course: CourseRepository,
+    private val repository: MachinePhotoRepository,
+) : ViewModel() {
+    val machine: MachineProfile = course.machine(savedStateHandle.toRoute<PhotoRoute>().machineId)
+    private val machineId = machine.id
+    val controls = machine.identifiableControls
+    val photoFile: File get() = repository.photoFile(machineId)
 
-    val photo: StateFlow<MachinePhotoState> = repository.state
+    val photo: StateFlow<MachinePhotoState> = repository.state(machineId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MachinePhotoState())
 
     private val skipped = MutableStateFlow<Set<String>>(emptySet())
@@ -94,14 +104,14 @@ class PhotoViewModel(private val repository: MachinePhotoRepository) : ViewModel
 
     fun importPhoto(uri: Uri) {
         viewModelScope.launch {
-            repository.importPhoto(uri)
+            repository.importPhoto(machineId, uri)
             skipped.value = emptySet()
             mode.value = PhotoMode.MARK
         }
     }
 
     fun placeMark(control: IdentifiableControl, x: Float, y: Float) {
-        viewModelScope.launch { repository.setMark(control.id, PhotoMark(x, y)) }
+        viewModelScope.launch { repository.setMark(machineId, control.id, PhotoMark(x, y)) }
     }
 
     fun skip(control: IdentifiableControl) {
@@ -110,7 +120,7 @@ class PhotoViewModel(private val repository: MachinePhotoRepository) : ViewModel
 
     fun restartMarking() {
         skipped.value = emptySet()
-        viewModelScope.launch { controls.forEach { repository.setMark(it.id, null) } }
+        viewModelScope.launch { controls.forEach { repository.setMark(machineId, it.id, null) } }
     }
 
     fun startQuiz() {
@@ -137,14 +147,14 @@ class PhotoViewModel(private val repository: MachinePhotoRepository) : ViewModel
     }
 
     fun deletePhoto() {
-        viewModelScope.launch { repository.deletePhoto() }
+        viewModelScope.launch { repository.deletePhoto(machineId) }
         mode.value = PhotoMode.MARK
         _attempt.value = null
     }
 
     companion object {
         const val MIN_MARKS_FOR_QUIZ = 4
-        val Factory = appViewModelFactory { c, _ -> PhotoViewModel(c.photoRepository) }
+        val Factory = appViewModelFactory { c, handle -> PhotoViewModel(handle, c.courseRepository, c.photoRepository) }
     }
 }
 
@@ -172,7 +182,7 @@ fun PhotoScreen(
     }
 
     Column(Modifier.fillMaxSize()) {
-        AppTopBar(title = "Ma machine en photo", onBack = onBack)
+        AppTopBar(title = "Photo · ${viewModel.machine.name}", onBack = onBack)
         Column(
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -183,19 +193,40 @@ fun PhotoScreen(
                     Eyebrow("Identifier les commandes sur ta photo")
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        "Prends ta propre Electribe en photo, vue de dessus, puis choisis-la ici. " +
+                        "Prends ta propre ${viewModel.machine.name} en photo, vue de dessus, puis choisis-la ici. " +
                             "Tu repères d'abord chaque commande en la touchant sur la photo ; l'app t'interroge ensuite " +
                             "(« Où est Write ? ») en comparant avec tes repères. La photo reste sur ton téléphone.",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        "Les commandes et leur rôle viennent du manuel (p. 22–24). L'app n'affiche aucune image de la machine : seulement ta photo.",
+                        "La photo sert aussi d'image sur la fiche de la machine. L'app n'affiche aucune image du fabricant : seulement ta photo.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Spacer(Modifier.height(10.dp))
                     Button(onClick = pick) { Text("Choisir une photo de ma machine") }
+                }
+                return@Column
+            }
+
+            if (viewModel.controls.isEmpty()) {
+                Image(
+                    image,
+                    contentDescription = "Photo de ta machine",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.fillMaxWidth().aspectRatio(image.width.toFloat() / image.height),
+                )
+                SectionCard {
+                    Text(
+                        "Photo enregistrée : elle s'affiche sur la fiche de la machine. Le repérage des commandes " +
+                            "arrivera avec le parcours, rédigé à partir du manuel officiel.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                Row {
+                    TextButton(onClick = pick) { Text("Changer de photo") }
+                    TextButton(onClick = viewModel::deletePhoto) { Text("Supprimer", color = Color(0xFFFF8A8A)) }
                 }
                 return@Column
             }

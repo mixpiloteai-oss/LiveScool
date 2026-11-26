@@ -1,6 +1,10 @@
 package com.livemachine.academy.ui.screens.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,7 +32,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.livemachine.academy.data.content.MachineContent
 import com.livemachine.academy.ui.components.AppTopBar
 import com.livemachine.academy.ui.components.Eyebrow
 import com.livemachine.academy.ui.components.HeroBanner
@@ -58,39 +61,83 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             item {
+                Eyebrow("Ta machine", color = MaterialTheme.colorScheme.secondary)
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    state.machines.forEach { m ->
+                        val selected = m.id == state.machine.id
+                        Surface(
+                            onClick = { viewModel.selectMachine(m.id) },
+                            shape = RoundedCornerShape(16.dp),
+                            color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                            border = BorderStroke(2.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Column(Modifier.padding(12.dp)) {
+                                Text(m.manufacturer, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
+                                Text(m.name, style = MaterialTheme.typography.titleMedium)
+                                Text(
+                                    if (m.hasCourse) "${m.lessons.size} leçons" else "Parcours à venir",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            item {
+                val machine = state.machine
                 HeroBanner {
-                    Eyebrow(MachineContent.modelLabel, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Eyebrow(machine.fullName, color = MaterialTheme.colorScheme.onPrimaryContainer)
                     Spacer(Modifier.height(6.dp))
                     Text("Apprends ici, joue sur ta machine.", style = MaterialTheme.typography.headlineSmall)
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Lis la leçon sur ton téléphone, puis refais chaque étape sur ta vraie Electribe.",
+                        if (machine.hasCourse) "Lis la leçon sur ton téléphone, puis refais chaque étape sur ta vraie ${machine.name}."
+                        else "Le parcours de la ${machine.name} sera rédigé à partir de son manuel officiel.",
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    Spacer(Modifier.height(16.dp))
-                    ProgressLine(state.fraction)
-                    Spacer(Modifier.height(6.dp))
-                    Text(
-                        "${state.completedLessons} / ${state.totalLessons} leçons terminées",
-                        style = MaterialTheme.typography.labelMedium,
-                    )
+                    if (machine.hasCourse) {
+                        Spacer(Modifier.height(16.dp))
+                        ProgressLine(state.fraction)
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            "${state.completedLessons} / ${state.totalLessons} leçons terminées",
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                    }
                     Spacer(Modifier.height(16.dp))
                     val next = state.nextLesson
-                    Button(onClick = { if (next != null) onOpenLesson(next.id) else onOpenPath() }) {
-                        Text(if (next != null) "Continuer : ${next.title}" else "Voir le parcours")
+                    Button(onClick = {
+                        when {
+                            next != null -> onOpenLesson(next.id)
+                            machine.hasCourse -> onOpenPath()
+                            else -> onOpenMachine()
+                        }
+                    }) {
+                        Text(
+                            when {
+                                next != null -> "Continuer : ${next.title}"
+                                machine.hasCourse -> "Voir le parcours"
+                                else -> "Voir la fiche machine"
+                            },
+                        )
                         Spacer(Modifier.width(8.dp))
                         Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = null)
                     }
                 }
             }
-            item { Shortcut(Icons.Outlined.Route, "Parcours", "Les 9 modules dans l'ordre conseillé", onOpenPath) }
+            item { Shortcut(Icons.Outlined.Route, "Parcours", "Les ${state.modules.size} modules dans l'ordre conseillé", onOpenPath) }
             item { Shortcut(Icons.Outlined.GridView, "Modules", "Accès direct à chaque module", onOpenModules) }
             if (state.reviewCount > 0) {
                 item { Shortcut(Icons.Outlined.Replay, "Réviser mes erreurs", "${state.reviewCount} question(s) à revoir", onOpenReview) }
             }
             item { Shortcut(Icons.Outlined.FitnessCenter, "Exercices", "À faire sur la vraie machine", onOpenExercises) }
-            item { Shortcut(Icons.Outlined.EmojiEvents, "Défis par style", "Hardtek, tribe, acidcore, mentalcore", onOpenChallenges) }
-            item { Shortcut(Icons.Outlined.Tune, "La machine", "Fiche de ton Electribe Sampler", onOpenMachine) }
+            if (state.challenges.isNotEmpty()) {
+                item { Shortcut(Icons.Outlined.EmojiEvents, "Défis par style", "Hardtek, tribe, acidcore, mentalcore", onOpenChallenges) }
+            }
+            item { Shortcut(Icons.Outlined.Tune, "La machine", "Fiche de ta ${state.machine.name}", onOpenMachine) }
             item {
                 SectionCard {
                     Eyebrow("Styles visés", color = MaterialTheme.colorScheme.secondary)

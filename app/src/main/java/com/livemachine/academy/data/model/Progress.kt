@@ -34,4 +34,6 @@ data class AppSettings(
     val keepScreenOn: Boolean = true,
     /** Mode libre : tous les modules sont accessibles sans validation du précédent. */
     val unlockAllModules: Boolean = false,
+    /** Machine choisie à l'accueil (Electribe par défaut, pour les données existantes). */
+    val selectedMachineId: String = com.livemachine.academy.data.content.MachineCatalog.ELECTRIBE_ID,
 )

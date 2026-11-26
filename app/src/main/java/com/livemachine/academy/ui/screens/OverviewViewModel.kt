@@ -2,7 +2,9 @@ package com.livemachine.academy.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.livemachine.academy.data.content.MachineCatalog
 import com.livemachine.academy.data.model.CourseModule
+import com.livemachine.academy.data.model.MachineProfile
 import com.livemachine.academy.data.model.Exercise
 import com.livemachine.academy.data.model.Lesson
 import com.livemachine.academy.data.model.QuizScore
@@ -43,6 +45,8 @@ data class OverviewUiState(
     val lessonTitles: Map<String, String> = emptyMap(),
     val reviewItems: List<ReviewItem> = emptyList(),
     val unlockAll: Boolean = false,
+    val machine: MachineProfile = MachineCatalog.electribe,
+    val machines: List<MachineProfile> = MachineCatalog.all,
 ) {
     val totalLessons: Int get() = modules.sumOf { it.total }
     val completedLessons: Int get() = modules.sumOf { it.completed }
@@ -56,11 +60,12 @@ data class OverviewUiState(
 class OverviewViewModel(
     private val course: CourseRepository,
     private val progressRepository: ProgressRepository,
-    settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     val uiState: StateFlow<OverviewUiState> = combine(progressRepository.progress, settingsRepository.settings) { progress, settings ->
-        val modules = course.modules()
+        val machineId = settings.selectedMachineId
+        val modules = course.modules(machineId)
         OverviewUiState(
             modules = modules.mapIndexed { index, module ->
                 ModuleProgress(
@@ -72,17 +77,23 @@ class OverviewViewModel(
                     finalScore = progress.bestQuizScores[ProgressRules.finalQuizId(module.id)],
                 )
             },
-            nextLesson = course.nextLesson(progress.completedLessons),
-            exercises = course.exercises(),
-            challenges = course.challenges(),
+            nextLesson = course.nextLesson(machineId, progress.completedLessons),
+            exercises = course.exercises(machineId),
+            challenges = course.challenges(machineId),
             progress = progress,
             lessonTitles = course.lessons().associate { it.id to it.title },
             reviewItems = ProgressRules.reviewQuestions(modules, progress)
                 .groupBy { q -> course.lessonOfQuestion(q.id) }
                 .mapNotNull { (lesson, qs) -> lesson?.let { ReviewItem(it.id, it.title, qs.size) } },
             unlockAll = settings.unlockAllModules,
+            machine = course.machine(machineId),
+            machines = course.machines(),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), OverviewUiState())
+
+    fun selectMachine(machineId: String) {
+        viewModelScope.launch { settingsRepository.setSelectedMachine(machineId) }
+    }
 
     fun toggleExercise(exerciseId: String) {
         viewModelScope.launch {

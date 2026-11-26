@@ -15,6 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.livemachine.academy.ui.components.AppTopBar
+import com.livemachine.academy.ui.components.AwaitingManualNotice
+import com.livemachine.academy.ui.components.Eyebrow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import com.livemachine.academy.ui.components.ScreenPadding
 import com.livemachine.academy.ui.screens.OverviewViewModel
 import com.livemachine.academy.ui.screens.modules.ModuleRow
@@ -34,17 +38,29 @@ fun PathScreen(
         AppTopBar(title = "Parcours", onOpenSettings = onOpenSettings)
         LazyColumn(contentPadding = ScreenPadding, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
+                Eyebrow(state.machine.fullName, color = MaterialTheme.colorScheme.secondary)
+                Spacer(Modifier.height(4.dp))
                 Text(
-                    "De la découverte de la façade jusqu'au set live. Suis les modules dans l'ordre : " +
-                        "chacun s'appuie sur le précédent.",
+                    if (state.machine.hasCourse) "Suis les modules dans l'ordre : chacun s'appuie sur le précédent."
+                    else state.machine.note,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            if (state.modules.isEmpty()) {
+                item {
+                    AwaitingManualNotice(
+                        message = "Aucun module pour l'instant : le parcours sera construit à partir du manuel officiel " +
+                            "de la ${state.machine.name}, pages citées.",
+                    )
+                }
+            }
             items(state.modules, key = { it.module.id }) { item ->
                 ModuleRow(item, highlighted = item.module.id == currentModuleId) { onOpenModule(item.module.id) }
             }
-            item { TextButton(onClick = onOpenModules) { Text("Voir le catalogue des modules") } }
+            if (state.modules.isNotEmpty()) {
+                item { TextButton(onClick = onOpenModules) { Text("Voir le catalogue des modules") } }
+            }
         }
     }
 }

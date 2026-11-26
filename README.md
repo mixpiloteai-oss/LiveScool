@@ -21,8 +21,13 @@ JDK 17 + SDK Android (compileSdk 35) :
 Sur GitHub Actions : chaque push teste et compile (`android.yml`) ; le workflow **« Publier l'APK »** (`release.yml`, lancé
 à la demande) vérifie les APK et les publie dans une Release.
 
+## Mises à jour et signature
+Depuis la v1.2.0, tous les APK sont signés avec `app/debug.keystore`, une clé **partagée et non secrète** (même rôle qu'une
+clé debug Android) : chaque nouvelle version s'installe par-dessus la précédente en gardant la progression.
+Les versions ≤ 1.1.2 avaient une clé différente à chaque compilation : pour passer à la 1.2.0, il faut les désinstaller une fois.
+
 ## Release signée avec ta propre clé
-Sans clé, la release est signée avec la clé debug : installable, mais pas publiable sur le Play Store.
+Pour publier hors de ton téléphone (Play Store…), utilise ta propre clé secrète :
 1. Créer une clé (une seule fois, à conserver précieusement) :
    ```bash
    keytool -genkeypair -v -keystore lma-release.jks -alias lma -keyalg RSA -keysize 4096 -validity 10000

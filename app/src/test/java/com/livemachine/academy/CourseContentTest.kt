@@ -86,7 +86,8 @@ class CourseContentTest {
     fun `lecon suivante suit l'ordre du parcours`() {
         val repo = CourseRepository()
         val first = repo.lessons().first()
-        assertEquals(first.id, repo.nextLesson(emptySet())?.id)
-        assertEquals(repo.lessons().getOrNull(1)?.id, repo.nextLesson(setOf(first.id))?.id)
+        val id = com.livemachine.academy.data.content.MachineCatalog.ELECTRIBE_ID
+        assertEquals(first.id, repo.nextLesson(id, emptySet())?.id)
+        assertEquals(repo.lessons().getOrNull(1)?.id, repo.nextLesson(id, setOf(first.id))?.id)
     }
 }

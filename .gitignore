@@ -16,3 +16,5 @@ docs/manual/*.pdf
 # Clés de signature
 *.jks
 *.keystore
+# Clé partagée NON secrète (rôle de clé debug) : signature stable pour les mises à jour
+!app/debug.keystore

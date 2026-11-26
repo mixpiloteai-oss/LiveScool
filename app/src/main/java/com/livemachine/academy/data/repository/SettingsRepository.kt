@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.livemachine.academy.data.content.MachineCatalog
 import com.livemachine.academy.data.model.AppSettings
 import com.livemachine.academy.data.model.TextSize
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
                 ?: TextSize.NORMAL,
             keepScreenOn = prefs[KEEP_SCREEN_ON] ?: true,
             unlockAllModules = prefs[UNLOCK_ALL] ?: false,
+            selectedMachineId = prefs[SELECTED_MACHINE] ?: MachineCatalog.ELECTRIBE_ID,
         )
     }
 
@@ -33,9 +35,14 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { it[UNLOCK_ALL] = enabled }
     }
 
+    suspend fun setSelectedMachine(machineId: String) {
+        dataStore.edit { it[SELECTED_MACHINE] = machineId }
+    }
+
     private companion object {
         val TEXT_SIZE = stringPreferencesKey("text_size")
         val KEEP_SCREEN_ON = booleanPreferencesKey("keep_screen_on")
         val UNLOCK_ALL = booleanPreferencesKey("unlock_all_modules")
+        val SELECTED_MACHINE = stringPreferencesKey("selected_machine")
     }
 }

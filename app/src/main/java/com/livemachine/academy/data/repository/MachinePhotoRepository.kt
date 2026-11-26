@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.exifinterface.media.ExifInterface
+import com.livemachine.academy.data.content.MachineCatalog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -28,25 +29,27 @@ data class MachinePhotoState(
 )
 
 /**
- * Photo de la machine de l'utilisateur et repères qu'il y a placés.
- * La photo est copiée dans le stockage privé de l'app ; rien ne quitte le téléphone.
+ * Photo de chaque machine de l'utilisateur et repères qu'il y a placés.
+ * Les photos sont copiées dans le stockage privé de l'app ; rien ne quitte le téléphone.
+ * L'Electribe garde les clés et le fichier d'avant le multi-machine (données conservées).
  */
 class MachinePhotoRepository(
     private val context: Context,
     private val dataStore: DataStore<Preferences>,
 ) {
-    val photoFile: File get() = File(context.filesDir, PHOTO_FILE)
+    fun photoFile(machineId: String): File = File(context.filesDir, photoFileName(machineId))
 
-    val state: Flow<MachinePhotoState> = dataStore.data.map { prefs ->
+    fun state(machineId: String): Flow<MachinePhotoState> = dataStore.data.map { prefs ->
+        val version = prefs[versionKey(machineId)]
         MachinePhotoState(
-            hasPhoto = prefs[VERSION] != null && photoFile.exists(),
-            version = prefs[VERSION] ?: 0L,
-            marks = decodeMarks(prefs[MARKS]),
+            hasPhoto = version != null && photoFile(machineId).exists(),
+            version = version ?: 0L,
+            marks = decodeMarks(prefs[marksKey(machineId)]),
         )
     }
 
     /** Copie la photo choisie (redimensionnée, orientée selon l'EXIF) et efface les anciens repères. */
-    suspend fun importPhoto(uri: Uri): Boolean = withContext(Dispatchers.IO) {
+    suspend fun importPhoto(machineId: String, uri: Uri): Boolean = withContext(Dispatchers.IO) {
         val resolver = context.contentResolver
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) } ?: return@withContext false
@@ -65,35 +68,41 @@ class MachinePhotoRepository(
         } ?: 0f
         val bitmap = if (rotation == 0f) decoded else
             Bitmap.createBitmap(decoded, 0, 0, decoded.width, decoded.height, Matrix().apply { postRotate(rotation) }, true)
-        photoFile.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
+        photoFile(machineId).outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
         dataStore.edit {
-            it[VERSION] = System.currentTimeMillis()
-            it.remove(MARKS)
+            it[versionKey(machineId)] = System.currentTimeMillis()
+            it.remove(marksKey(machineId))
         }
         true
     }
 
-    suspend fun setMark(controlId: String, mark: PhotoMark?) {
+    suspend fun setMark(machineId: String, controlId: String, mark: PhotoMark?) {
         dataStore.edit { prefs ->
-            val marks = decodeMarks(prefs[MARKS]).toMutableMap()
+            val marks = decodeMarks(prefs[marksKey(machineId)]).toMutableMap()
             if (mark == null) marks.remove(controlId) else marks[controlId] = mark
-            prefs[MARKS] = encodeMarks(marks)
+            prefs[marksKey(machineId)] = encodeMarks(marks)
         }
     }
 
-    suspend fun deletePhoto() {
-        withContext(Dispatchers.IO) { photoFile.delete() }
+    suspend fun deletePhoto(machineId: String) {
+        withContext(Dispatchers.IO) { photoFile(machineId).delete() }
         dataStore.edit {
-            it.remove(VERSION)
-            it.remove(MARKS)
+            it.remove(versionKey(machineId))
+            it.remove(marksKey(machineId))
         }
     }
 
     companion object {
-        private const val PHOTO_FILE = "machine_photo.jpg"
         private const val MAX_SIZE = 1600
-        private val VERSION = longPreferencesKey("photo_version")
-        private val MARKS = stringPreferencesKey("photo_marks")
+
+        /** L'Electribe garde les noms d'origine ; les autres machines sont suffixées. */
+        private fun isLegacy(machineId: String) = machineId == MachineCatalog.ELECTRIBE_ID
+
+        fun photoFileName(machineId: String) = if (isLegacy(machineId)) "machine_photo.jpg" else "machine_photo_$machineId.jpg"
+        fun versionKeyName(machineId: String) = if (isLegacy(machineId)) "photo_version" else "photo_version_$machineId"
+        fun marksKeyName(machineId: String) = if (isLegacy(machineId)) "photo_marks" else "photo_marks_$machineId"
+        private fun versionKey(machineId: String) = longPreferencesKey(versionKeyName(machineId))
+        private fun marksKey(machineId: String) = stringPreferencesKey(marksKeyName(machineId))
 
         fun encodeMarks(marks: Map<String, PhotoMark>): String =
             marks.entries.joinToString(";") { (id, m) -> "$id:${m.x}:${m.y}" }
