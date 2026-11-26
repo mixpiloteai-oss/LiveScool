@@ -15,6 +15,8 @@ import com.livemachine.academy.data.model.ManualRef
  */
 object GlossaryContent {
     val terms: List<GlossaryTerm> = listOf(
+        GlossaryTerm("EXPORT ALL PATTERN / EXPORT ALL SAMPLE", "Sauvegardes complètes sur carte : patterns + réglages Global ; samples, rechargés automatiquement au démarrage.", MACHINE, ManualRef("7. DATA UTILITY", "9–10", PARAMETER_GUIDE)),
+        GlossaryTerm("CLOCK MODE", "Horloge de référence : Internal (maître), Auto, External USB, External MIDI ou External Sync.", MACHINE, ManualRef("6. GLOBAL PARAMETERS › CLOCK MODE", "7", PARAMETER_GUIDE)),
         GlossaryTerm("Step Jump", "Pendant la lecture, un pad fait sauter instantanément au pas correspondant ; plusieurs pads jouent les pas dans l'ordre d'enfoncement.", MACHINE, ManualRef("Description par section › Section du mode de pad", "24")),
         GlossaryTerm("Event Recorder", "Enregistre une performance live (patterns, commandes, pads) sur la carte SD ; ne modifie pas les patterns. Demande CLOCK MODE sur Internal.", MACHINE, ManualRef("Autres réglages › 9. Event Recorder", "33–34")),
         GlossaryTerm("Gate Arpeggiator", "Rejoue la part au tempo pendant qu'on tient son pad ; au pad tactile, X = vitesse du gate, Y = longueur du son.", MACHINE, ManualRef("Production de musique › 3. Gate Arpeggiator", "29")),

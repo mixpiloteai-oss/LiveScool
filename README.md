@@ -6,7 +6,7 @@ pas de WebView, fonctionne hors ligne.
 
 Styles visés : mentalcore, tribe, tribeCore, hardtek, acidcore.
 
-## État actuel (v0.9.0)
+## État actuel (v1.0.0)
 
 - Architecture, navigation et les 11 écrans de base en place.
 - **Module 1 (Interface et navigation) rédigé** : 6 leçons complètes, avec exercices et quiz, d'après
@@ -25,7 +25,9 @@ Styles visés : mentalcore, tribe, tribeCore, hardtek, acidcore.
   transformation, CHAIN, Pattern Set, atelier morceau complet).
 - **Module 8 (Live et transitions) rédigé** : 6 leçons (réglages de scène, mutes, Step Jump, Gate Arp et
   Touch Scale, transitions, Event Recorder).
-- Module 9 : défini, leçons à rédiger depuis le manuel (voir `docs/manual/README.md`).
+- **Module 9 (Préparer un set) rédigé** : 6 leçons (sauvegardes, organisation, alimentation,
+  branchements et synchro, dépannage, répétition générale).
+- **Les 9 modules sont complets : 54 leçons vérifiées.**, leçons à rédiger depuis le manuel (voir `docs/manual/README.md`).
 - Progression (leçons, exercices, meilleurs scores de quiz) et paramètres enregistrés sur l'appareil.
 
 ## Compiler

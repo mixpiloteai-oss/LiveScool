@@ -89,10 +89,10 @@ object CourseContent {
             id = "m9",
             number = 9,
             title = "Préparer un set",
-            summary = "Organiser patterns et sauvegardes pour la scène.",
-            goal = "Arriver devant le public avec un set organisé et sauvegardé.",
+            summary = "Sauvegardes, organisation, alimentation, branchements, dépannage, répétition générale.",
+            goal = "Arriver devant le public avec un set organisé, sauvegardé et répété.",
             styleFocus = "Un set cohérent en tempo et en énergie, de la tribe au mentalcore.",
-            lessons = emptyList(),
+            lessons = Module9Content.lessons,
         ),
     )
 
