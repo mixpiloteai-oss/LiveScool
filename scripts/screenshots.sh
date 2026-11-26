@@ -139,6 +139,18 @@ scroll_to() {
   echo "ÉLÉMENT INTROUVABLE APRÈS DÉFILEMENT : $1"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"; { echo "$(date +%T) introuvable"; grep -o 'text="[^"]*"' /tmp/ui.xml | head -15; } >> "$OUT/diagnostic.txt"; FAILED=1; return 1
 }
 
+# --- Diagnostic rapide : contenu complet de l'écran Parcours ---
+if [ "${1:-}" = "smoke" ]; then
+  restart
+  shot s1-accueil
+  tap_tab "Parcours"
+  shot s2-parcours
+  coords_of "rien" >/dev/null
+  { echo "== smoke : écran Parcours, tous les noeuds"; grep -o '<node [^>]*>' /tmp/ui.xml | grep -o 'text="[^"]*"\|content-desc="[^"]*"\|clickable="true"\|bounds="[^"]*"' | paste -sd' ' | sed 's/bounds=/\n/g'; } >> "$OUT/diagnostic.txt"
+  tap_text "Interface et navigation" && shot s3-module-1
+  exit 0
+fi
+
 # --- Test de mise à jour : progression créée dans l'ancienne version ---
 if [ "${1:-}" = "seed" ]; then
   restart

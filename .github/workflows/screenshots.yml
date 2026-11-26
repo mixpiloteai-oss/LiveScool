@@ -10,6 +10,10 @@ on:
         default: debug
         type: choice
         options: [debug, release]
+      script_mode:
+        description: "Mode du script : vide (parcours complet) ou smoke (diagnostic rapide)"
+        default: ""
+        type: string
       upgrade_from:
         description: "Tag d'une Release à installer d'abord pour tester la mise à jour (ex. v1.1.2), vide sinon"
         default: ""
@@ -64,7 +68,7 @@ jobs:
             if [ -d old-apk ]; then adb install old-apk/*.apk && bash scripts/screenshots.sh seed; fi
             adb install -r app/build/outputs/apk/${{ inputs.variant || 'debug' }}/app-${{ inputs.variant || 'debug' }}.apk
             if [ -d old-apk ]; then bash scripts/screenshots.sh verify-upgrade && adb shell pm clear com.livemachine.academy; fi
-            bash scripts/screenshots.sh
+            bash scripts/screenshots.sh ${{ inputs.script_mode }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
