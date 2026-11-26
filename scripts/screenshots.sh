@@ -128,5 +128,20 @@ tap_text "Progrès" && shot 15-progression
 swipe_up; shot 16-progression-suite
 tap_text "Paramètres" && shot 17-parametres
 
+# Autres écrans : glossaire (avec recherche), exercices, catalogue des modules
+restart
+tap_text "Glossaire" && tap_text "Rechercher un terme" && adb shell input text "filtre" && sleep 2 && shot 18-glossaire-recherche
+restart
+scroll_to_and_tap "À faire sur la vraie machine" && shot 19-exercices
+restart
+tap_text "Accès direct à chaque module" && shot 20-modules
+
+# Taille de texte « Très grande »
+restart
+tap_text "Progrès" && tap_text "Paramètres" && tap_text "Très grande"
+restart
+shot 21-texte-xl-accueil
+tap_text "Continuer" && shot 22-texte-xl-lecon
+
 ls -1 "$OUT"
 exit $FAILED

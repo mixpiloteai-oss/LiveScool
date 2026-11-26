@@ -13,8 +13,22 @@ android {
         applicationId = "com.livemachine.academy"
         minSdk = 26
         targetSdk = 35
-        versionCode = 11
-        versionName = "1.1.0"
+        versionCode = 12
+        versionName = "1.1.1"
+    }
+
+    // Clé release fournie par variables d'environnement (voir README). Sans elles,
+    // la release est signée avec la clé debug : installable, mais pas publiable sur un store.
+    val releaseKeystore = System.getenv("LMA_KEYSTORE_PATH")?.let { file(it) }?.takeIf { it.exists() }
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = releaseKeystore
+                storePassword = System.getenv("LMA_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("LMA_KEY_ALIAS")
+                keyPassword = System.getenv("LMA_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
@@ -22,8 +36,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Signé avec la clé debug pour rester installable sans keystore dédié (à remplacer avant diffusion).
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -35,6 +48,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

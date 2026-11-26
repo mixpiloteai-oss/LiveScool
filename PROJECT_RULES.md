@@ -19,22 +19,23 @@ Kotlin, Jetpack Compose, Material 3 (thème sombre unique, magenta), MVVM + Stat
 - Divergences signalées dans les leçons : sauvegarde Global (manuel p. 32 vs guide p. 7) ; AUTO POWER OFF « Off » (manuel) / « Disable » (guide).
 - Non documenté, à faire vérifier sur la machine : moment du changement de pattern en lecture (7.1), sauvegarde des Part Mute (7.2).
 
-## Fait (v1.1.0)
+## Fait (v1.1.1)
 - 11 écrans + Défis + Photo ; 9 modules × 6 leçons = 54 leçons `VERIFIED`, pages citées.
 - Leçon : étapes cochables, exercice validable, quiz (80 %). Quiz final par module (10 q.), révision des erreurs (`wrongQuestions`).
 - Déblocage : module N ouvert si N-1 validé (leçons faites OU quiz final ≥ 80 %), mode libre dans Paramètres. Compétence = leçons + quiz final. Règles pures dans `domain/ProgressRules.kt`.
 - 8 défis par style (`ChallengeContent`), débloqués par module.
 - Photo : l'utilisateur photographie SA machine, repère les commandes (`MachineContent.identifiableControls`), puis quiz « Où est… ? ». Aucune image Korg ni schéma inventé.
-- Tests : `CourseContentTest`, `QuizSessionTest`, `ProgressRulesTest`. CI `android.yml` ; `screenshots.yml` (émulateur, teste les interactions, commite `docs/screenshots/`).
+- Tests : `CourseContentTest`, `QuizSessionTest`, `ProgressRulesTest`. CI `android.yml` (tests, lint, APK debug + release) ; `screenshots.yml` (émulateur debug ou release, teste les interactions, commite `docs/screenshots/`) ; `release.yml` (vérifie et publie les APK dans une Release GitHub).
+- Signature release : variables `LMA_KEYSTORE_*` / secrets GitHub, sinon clé debug. Version lue via `BuildConfig`.
 
 ## Prochaines étapes
 1. Retours utilisateur (téléphone + vraie machine), dont points 7.1 / 7.2 et usage réel de l'écran Photo.
 2. Vérifier les tailles de texte « Grande » / « Très grande ».
-3. Clé de signature release (actuellement clé debug).
+3. Créer la clé release de l'utilisateur (README) si publication hors de son téléphone.
 
 ## Règles
 - N'inventer aucune fonction : toute info machine cite `ManualRef` ; `VERIFIED` seulement si vérifié dans le document.
 - Compilation impossible en local (SDK bloqué) : pousser et vérifier le run GitHub Actions.
 - Branche de travail : `ccr-da6a4977-k0rjt6` (seule branche, pas de PR possible).
-- Incrémenter `versionCode`/`versionName` (build.gradle.kts + SettingsScreen) à chaque version.
+- Incrémenter `versionCode`/`versionName` dans `app/build.gradle.kts` à chaque version.
 - Répondre en français, de façon concise.

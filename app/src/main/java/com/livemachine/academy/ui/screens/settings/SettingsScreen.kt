@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.livemachine.academy.BuildConfig
 import com.livemachine.academy.data.content.MachineContent
 import com.livemachine.academy.data.model.AppSettings
 import com.livemachine.academy.data.model.TextSize
@@ -134,7 +135,7 @@ fun SettingsScreen(
             SectionCard {
                 Eyebrow("À propos")
                 Spacer(Modifier.height(8.dp))
-                Text("Live Machine Academy · version 1.1.0", style = MaterialTheme.typography.titleMedium)
+                Text("Live Machine Academy · version ${BuildConfig.VERSION_NAME}", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(6.dp))
                 Text(
                     "Application hors ligne. Source pédagogique unique : " + MachineContent.manualSource + " " +
