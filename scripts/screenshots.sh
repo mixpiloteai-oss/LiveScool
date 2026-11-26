@@ -79,8 +79,22 @@ swipe_up() {
 
 back() { adb shell input keyevent KEYCODE_BACK; sleep 2; }
 
-# Relance l'app depuis l'accueil (la progression, stockée sur l'appareil, est conservée).
-restart() { adb shell am start -S -n "$PKG/.MainActivity" >/dev/null; sleep 6; }
+# Relance l'app depuis l'accueil (la progression, stockée sur l'appareil, est conservée)
+# et attend qu'elle soit au premier plan.
+restart() {
+  adb shell am start -S -W -n "$PKG/.MainActivity" >/dev/null
+  for _ in $(seq 1 20); do
+    adb shell dumpsys activity activities | grep -q "mResumedActivity.*$PKG" && break
+    sleep 1
+  done
+  sleep 4
+}
+
+# Diagnostic : activité au premier plan et plantages éventuels.
+diagnose() {
+  mkdir -p "$OUT"
+  { echo "== $1"; adb shell dumpsys activity activities | grep -E "mResumedActivity|topResumedActivity"; adb logcat -d -b crash | tail -40; } >> "$OUT/diagnostic.txt"
+}
 
 scroll_to() {
   for _ in $(seq 1 12); do
@@ -93,6 +107,8 @@ scroll_to() {
 # --- Test de mise à jour : progression créée dans l'ancienne version ---
 if [ "${1:-}" = "seed" ]; then
   restart
+  shot 00-ancienne-version-demarrage
+  diagnose "ancienne version au démarrage"
   tap_text "Parcours" && tap_text "Interface et navigation" && tap_text "Vue d'ensemble de la façade"
   scroll_to_and_tap "Machine éteinte devant toi"
   scroll_to_and_tap "J'ai réussi l'exercice"
@@ -105,6 +121,7 @@ if [ "${1:-}" = "seed" ]; then
 fi
 if [ "${1:-}" = "verify-upgrade" ]; then
   restart
+  diagnose "nouvelle version après mise à jour"
   tap_text "Progrès" && shot 00b-progression-apres-mise-a-jour
   for attendu in "1/54" "Réviser mes erreurs (1)"; do
     if [ -z "$(coords_of "$attendu")" ]; then echo "PROGRESSION PERDUE : « $attendu » absent"; FAILED=1; else echo "OK après mise à jour : $attendu"; fi
