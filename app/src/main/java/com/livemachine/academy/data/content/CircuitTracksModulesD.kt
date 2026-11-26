@@ -49,6 +49,7 @@ internal object CircuitTracksModulesD {
 
     private val m10l1 = ctLesson(
         M10, 1, "Séquencer une machine externe avec les pistes MIDI", listOf(MIDI_INTRO, MODELES, SORTIE_MIDI), 20,
+        photo = listOf("ct-tracks", "ct-preset", "ct-macros"),
         objective = "Faire jouer un synthé ou une boîte à rythmes externe depuis MIDI 1 ou MIDI 2, et piloter ses paramètres avec les Macros.",
         explanation = "Une piste MIDI se programme comme un synthé (notes, vélocité, gate, probabilité…) mais envoie ses notes en MIDI. " +
             "Ses Macros envoient des CC selon le modèle choisi dans la vue Preset (8 modèles). Les modèles par défaut sont identiques : " +
@@ -100,6 +101,7 @@ internal object CircuitTracksModulesD {
 
     private val m10l2 = ctLesson(
         M10, 2, "Canaux, vue Setup et contrôleur externe", listOf(SETUP, CANAUX, RX_TX, CLAVIER_EXT, PATCH_EXT, SETUP_AVANCE), 20,
+        photo = listOf("ct-save", "ct-shift", "ct-play"),
         objective = "Régler les canaux MIDI, filtrer ce qui entre et sort, et jouer les synthés depuis un clavier.",
         explanation = "La vue Setup s'ouvre avec Shift + Save et se ferme avec Play, qui enregistre les réglages. " +
             "Canaux par défaut : Synth 1 = 1, Synth 2 = 2, MIDI 1 = 3, MIDI 2 = 4, les quatre Drum = 10 ; le canal 16 est réservé au projet. " +
@@ -150,6 +152,7 @@ internal object CircuitTracksModulesD {
 
     private val m10l3 = ctLesson(
         M10, 3, "Horloge, synchronisation et entrées audio", listOf(TEMPO, HORLOGE_EXT, HORLOGE, SYNC_OUT, ARRIERE, MIXER), 20,
+        photo = listOf("ct-tempo", "ct-macros"),
         objective = "Rendre la Circuit Tracks maître ou esclave du tempo et synchroniser une machine analogique.",
         explanation = "Le tempo interne va de 40 à 240 BPM. Avec la réception d'horloge active (mode AUTO), une horloge MIDI externe valide, " +
             "par USB ou MIDI In, prend la main : « SYN » s'affiche quand tu tournes la Macro 1 dans la vue Tempo. Elle peut aller de 30 à 300 BPM, " +
@@ -213,6 +216,7 @@ internal object CircuitTracksModulesD {
 
     private val m11l1 = ctLesson(
         M11, 1, "Huit patterns par piste", listOf(VUE_PATTERNS, SUPPR_PATTERNS, DUPL_PATTERNS), 15,
+        photo = listOf("ct-patterns", "ct-shift", "ct-duplicate", "ct-clear"),
         objective = "Créer des variations d'un pattern et passer de l'une à l'autre.",
         explanation = "La vue Patterns montre une colonne par piste et ses patterns : 1 à 4 sur la page 1, 5 à 8 sur la page 2 (touches fléchées). " +
             "Le pattern qui joue clignote. Touche un autre pad pour le choisir : en lecture, il attend la fin du pattern en cours ; " +
@@ -261,6 +265,7 @@ internal object CircuitTracksModulesD {
 
     private val m11l2 = ctLesson(
         M11, 2, "Chaîner les patterns, transposer, verrouiller la vue", listOf(CHAINES, TRANSPOSER, VERROU), 20,
+        photo = listOf("ct-patterns", "ct-shift", "ct-arrows"),
         objective = "Allonger une piste avec une chaîne de patterns et éditer un pattern sans couper la lecture.",
         explanation = "Pour chaîner, tiens le pattern de départ et touche le dernier : tous ceux entre les deux jouent à la suite, en boucle. " +
             "Les patterns doivent être consécutifs (1-2-3, pas 1-2-6). Chaque piste a sa chaîne : la plus longue fixe la durée totale, " +
@@ -309,6 +314,7 @@ internal object CircuitTracksModulesD {
 
     private val m11l3 = ctLesson(
         M11, 3, "Scènes et arrangement", listOf(SCENES, CHAINE_SCENES, FILE_SCENES), 20,
+        photo = listOf("ct-mixer", "ct-shift", "ct-save"),
         objective = "Mémoriser les parties d'un morceau dans des Scènes et les enchaîner en arrangement complet.",
         explanation = "Une Scène mémorise, pour toutes les pistes, les patterns et chaînes sélectionnés. Les 16 Scènes sont les deux rangées du bas de la vue Mixer. " +
             "Pour en créer une : choisis les patterns dans la vue Patterns, ouvre le Mixer, tiens Shift et touche un pad de Scène. " +
@@ -371,6 +377,7 @@ internal object CircuitTracksModulesD {
 
     private val m12l1 = ctLesson(
         M12, 1, "Transitions : file d'attente ou changement immédiat", listOf(VUE_PATTERNS, FILE_SCENES, CHARGER, CHANGER_PROJET), 20,
+        photo = listOf("ct-patterns", "ct-mixer", "ct-projects", "ct-shift"),
         objective = "Choisir, pour chaque transition, entre un changement calé en fin de boucle et un changement immédiat.",
         explanation = "Patterns, Scènes et projets suivent la même logique : par défaut, ce que tu choisis attend son tour (le pad clignote) ; " +
             "avec Shift, le changement est immédiat. Pour les patterns et les projets, Shift garde la position de lecture. " +
@@ -418,6 +425,7 @@ internal object CircuitTracksModulesD {
 
     private val m12l2 = ctLesson(
         M12, 2, "Jouer en live : mutes, pads libres, filtre, tempo et swing", listOf(MIXER, MUTE_JEU, FILTRE, TAP, SWING), 20,
+        photo = listOf("ct-mixer", "ct-filter", "ct-tempo", "ct-shift"),
         objective = "Faire vivre un morceau en direct avec les mutes, le Master Filter, le tap tempo et le swing.",
         explanation = "Dans la vue Mixer, les mutes de la rangée 1 coupent et relancent les pistes : c'est l'outil principal des breaks. " +
             "Une piste mutée n'est plus jouée par le séquenceur, mais ses pads de pas restent jouables à la main : tu peux faire des accords " +
@@ -469,6 +477,7 @@ internal object CircuitTracksModulesD {
 
     private val m12l3 = ctLesson(
         M12, 3, "Préparer et protéger son set", listOf(COULEURS, SAVE_LOCK, PACKS, MICROSD, BRIGHTNESS, ALIM), 20,
+        photo = listOf("ct-save", "ct-macros", "ct-projects", "ct-shift"),
         objective = "Organiser tes projets pour la scène, protéger la sauvegarde et emporter plusieurs sets sur microSD.",
         explanation = "Pendant une sauvegarde, après le premier Save, la Macro 1 fait défiler 14 couleurs pour le pad du projet : pratique pour repérer " +
             "tes morceaux en live. Save Lock (Shift + Save tenus à l'allumage) désactive la sauvegarde pour ne rien écraser par erreur ; " +

@@ -160,6 +160,7 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
             LessonScreen(
                 onBack = back,
                 onOpenQuiz = { navController.navigate(QuizRoute(QuizKind.LESSON, it)) },
+                onOpenPhoto = { machineId, focus -> navController.navigate(PhotoRoute(machineId, focus)) },
             )
         }
         composable<QuizRoute> { QuizScreen(onBack = back) }

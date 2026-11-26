@@ -143,7 +143,7 @@ fun ManualRefLine(ref: ManualRef) {
 @Composable
 fun AwaitingManualNotice(
     modifier: Modifier = Modifier,
-    message: String = "Ce contenu sera rédigé uniquement à partir du manuel officiel de l'Electribe Sampler. " +
+    message: String = "Ce contenu sera rédigé uniquement à partir du manuel officiel de la machine. " +
         "Il n'est pas encore disponible dans l'application.",
 ) {
     Row(

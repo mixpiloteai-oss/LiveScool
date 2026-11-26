@@ -27,3 +27,29 @@ data class IdentifiableControl(
     val hint: String,
     val manualRef: ManualRef,
 )
+
+/** Types d'ateliers de création musicale. */
+enum class WorkshopKind(val label: String) {
+    PATTERN("Programmer un pattern"),
+    VARIATION("Créer une variation"),
+    AUTOMATION("Modifier une automation"),
+    MACROS("Utiliser les macros"),
+    TRANSITION("Préparer une transition"),
+    LIVE_SEQUENCE("Construire une séquence live"),
+}
+
+/**
+ * Atelier de création, réalisé sur la vraie machine : étapes cochables
+ * (progression « id#index »), puis validation manuelle du résultat.
+ */
+data class CreativeWorkshop(
+    val id: String,
+    val kind: WorkshopKind,
+    val title: String,
+    /** Module qu'il faut avoir validé pour ouvrir l'atelier. */
+    val requiredModuleId: String,
+    val goal: String,
+    val steps: List<String>,
+    val successCriteria: String,
+    val manualRefs: List<ManualRef>,
+)

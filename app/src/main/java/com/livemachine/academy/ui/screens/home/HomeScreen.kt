@@ -134,7 +134,9 @@ fun HomeScreen(
                 item { Shortcut(Icons.Outlined.Replay, "Réviser mes erreurs", "${state.reviewCount} question(s) à revoir", onOpenReview) }
             }
             item { Shortcut(Icons.Outlined.FitnessCenter, "Exercices", "À faire sur la vraie machine", onOpenExercises) }
-            if (state.challenges.isNotEmpty()) {
+            if (state.workshops.isNotEmpty()) {
+                item { Shortcut(Icons.Outlined.EmojiEvents, "Ateliers et défis", "Création guidée et défis par style", onOpenChallenges) }
+            } else if (state.challenges.isNotEmpty()) {
                 item { Shortcut(Icons.Outlined.EmojiEvents, "Défis par style", "Hardtek, tribe, acidcore, mentalcore", onOpenChallenges) }
             }
             item { Shortcut(Icons.Outlined.Tune, "La machine", "Fiche de ta ${state.machine.name}", onOpenMachine) }

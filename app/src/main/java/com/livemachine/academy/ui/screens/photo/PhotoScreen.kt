@@ -82,9 +82,17 @@ class PhotoViewModel(
     course: CourseRepository,
     private val repository: MachinePhotoRepository,
 ) : ViewModel() {
-    val machine: MachineProfile = course.machine(savedStateHandle.toRoute<PhotoRoute>().machineId)
+    private val route = savedStateHandle.toRoute<PhotoRoute>()
+    val machine: MachineProfile = course.machine(route.machineId)
     private val machineId = machine.id
-    val controls = machine.identifiableControls
+    private val focusIds = route.focus.split(',').filter { it.isNotBlank() }.toSet()
+
+    /** Commandes travaillées : celles de la leçon si l'écran est ouvert depuis une leçon, sinon toutes. */
+    val controls = machine.identifiableControls.filter { focusIds.isEmpty() || it.id in focusIds }.ifEmpty { machine.identifiableControls }
+    val isLessonFocus: Boolean = focusIds.isNotEmpty() && controls.size < machine.identifiableControls.size
+
+    /** Quiz possible dès 4 commandes repérées, ou toutes celles de la leçon si elle en compte moins. */
+    val minMarksForQuiz: Int = minOf(MIN_MARKS_FOR_QUIZ, controls.size).coerceAtLeast(1)
     val photoFile: File get() = repository.photoFile(machineId)
 
     val photo: StateFlow<MachinePhotoState> = repository.state(machineId)
@@ -182,7 +190,7 @@ fun PhotoScreen(
     }
 
     Column(Modifier.fillMaxSize()) {
-        AppTopBar(title = "Photo · ${viewModel.machine.name}", onBack = onBack)
+        AppTopBar(title = if (viewModel.isLessonFocus) "Photo · commandes de la leçon" else "Photo · ${viewModel.machine.name}", onBack = onBack)
         Column(
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -232,8 +240,8 @@ fun PhotoScreen(
             }
 
             val toMark = viewModel.nextToMark(photo, skipped)
-            val markedCount = photo.marks.size
-            val canQuiz = markedCount >= PhotoViewModel.MIN_MARKS_FOR_QUIZ
+            val markedCount = viewModel.controls.count { it.id in photo.marks }
+            val canQuiz = markedCount >= viewModel.minMarksForQuiz
             val current = attempt
 
             // Consigne au-dessus de la photo
@@ -299,7 +307,7 @@ fun PhotoScreen(
                 }
                 if (!canQuiz) {
                     Text(
-                        "Repère au moins ${PhotoViewModel.MIN_MARKS_FOR_QUIZ} commandes pour lancer le quiz.",
+                        "Repère au moins ${viewModel.minMarksForQuiz} commande(s) pour lancer le quiz.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

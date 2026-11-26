@@ -73,6 +73,30 @@ class MultiMachineTest {
     }
 
     @Test
+    fun `chaque identifiant de progression a sa machine`() {
+        assertEquals(electribe, MachineCatalog.machineOfProgressId("m1-l1"))
+        assertEquals(electribe, MachineCatalog.machineOfProgressId("final-m9"))
+        assertEquals(electribe, MachineCatalog.machineOfProgressId("c-hardtek-1"))
+        assertEquals(electribe, MachineCatalog.machineOfProgressId("m1-l1#3"))
+        assertEquals(circuit, MachineCatalog.machineOfProgressId("ct-m1-l1-q1"))
+        assertEquals(circuit, MachineCatalog.machineOfProgressId("final-ct-m12"))
+        assertEquals(circuit, MachineCatalog.machineOfProgressId("ct-w-live#2"))
+        // Tous les identifiants réels retombent sur leur machine
+        MachineCatalog.all.forEach { m ->
+            val ids = m.lessons.flatMap { l -> listOf(l.id) + listOfNotNull(l.exercise?.id) + l.quiz.map { it.id } } +
+                m.modules.map { ProgressRules.finalQuizId(it.id) } + m.challenges.map { it.id } + m.workshops.map { it.id }
+            ids.forEach { assertEquals(it, m.id, MachineCatalog.machineOfProgressId(it)) }
+        }
+    }
+
+    @Test
+    fun `cours de l Electribe inchanges par les interactions Circuit Tracks`() {
+        assertTrue(MachineCatalog.electribe.workshops.isEmpty())
+        assertTrue(MachineCatalog.electribe.lessons.all { it.photoControls.isEmpty() })
+        assertEquals(54, MachineCatalog.electribe.lessons.size)
+    }
+
+    @Test
     fun `photo de l Electribe garde ses anciens noms`() {
         assertEquals("machine_photo.jpg", MachinePhotoRepository.photoFileName(electribe))
         assertEquals("photo_version", MachinePhotoRepository.versionKeyName(electribe))

@@ -42,6 +42,7 @@ internal object CircuitTracksModulesB {
 
     private val m4l1 = ctLesson(
         M4, 1, "Programmer un rythme et comprendre les kits", listOf(PREMIERS_PAS, RYTHMES, JOUER_RYTHMES), 15,
+        photo = listOf("ct-tracks", "ct-arrows", "ct-grid"),
         objective = "Programmer les quatre pistes Drum pas à pas et trouver vite le bon type de son dans un kit.",
         explanation = "Sur une piste Drum, les 16 pads du bas affichent une page de samples ; les touches fléchées passent aux 4 pages. " +
             "Chaque page est un kit organisé de la même façon : 1-2 kicks, 3-4 snares, 5-6 charleys fermés, 7-8 charleys ouverts, " +
@@ -92,6 +93,7 @@ internal object CircuitTracksModulesB {
 
     private val m4l2 = ctLesson(
         M4, 2, "Choisir les samples et jouer les quatre pistes à la fois", listOf(SAMPLES, DRUM_ETENDUE, REC_DRUM, COMPONENTS), 15,
+        photo = listOf("ct-preset", "ct-note", "ct-shift", "ct-rec"),
         objective = "Choisir un sample dans la vue Preset et enregistrer les quatre pistes Drum en jouant en direct.",
         explanation = "La vue Preset d'une piste Drum montre les 64 samples en deux pages de 32 : plus rapide pour comparer. " +
             "La vue Drum étendue (Shift + Note) réduit la grille à quatre pads, 29 à 32, un par piste Drum, chacun avec son sample actif : " +
@@ -139,6 +141,7 @@ internal object CircuitTracksModulesB {
 
     private val m4l3 = ctLesson(
         M4, 3, "Sample Flip : plusieurs samples sur une piste", listOf(FLIP, MANUEL_DRUM, ZERO), 15,
+        photo = listOf("ct-grid", "ct-rec"),
         objective = "Faire jouer des samples différents sur une même piste Drum, pas par pas ou en direct.",
         explanation = "Normalement une piste Drum joue son sample actif. Sample Flip permet de changer de sample sur certains pas seulement. " +
             "Pas à pas : tiens le pad du pas (il devient rouge), puis touche un autre sample : le pas devient rose. " +
@@ -200,6 +203,7 @@ internal object CircuitTracksModulesB {
 
     private val m5l1 = ctLesson(
         M5, 1, "Enregistrer en temps réel", listOf(REC_SYNTH, METRONOME, REC_DRUM, EDITER), 15,
+        photo = listOf("ct-rec", "ct-play", "ct-shift", "ct-clear", "ct-tempo"),
         objective = "Enregistrer synthés et batterie en jouant, avec le métronome, et faire des punch-in précis.",
         explanation = "Record allumé, tout ce que tu joues s'ajoute au pattern ; la tête de lecture devient rouge pour te le rappeler. " +
             "Le métronome s'allume avec Shift + Clear et son volume se règle dans la vue Tempo avec la Macro 5. " +
@@ -248,6 +252,7 @@ internal object CircuitTracksModulesB {
 
     private val m5l2 = ctLesson(
         M5, 2, "Éditer les pas : ajouter, effacer, copier, passer à 32", listOf(EDITER, SUPPR_DUPL, SUPPR_DRUM, STEP_PAGE), 20,
+        photo = listOf("ct-clear", "ct-duplicate", "ct-steppage"),
         objective = "Corriger un pattern pas par pas et l'allonger à 32 pas.",
         explanation = "Sur un synthé, tenir un pas montre ses notes en rouge sur le clavier et les joue. Tenir un pas + toucher une note l'ajoute ; " +
             "même geste sur une note rouge : elle est retirée. Pas besoin de Record. Clear + pas efface toutes les notes du pas d'un coup. " +
@@ -299,6 +304,7 @@ internal object CircuitTracksModulesB {
 
     private val m5l3 = ctLesson(
         M5, 3, "Vélocité, gate et notes liées", listOf(VELOCITE, VEL_DRUM, GATE, LIEES), 20,
+        photo = listOf("ct-velocity", "ct-gate", "ct-shift"),
         objective = "Régler l'accent et la durée de chaque pas, et tenir une note sur tout le pattern.",
         explanation = "Vue Velocity : en haut les pas, en bas un fader de 16 pads ; chaque pad vaut 8 (12 pads = 96). Touche un pas puis un pad du fader. " +
             "En lecture, tiens le pas pendant le réglage. Shift + Velocity active la vélocité fixe (96) pour tout ce que tu joues ; " +
@@ -362,6 +368,7 @@ internal object CircuitTracksModulesB {
 
     private val m6l1 = ctLesson(
         M6, 1, "Enregistrement non quantifié et micro-pas", listOf(SANS_QUANTIF, MICRO_SYNTH, MICRO_DRUM), 20,
+        photo = listOf("ct-shift", "ct-rec", "ct-gate"),
         objective = "Décaler des notes et des frappes entre les pas, et créer des roulements de batterie.",
         explanation = "Chaque pas est divisé en six micro-pas. Par défaut, l'enregistrement est quantifié : la note va sur le pas le plus proche. " +
             "Shift + Record le coupe : la note va sur le micro-pas le plus proche. En tenant Shift, Record vert = quantifié, rouge = non quantifié. " +
@@ -410,6 +417,7 @@ internal object CircuitTracksModulesB {
 
     private val m6l2 = ctLesson(
         M6, 2, "Probabilité et Mutate", listOf(PROBA, PROBA_DRUM, MUTATE), 15,
+        photo = listOf("ct-settings", "ct-shift", "ct-duplicate"),
         objective = "Faire varier un pattern tout seul avec la probabilité, et le transformer avec Mutate.",
         explanation = "Chaque pas a une probabilité d'être joué, de 100 % à 12,5 % en huit valeurs, réglée dans la vue Probability " +
             "(Shift + Pattern Settings) avec les pads 17 à 24. Toutes les notes d'un pas sont jouées ensemble ou pas du tout ; " +
@@ -459,6 +467,7 @@ internal object CircuitTracksModulesB {
 
     private val m6l3 = ctLesson(
         M6, 3, "Longueur, sens et vitesse du pattern", listOf(PARAM_PATTERN, SENS, VITESSE), 20,
+        photo = listOf("ct-settings", "ct-shift"),
         objective = "Créer de la polyrythmie avec des longueurs différentes, et changer le sens ou la vitesse d'une piste.",
         explanation = "Dans la vue Pattern Settings, le pad sable marque le dernier pas : touche un autre pas pour raccourcir. " +
             "Shift + pas déplace le point de départ. Les notes hors zone sont gardées (rouge pâle). Chaque piste a sa propre longueur : " +

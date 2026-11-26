@@ -46,6 +46,7 @@ internal fun ctLesson(
     mistakes: List<String>,
     quiz: List<CtQuestion>,
     style: String? = null,
+    photo: List<String> = emptyList(),
 ): Lesson {
     val id = "$moduleId-l$order"
     return Lesson(
@@ -63,6 +64,7 @@ internal fun ctLesson(
         expectedResult = expected,
         exercise = Exercise("$id-ex", id, exerciseTitle, exercise, success, style),
         commonMistakes = mistakes,
+        photoControls = photo,
         quiz = quiz.mapIndexed { i, q ->
             QuizQuestion("$id-q${i + 1}", q.prompt, q.options, q.correct, q.explanation, q.ref)
         },

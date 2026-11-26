@@ -32,9 +32,20 @@ object MachineCatalog {
         sections = CircuitTracksContent.sections,
         identifiableControls = CircuitTracksContent.identifiableControls,
         challenges = CircuitTracksContent.challenges,
+        workshops = CircuitTracksWorkshops.workshops,
+        progressPrefix = "ct-",
     )
 
     val all: List<MachineProfile> = listOf(electribe, circuitTracks)
 
     fun byId(id: String?): MachineProfile = all.firstOrNull { it.id == id } ?: electribe
+
+    /**
+     * Machine propriétaire d'un identifiant de progression (leçon, exercice, question, étape,
+     * défi, atelier, ou quiz final « final-<module> »). Sans préfixe connu : l'Electribe.
+     */
+    fun machineOfProgressId(id: String): String {
+        val base = id.substringBefore('#').removePrefix("final-")
+        return all.firstOrNull { it.progressPrefix.isNotEmpty() && base.startsWith(it.progressPrefix) }?.id ?: ELECTRIBE_ID
+    }
 }

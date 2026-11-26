@@ -38,7 +38,7 @@ fun ExercisesScreen(
         LazyColumn(contentPadding = ScreenPadding, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
                 Text(
-                    "Chaque exercice se fait sur ta vraie Electribe. Coche-le quand tu as obtenu le résultat demandé.",
+                    "Chaque exercice se fait sur ta vraie ${state.machine.name}. Coche-le quand tu as obtenu le résultat demandé.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

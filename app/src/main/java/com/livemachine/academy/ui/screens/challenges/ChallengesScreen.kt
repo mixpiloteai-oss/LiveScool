@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +32,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.livemachine.academy.data.model.CreativeWorkshop
 import com.livemachine.academy.data.model.MusicStyle
+import com.livemachine.academy.data.model.UserProgress
 import com.livemachine.academy.ui.components.AppTopBar
 import com.livemachine.academy.ui.components.Eyebrow
 import com.livemachine.academy.ui.components.ManualRefLine
@@ -49,16 +52,7 @@ fun ChallengesScreen(
     val shown = state.challenges.filter { style == null || it.style == style }
 
     Column(Modifier.fillMaxSize()) {
-        AppTopBar(title = "Défis par style", onBack = onBack)
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-        ) {
-            item { FilterChip(selected = style == null, onClick = { style = null }, label = { Text("Tous") }) }
-            items(MusicStyle.entries) { s ->
-                FilterChip(selected = style == s, onClick = { style = if (style == s) null else s }, label = { Text(s.label) })
-            }
-        }
+        AppTopBar(title = if (state.workshops.isEmpty()) "Défis par style" else "Ateliers et défis", onBack = onBack)
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -69,6 +63,29 @@ fun ChallengesScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+            if (state.workshops.isNotEmpty()) {
+                item { Text("Ateliers de création", style = MaterialTheme.typography.titleLarge) }
+                items(state.workshops, key = { it.id }) { w ->
+                    WorkshopCard(
+                        workshop = w,
+                        progress = state.progress,
+                        open = state.unlockAll || state.isModuleValidated(w.requiredModuleId),
+                        moduleLabel = state.modules.firstOrNull { it.module.id == w.requiredModuleId }?.module
+                            ?.let { "Module ${it.number} (${it.title})" } ?: "",
+                        onToggleStep = { viewModel.toggleWorkshopStep(w.id, it) },
+                        onValidate = { viewModel.toggleChallenge(w.id) },
+                    )
+                }
+                item { Text("Défis par style", style = MaterialTheme.typography.titleLarge) }
+            }
+            item {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    item { FilterChip(selected = style == null, onClick = { style = null }, label = { Text("Tous") }) }
+                    items(MusicStyle.entries) { s ->
+                        FilterChip(selected = style == s, onClick = { style = if (style == s) null else s }, label = { Text(s.label) })
+                    }
+                }
             }
             if (state.challenges.isEmpty()) {
                 item {
@@ -119,6 +136,61 @@ fun ChallengesScreen(
                 }
             }
             item { Spacer(Modifier.width(1.dp)) }
+        }
+    }
+}
+
+/** Atelier de création : étapes à cocher sur la machine, puis validation manuelle. */
+@Composable
+private fun WorkshopCard(
+    workshop: CreativeWorkshop,
+    progress: UserProgress,
+    open: Boolean,
+    moduleLabel: String,
+    onToggleStep: (Int) -> Unit,
+    onValidate: () -> Unit,
+) {
+    val done = workshop.id in progress.completedChallenges
+    val stepsDone = workshop.steps.indices.count { progress.isStepDone(workshop.id, it) }
+    SectionCard {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Eyebrow(workshop.kind.label, color = MaterialTheme.colorScheme.secondary)
+                Text(workshop.title, style = MaterialTheme.typography.titleMedium)
+            }
+            when {
+                done -> Icon(Icons.Filled.CheckCircle, contentDescription = "Validé", tint = Acid)
+                !open -> Icon(Icons.Outlined.Lock, contentDescription = "Verrouillé", tint = MaterialTheme.colorScheme.outline)
+            }
+        }
+        Spacer(Modifier.height(6.dp))
+        Text(workshop.goal, style = MaterialTheme.typography.bodyMedium)
+        if (!open) {
+            Spacer(Modifier.height(6.dp))
+            Text(
+                "Se débloque quand le $moduleLabel est validé.",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            return@SectionCard
+        }
+        Spacer(Modifier.height(8.dp))
+        Text("Étapes sur la machine : $stepsDone/${workshop.steps.size}", style = MaterialTheme.typography.labelLarge)
+        workshop.steps.forEachIndexed { i, step ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = progress.isStepDone(workshop.id, i), onCheckedChange = { onToggleStep(i) })
+                Text("${i + 1}. $step", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+            }
+        }
+        Spacer(Modifier.height(6.dp))
+        Text("Réussi si : ${workshop.successCriteria}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+        Spacer(Modifier.height(6.dp))
+        workshop.manualRefs.forEach { ManualRefLine(it) }
+        Spacer(Modifier.height(10.dp))
+        when {
+            done -> OutlinedButton(onClick = onValidate) { Text("Atelier validé (annuler)") }
+            stepsDone < workshop.steps.size -> OutlinedButton(onClick = {}, enabled = false) { Text("Coche toutes les étapes pour valider") }
+            else -> Button(onClick = onValidate) { Text("J'ai réussi l'atelier") }
         }
     }
 }

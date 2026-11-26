@@ -88,6 +88,8 @@ data class Lesson(
     val exercise: Exercise? = null,
     val commonMistakes: List<String> = emptyList(),
     val quiz: List<QuizQuestion> = emptyList(),
+    /** Commandes de la fiche photo (ids de [IdentifiableControl]) à repérer pour cette leçon. */
+    val photoControls: List<String> = emptyList(),
 )
 
 data class CourseModule(

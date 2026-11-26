@@ -31,6 +31,7 @@ internal object CircuitTracksModulesC {
 
     private val m7l1 = ctLesson(
         M7, 1, "Enregistrer les mouvements des Macros en direct", listOf(AUTO_SYNTH, AUTO_DRUM, MIDI_MODELES), 15,
+        photo = listOf("ct-rec", "ct-macros", "ct-velocity", "ct-gate"),
         objective = "Enregistrer un mouvement de Macro dans le pattern pour qu'il se rejoue à chaque tour.",
         explanation = "En lecture, Record allumé, tourne une Macro : sa LED passe au rouge et le mouvement s'inscrit dans le pattern. " +
             "Ressors de Record avant que la boucle recommence, sinon la machine réécrit l'automation avec la position actuelle du potentiomètre. " +
@@ -78,6 +79,7 @@ internal object CircuitTracksModulesC {
 
     private val m7l2 = ctLesson(
         M7, 2, "Automation pas par pas", listOf(AUTO_SYNTH, AUTO_DRUM, MUTE_JEU), 15,
+        photo = listOf("ct-rec", "ct-macros"),
         objective = "Placer un réglage précis sur un pas donné, sans jouer en direct.",
         explanation = "À l'arrêt, Record allumé, tiens un pas et tourne une Macro : la valeur est écrite sur ce pas. " +
             "Cela marche aussi en lecture : Record allumé, tiens le pas et tourne. Sur une piste Drum, fais-le dans la vue Velocity, Gate ou Probability. " +
@@ -123,6 +125,7 @@ internal object CircuitTracksModulesC {
 
     private val m7l3 = ctLesson(
         M7, 3, "Effacer l'automation, automatiser mixage et effets", listOf(AUTO_SYNTH, AUTO_DRUM, MIXER, PANO, AUTO_FX), 15,
+        photo = listOf("ct-clear", "ct-macros", "ct-mixer", "ct-fx"),
         objective = "Effacer une automation ratée et automatiser niveaux, panoramique et envois d'effets.",
         explanation = "Pour effacer l'automation d'une Macro, tiens Clear et tourne cette Macro d'au moins 20 % : la LED devient rouge. " +
             "Attention, c'est tout le pattern qui perd l'automation de cette Macro, pas seulement un pas. Sur la batterie, tourne vers la gauche. " +
@@ -184,6 +187,7 @@ internal object CircuitTracksModulesC {
 
     private val m8l1 = ctLesson(
         M8, 1, "Les Macros d'un synthé", listOf(MACROS, DESSUS, COMPONENTS), 20,
+        photo = listOf("ct-macros"),
         objective = "Sculpter un patch de synthé en direct avec les huit Macros.",
         explanation = "Sur les patches d'origine, chaque Macro peut agir sur jusqu'à quatre paramètres du patch. Les légendes donnent la fonction générale : " +
             "1 Oscillator, 2 Oscillator Mod, 3 Amp Envelope, 4 Filter Envelope, 5 Filter Frequency, 6 Resonance, 7 Modulation, 8 FX. " +
@@ -231,6 +235,7 @@ internal object CircuitTracksModulesC {
 
     private val m8l2 = ctLesson(
         M8, 2, "Les Macros de la batterie", listOf(MACROS_DRUM), 15,
+        photo = listOf("ct-macros"),
         objective = "Transformer un sample de batterie avec les quatre Macros paires.",
         explanation = "Sur une piste Drum, seules les Macros paires sont actives, avec une fonction fixe : 2 Pitch (hauteur), 4 durée du déclin, " +
             "6 distorsion, 8 EQ. Leur LED prend la couleur de la piste. Le résultat dépend beaucoup du sample : " +
@@ -278,6 +283,7 @@ internal object CircuitTracksModulesC {
 
     private val m8l3 = ctLesson(
         M8, 3, "Master Filter et dynamique de jeu", listOf(FILTRE, DESSUS, VEL_FIXE), 15,
+        photo = listOf("ct-filter", "ct-volume", "ct-velocity", "ct-shift"),
         objective = "Utiliser le Master Filter pour des transitions et choisir entre jeu dynamique et vélocité fixe.",
         explanation = "Le Master Filter traite tout le son de sortie, entrées audio comprises. Au centre (cran), aucun filtrage et LED blanche faible. " +
             "Vers la gauche : passe-bas, les aigus disparaissent et le son s'étouffe. Vers la droite : passe-haut, le kick et les basses disparaissent. " +
@@ -339,6 +345,7 @@ internal object CircuitTracksModulesC {
 
     private val m9l1 = ctLesson(
         M9, 1, "Le Mixer : niveaux, mute et panoramique", listOf(MIXER, PANO), 15,
+        photo = listOf("ct-mixer", "ct-macros", "ct-arrows", "ct-clear"),
         objective = "Équilibrer les huit pistes, couper des pistes et les placer dans l'espace stéréo.",
         explanation = "Dans la vue Mixer, la rangée 1 contient un bouton mute par piste. Les Macros règlent le niveau de chaque piste, " +
             "dans l'ordre : Synth 1, Synth 2, MIDI 1 / entrée 1, MIDI 2 / entrée 2, Drum 1 à 4. Les Macros 3 et 4 règlent donc le niveau " +
@@ -388,6 +395,7 @@ internal object CircuitTracksModulesC {
 
     private val m9l2 = ctLesson(
         M9, 2, "Réverbe et délai", listOf(FX, REVERB, DELAI), 15,
+        photo = listOf("ct-fx", "ct-macros"),
         objective = "Choisir une réverbe et un délai et doser leur envoi piste par piste.",
         explanation = "La vue FX propose 16 délais (rangées 1-2, pads pêche) et 8 réverbes (rangée 3, pads crème). " +
             "Une seule réverbe et un seul délai servent pour tout le projet ; chaque piste dose son envoi avec sa Macro, dans le même ordre que le Mixer. " +
@@ -437,6 +445,7 @@ internal object CircuitTracksModulesC {
 
     private val m9l3 = ctLesson(
         M9, 3, "Sidechain et compresseur global", listOf(SIDECHAIN, COMPRESSEUR), 20,
+        photo = listOf("ct-fx", "ct-shift"),
         objective = "Faire « pomper » synthés et entrées audio au rythme du kick, et connaître le compresseur global.",
         explanation = "La vue Side Chain (Shift + FX) fait baisser le niveau d'un synthé, ou d'une entrée audio via les pistes MIDI, à chaque frappe d'une piste Drum. " +
             "Rangées 3 et 4 : pad 1 = OFF, pads 2 à 8 = 7 presets, pour Synth 1 et Synth 2. Pads 5 à 8 de la rangée du haut : choix de la piste Drum qui déclenche. " +

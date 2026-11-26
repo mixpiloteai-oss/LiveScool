@@ -20,6 +20,10 @@ data class MachineProfile(
     val sections: List<MachineSection> = emptyList(),
     val identifiableControls: List<IdentifiableControl> = emptyList(),
     val challenges: List<StyleChallenge> = emptyList(),
+    /** Ateliers de création musicale guidés, propres à la machine. */
+    val workshops: List<CreativeWorkshop> = emptyList(),
+    /** Préfixe des identifiants de progression de la machine ("" = machine historique, l'Electribe). */
+    val progressPrefix: String = "",
 ) {
     val fullName: String get() = "$manufacturer $name"
     val lessons: List<Lesson> get() = modules.flatMap { it.lessons }

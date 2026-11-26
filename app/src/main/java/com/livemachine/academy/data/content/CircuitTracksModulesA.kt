@@ -35,6 +35,7 @@ internal object CircuitTracksModulesA {
 
     private val m1l1 = ctLesson(
         M1, 1, "La façade et le principe des vues", listOf(DESSUS, GLOSSAIRE), 15,
+        photo = listOf("ct-grid", "ct-filter", "ct-macros", "ct-volume", "ct-tracks", "ct-note", "ct-settings", "ct-shift"),
         objective = "Situer chaque touche de la façade et comprendre que la grille de 32 pads change de rôle selon la vue choisie.",
         explanation = "La Circuit Tracks n'a pas d'écran : tout passe par la grille de 4 × 8 pads RVB. Chaque touche ouvre une « vue », " +
             "c'est-à-dire une façon d'utiliser la grille : jouer des notes, régler la vélocité, choisir un pattern, mixer… " +
@@ -90,6 +91,7 @@ internal object CircuitTracksModulesA {
 
     private val m1l2 = ctLesson(
         M1, 2, "Allumer, écouter une démo, lire les couleurs", listOf(ALIM, ARRIERE, ALLUMER, PREMIERS_PAS), 15,
+        photo = listOf("ct-play", "ct-tracks", "ct-grid"),
         objective = "Allumer la machine, lancer un projet de démo et reconnaître chaque piste à sa couleur.",
         explanation = "La Circuit Tracks fonctionne sur batterie (jusqu'à 4 heures), sur secteur ou sur un port USB d'ordinateur. " +
             "Le bouton d'alimentation se tient environ une seconde pour éviter les erreurs. Au démarrage, la grille montre une animation " +
@@ -142,6 +144,7 @@ internal object CircuitTracksModulesA {
 
     private val m1l3 = ctLesson(
         M1, 3, "Charger et sauvegarder un projet", listOf(CHARGER, PROJETS), 20,
+        photo = listOf("ct-projects", "ct-save", "ct-clear", "ct-arrows", "ct-shift"),
         objective = "Ouvrir n'importe quel projet, sauvegarder ton travail sans écraser l'original et effacer un projet.",
         explanation = "Un projet contient tout ce qu'il faut pour rejouer un morceau : patterns, sons, automation… La machine a 64 emplacements, " +
             "sur deux pages de 32 dans la vue Projects. Save pressé deux fois sauvegarde dans le dernier emplacement utilisé, donc écrase la version " +
@@ -206,6 +209,7 @@ internal object CircuitTracksModulesA {
 
     private val m2l1 = ctLesson(
         M2, 1, "Les huit pistes et leurs rôles", listOf(CARAC, GLOSSAIRE, MIDI_INTRO, RYTHMES, PATTERNS), 15,
+        photo = listOf("ct-tracks", "ct-note"),
         objective = "Savoir ce que fait chaque type de piste et choisir la bonne piste pour chaque élément d'un morceau.",
         explanation = "Un projet compte huit pistes : deux synthés numériques polyphoniques (6 voix), deux pistes MIDI qui pilotent des machines " +
             "externes, et quatre pistes de batterie à samples. Chaque piste a sa propre mémoire de huit patterns. " +
@@ -256,6 +260,7 @@ internal object CircuitTracksModulesA {
 
     private val m2l2 = ctLesson(
         M2, 2, "Premier beat de zéro", listOf(ZERO), 20,
+        photo = listOf("ct-projects", "ct-tracks", "ct-grid", "ct-rec", "ct-play"),
         objective = "Partir d'un projet vide et programmer kick, snare et quelques notes de synthé.",
         explanation = "Dans un projet vide, un pattern fait 16 pas par défaut (on peut aller jusqu'à 32 sur chaque piste). " +
             "Sur une piste Drum, les deux rangées du haut sont les 16 pas, celles du bas les samples d'une page. Tu choisis un sample, " +
@@ -307,6 +312,7 @@ internal object CircuitTracksModulesA {
 
     private val m2l3 = ctLesson(
         M2, 3, "Choisir le son de chaque piste avec Preset", listOf(PATCHES, SAMPLES, MIDI_INTRO), 15,
+        photo = listOf("ct-preset", "ct-arrows"),
         objective = "Ouvrir la vue Preset de n'importe quelle piste et changer de patch, de sample ou de modèle MIDI.",
         explanation = "La touche Preset ouvre une vue différente selon la piste : 128 patches pour un synthé (4 pages de 32), " +
             "64 samples pour une piste Drum (2 pages de 32), 8 modèles pour une piste MIDI. Le pad du son choisi est blanc. " +
@@ -366,6 +372,7 @@ internal object CircuitTracksModulesA {
 
     private val m3l1 = ctLesson(
         M3, 1, "Jouer un synthé : vue Note, octaves, vue étendue", listOf(SYNTHE, ETENDUE, ZERO), 15,
+        photo = listOf("ct-note", "ct-arrows", "ct-shift"),
         objective = "Jouer une mélodie sur la grille, changer d'octave et utiliser la vue Note étendue.",
         explanation = "Dans la vue Note, la rangée 3 est une octave au-dessus de la rangée 4. Pour monter, commence par les pads 25 à 32, " +
             "puis continue sur 18 à 24 : le pad 32 et le pad 17 sont la même note. Les touches fléchées décalent le clavier d'une octave ; " +
@@ -413,6 +420,7 @@ internal object CircuitTracksModulesA {
 
     private val m3l2 = ctLesson(
         M3, 2, "Gammes et note fondamentale", listOf(GAMMES, FONDAMENTALE, TEMPS_REEL, CLAVIER_EXT), 20,
+        photo = listOf("ct-scales", "ct-note"),
         objective = "Choisir une gamme et une tonalité pour jouer sans fausse note, et transposer un morceau en direct.",
         explanation = "La vue Scales règle le clavier des synthés et des pistes MIDI. En bas, 16 gammes (pads 17 à 32) : mineure naturelle, " +
             "majeure, dorienne, phrygienne… jusqu'à la chromatique (pad 32), qui donne les 12 notes sur une seule octave. " +
@@ -463,6 +471,7 @@ internal object CircuitTracksModulesA {
 
     private val m3l3 = ctLesson(
         M3, 3, "Patches, pré-écoute et polyphonie", listOf(PATCHES, TEMPS_REEL), 15,
+        photo = listOf("ct-preset", "ct-shift", "ct-rec"),
         objective = "Choisir rapidement un patch adapté à la basse ou aux accords, avec ou sans pré-écoute.",
         explanation = "Dans la vue Preset d'un synthé, toucher un pad fait entendre le patch (pré-écoute), dans la gamme et la tonalité choisies. " +
             "En live, tiens Shift en touchant le pad pour changer de son sans faire entendre la note de test. La pré-écoute est désactivée " +

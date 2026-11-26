@@ -20,7 +20,8 @@ object QuizKind {
 
 @Serializable data object ExercisesRoute
 @Serializable data object ChallengesRoute
-@Serializable data class PhotoRoute(val machineId: String)
+/** [focus] : ids de commandes séparés par des virgules (vide = toutes les commandes de la machine). */
+@Serializable data class PhotoRoute(val machineId: String, val focus: String = "")
 @Serializable data object ProgressRoute
 @Serializable data object GlossaryRoute
 @Serializable data object SettingsRoute

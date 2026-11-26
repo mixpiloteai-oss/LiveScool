@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.livemachine.academy.data.content.MachineCatalog
 import com.livemachine.academy.data.model.CourseModule
+import com.livemachine.academy.data.model.CreativeWorkshop
 import com.livemachine.academy.data.model.MachineProfile
 import com.livemachine.academy.data.model.Exercise
 import com.livemachine.academy.data.model.Lesson
@@ -17,7 +18,9 @@ import com.livemachine.academy.domain.ProgressRules
 import com.livemachine.academy.ui.appViewModelFactory
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -41,6 +44,7 @@ data class OverviewUiState(
     val nextLesson: Lesson? = null,
     val exercises: List<Exercise> = emptyList(),
     val challenges: List<StyleChallenge> = emptyList(),
+    val workshops: List<CreativeWorkshop> = emptyList(),
     val progress: UserProgress = UserProgress(),
     val lessonTitles: Map<String, String> = emptyMap(),
     val reviewItems: List<ReviewItem> = emptyList(),
@@ -63,7 +67,11 @@ class OverviewViewModel(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    val uiState: StateFlow<OverviewUiState> = combine(progressRepository.progress, settingsRepository.settings) { progress, settings ->
+    /** Progression lue dans le fichier de la machine choisie uniquement. */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val uiState: StateFlow<OverviewUiState> = settingsRepository.settings.flatMapLatest { settings ->
+        progressRepository.progressOf(settings.selectedMachineId).map { progress -> settings to progress }
+    }.map { (settings, progress) ->
         val machineId = settings.selectedMachineId
         val modules = course.modules(machineId)
         OverviewUiState(
@@ -80,6 +88,7 @@ class OverviewViewModel(
             nextLesson = course.nextLesson(machineId, progress.completedLessons),
             exercises = course.exercises(machineId),
             challenges = course.challenges(machineId),
+            workshops = course.machine(machineId).workshops,
             progress = progress,
             lessonTitles = course.lessons().associate { it.id to it.title },
             reviewItems = ProgressRules.reviewQuestions(modules, progress)
@@ -106,6 +115,14 @@ class OverviewViewModel(
         viewModelScope.launch {
             val done = challengeId in uiState.value.progress.completedChallenges
             progressRepository.setChallengeCompleted(challengeId, !done)
+        }
+    }
+
+    /** Étape guidée d'un atelier, cochée sur la vraie machine. */
+    fun toggleWorkshopStep(workshopId: String, index: Int) {
+        viewModelScope.launch {
+            val done = uiState.value.progress.isStepDone(workshopId, index)
+            progressRepository.setStepCompleted(workshopId, index, !done)
         }
     }
 

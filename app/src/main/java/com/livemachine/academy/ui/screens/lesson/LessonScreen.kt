@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material.icons.outlined.Quiz
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -32,7 +33,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.toRoute
+import com.livemachine.academy.data.content.MachineCatalog
 import com.livemachine.academy.data.model.ContentStatus
+import com.livemachine.academy.data.model.IdentifiableControl
 import com.livemachine.academy.data.model.Lesson
 import com.livemachine.academy.data.model.UserProgress
 import com.livemachine.academy.data.repository.CourseRepository
@@ -61,6 +64,11 @@ class LessonViewModel(
     private val progressRepository: ProgressRepository,
 ) : ViewModel() {
     val lesson: Lesson? = course.lesson(savedStateHandle.toRoute<LessonRoute>().lessonId)
+    val machine = lesson?.let { course.machineOfModule(it.moduleId) } ?: MachineCatalog.electribe
+
+    /** Commandes de la fiche photo à repérer pour cette leçon. */
+    val photoControls: List<IdentifiableControl> =
+        lesson?.photoControls.orEmpty().mapNotNull { id -> machine.identifiableControls.firstOrNull { it.id == id } }
 
     val progress: StateFlow<UserProgress> = progressRepository.progress
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), UserProgress())
@@ -91,6 +99,7 @@ class LessonViewModel(
 fun LessonScreen(
     onBack: () -> Unit,
     onOpenQuiz: (String) -> Unit,
+    onOpenPhoto: (machineId: String, focus: String) -> Unit = { _, _ -> },
     viewModel: LessonViewModel = viewModel(factory = LessonViewModel.Factory),
 ) {
     val lesson = viewModel.lesson
@@ -128,12 +137,34 @@ fun LessonScreen(
                     lesson.controls.map { c -> "${c.name} — ${c.role}" + (c.manualRef?.let { " (${it.doc.label.lowercase()} p. ${it.pages})" } ?: "") },
                 )
             }
+            if (viewModel.photoControls.isNotEmpty()) {
+                item {
+                    SectionCard {
+                        Eyebrow("Repère sur ta photo")
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            "Trouve ces commandes sur la photo de ta ${viewModel.machine.name}, puis sur la machine elle-même.",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Spacer(Modifier.height(6.dp))
+                        Text(viewModel.photoControls.joinToString(" · ") { it.name }, style = MaterialTheme.typography.labelLarge)
+                        Spacer(Modifier.height(10.dp))
+                        OutlinedButton(onClick = {
+                            onOpenPhoto(viewModel.machine.id, viewModel.photoControls.joinToString(",") { it.id })
+                        }) {
+                            Icon(Icons.Outlined.PhotoCamera, contentDescription = null)
+                            Spacer(Modifier.width(8.dp))
+                            Text("Repérer sur ma photo")
+                        }
+                    }
+                }
+            }
             item {
                 SectionCard {
                     Eyebrow("4 · Sur ta machine, étape par étape")
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Coche chaque étape une fois faite sur ta vraie Electribe.",
+                        "Coche chaque étape une fois faite sur ta vraie ${viewModel.machine.name}.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

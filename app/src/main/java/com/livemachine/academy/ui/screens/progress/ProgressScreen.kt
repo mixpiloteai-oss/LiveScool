@@ -63,7 +63,14 @@ fun ProgressScreen(
                     Spacer(Modifier.height(8.dp))
                     Row {
                         Stat("Compétences", "${state.modules.count { it.competenceAcquired }}/${state.modules.size}", Modifier.weight(1f))
-                        Stat("Défis", "${state.progress.completedChallenges.size}/${state.challenges.size}", Modifier.weight(1f))
+                        Stat("Défis", "${state.challenges.count { it.id in state.progress.completedChallenges }}/${state.challenges.size}", Modifier.weight(1f))
+                    }
+                    if (state.workshops.isNotEmpty()) {
+                        Spacer(Modifier.height(8.dp))
+                        Row {
+                            Stat("Ateliers", "${state.workshops.count { it.id in state.progress.completedChallenges }}/${state.workshops.size}", Modifier.weight(1f))
+                            Spacer(Modifier.weight(1f))
+                        }
                     }
                 }
             }
@@ -89,7 +96,7 @@ fun ProgressScreen(
                     }
                     Spacer(Modifier.width(12.dp))
                     SectionCard(Modifier.weight(1f), onClick = onOpenChallenges) {
-                        Text("Défis par style", style = MaterialTheme.typography.titleMedium)
+                        Text(if (state.workshops.isEmpty()) "Défis par style" else "Ateliers et défis", style = MaterialTheme.typography.titleMedium)
                     }
                 }
             }

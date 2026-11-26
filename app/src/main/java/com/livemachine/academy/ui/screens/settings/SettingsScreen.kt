@@ -30,7 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.livemachine.academy.BuildConfig
-import com.livemachine.academy.data.content.MachineContent
+import com.livemachine.academy.data.content.MachineCatalog
 import com.livemachine.academy.data.model.AppSettings
 import com.livemachine.academy.data.model.TextSize
 import com.livemachine.academy.data.repository.ProgressRepository
@@ -63,8 +63,9 @@ class SettingsViewModel(
         viewModelScope.launch { settingsRepository.setUnlockAllModules(enabled) }
     }
 
+    /** Efface la progression de la machine choisie, celle des autres machines est conservée. */
     fun resetProgress() {
-        viewModelScope.launch { progressRepository.reset() }
+        viewModelScope.launch { progressRepository.reset(settings.value.selectedMachineId) }
     }
 
     companion object {
@@ -130,7 +131,13 @@ fun SettingsScreen(
             SectionCard {
                 Eyebrow("Progression")
                 Spacer(Modifier.height(8.dp))
-                OutlinedButton(onClick = { confirmReset = true }) { Text("Réinitialiser ma progression") }
+                Text(
+                    "Chaque machine a sa propre sauvegarde. Seule celle de la ${MachineCatalog.byId(settings.selectedMachineId).name} sera effacée.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedButton(onClick = { confirmReset = true }) { Text("Réinitialiser la ${MachineCatalog.byId(settings.selectedMachineId).name}") }
             }
             SectionCard {
                 Eyebrow("À propos")
@@ -138,8 +145,8 @@ fun SettingsScreen(
                 Text("Live Machine Academy · version ${BuildConfig.VERSION_NAME}", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    "Application hors ligne. Source pédagogique unique : " + MachineContent.manualSource + " " +
-                        "Chaque leçon cite le chapitre et les pages du manuel. Application non officielle, non affiliée à Korg.",
+                    "Application hors ligne. Sources pédagogiques : " + MachineCatalog.all.joinToString(" ") { "${it.fullName} : ${it.sourcesLabel}" } + " " +
+                        "Chaque leçon cite le chapitre et les pages du manuel. Application non officielle, non affiliée à Korg ni à Novation.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -151,7 +158,7 @@ fun SettingsScreen(
         AlertDialog(
             onDismissRequest = { confirmReset = false },
             title = { Text("Réinitialiser ?") },
-            text = { Text("Leçons, étapes, exercices, défis, scores et erreurs à réviser seront effacés.") },
+            text = { Text("Leçons, étapes, exercices, défis, ateliers, scores et erreurs à réviser de la ${MachineCatalog.byId(settings.selectedMachineId).name} seront effacés.") },
             confirmButton = {
                 TextButton(onClick = { viewModel.resetProgress(); confirmReset = false }) { Text("Effacer") }
             },

@@ -5,6 +5,7 @@ import com.livemachine.academy.data.content.MachineCatalog
 import com.livemachine.academy.data.model.ContentStatus
 import com.livemachine.academy.data.model.ManualDoc
 import com.livemachine.academy.data.model.ManualRef
+import com.livemachine.academy.data.model.WorkshopKind
 import com.livemachine.academy.domain.ProgressRules
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -65,6 +66,32 @@ class CircuitTracksContentTest {
             assertTrue("Pages illisibles : ${ref.pages}", pages.isNotEmpty())
             pages.forEach { assertTrue("Page $it hors guide (${ref.chapter})", it in ref.doc.validPages) }
         }
+    }
+
+    @Test
+    fun `chaque lecon a des commandes a reperer sur la photo`() {
+        val ids = CircuitTracksContent.identifiableControls.map { it.id }.toSet()
+        lessons.forEach { l ->
+            assertTrue("${l.id} sans commande photo", l.photoControls.isNotEmpty())
+            l.photoControls.forEach { assertTrue("${l.id} : $it inconnue", it in ids) }
+        }
+    }
+
+    @Test
+    fun `ateliers de creation couvrant les six types`() {
+        val workshops = MachineCatalog.circuitTracks.workshops
+        assertEquals(WorkshopKind.entries.toSet(), workshops.map { it.kind }.toSet())
+        val moduleIds = modules.map { it.id }.toSet()
+        workshops.forEach { w ->
+            assertTrue(w.id, w.id.startsWith("ct-w-"))
+            assertTrue(w.id, w.requiredModuleId in moduleIds)
+            assertTrue(w.id, w.steps.size >= 3 && w.successCriteria.isNotBlank() && w.manualRefs.isNotEmpty())
+            w.manualRefs.forEach { ref ->
+                assertEquals(ManualDoc.CIRCUIT_TRACKS_GUIDE, ref.doc)
+                Regex("\\d+").findAll(ref.pages).forEach { assertTrue(ref.pages, it.value.toInt() in ref.doc.validPages) }
+            }
+        }
+        assertEquals(workshops.size, workshops.map { it.id }.toSet().size)
     }
 
     @Test
