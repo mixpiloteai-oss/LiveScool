@@ -51,7 +51,7 @@ tap_tab() {
     if [ -n "$coords" ]; then adb shell input tap $coords; sleep 2; return 0; fi
     sleep 2
   done
-  echo "ONGLET INTROUVABLE : $1"; FAILED=1; return 1
+  echo "ONGLET INTROUVABLE : $1"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"; FAILED=1; return 1
 }
 
 # Touche le premier élément dont le texte (ou la description) contient $1.
@@ -83,7 +83,7 @@ PY
     fi
     sleep 2
   done
-  echo "ÉLÉMENT INTROUVABLE : $text"
+  echo "ÉLÉMENT INTROUVABLE : $text"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"
   FAILED=1
   return 1
 }
@@ -127,7 +127,7 @@ scroll_to() {
     [ -n "$(coords_of "$1")" ] && return 0
     swipe_up
   done
-  echo "ÉLÉMENT INTROUVABLE APRÈS DÉFILEMENT : $1"; FAILED=1; return 1
+  echo "ÉLÉMENT INTROUVABLE APRÈS DÉFILEMENT : $1"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"; FAILED=1; return 1
 }
 
 # --- Test de mise à jour : progression créée dans l'ancienne version ---
