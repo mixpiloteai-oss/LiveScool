@@ -26,12 +26,12 @@ Kotlin, Jetpack Compose, Material 3 (thème sombre unique, magenta), MVVM + Stat
 - 8 défis par style (`ChallengeContent`), débloqués par module.
 - Photo : l'utilisateur photographie SA machine, repère les commandes (`MachineContent.identifiableControls`), puis quiz « Où est… ? ». Aucune image Korg ni schéma inventé.
 - Tests : `CourseContentTest`, `QuizSessionTest`, `ProgressRulesTest`. CI `android.yml` (tests, lint, APK debug + release) ; `screenshots.yml` (émulateur debug ou release, teste les interactions, commite `docs/screenshots/`) ; `release.yml` (vérifie et publie les APK dans une Release GitHub).
+- APK release v1.1.2 installé et fonctionnel sur le Samsung de l'utilisateur. Texte « Très grande » vérifié sur émulateur.
 - Signature release : variables `LMA_KEYSTORE_*` / secrets GitHub, sinon clé debug. Version lue via `BuildConfig`.
 
 ## Prochaines étapes
-1. Retours utilisateur (téléphone + vraie machine), dont points 7.1 / 7.2 et usage réel de l'écran Photo.
-2. Vérifier les tailles de texte « Grande » / « Très grande ».
-3. Créer la clé release de l'utilisateur (README) si publication hors de son téléphone.
+1. Retours utilisateur sur la vraie machine : points 7.1 / 7.2, usage de l'écran Photo, étapes qui ne collent pas.
+2. Créer la clé release de l'utilisateur (README) si publication hors de son téléphone.
 
 ## Règles
 - N'inventer aucune fonction : toute info machine cite `ManualRef` ; `VERIFIED` seulement si vérifié dans le document.
