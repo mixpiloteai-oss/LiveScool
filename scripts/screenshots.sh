@@ -120,7 +120,7 @@ scroll_to_and_tap "Défis par style" && shot 13-defis
 
 # Photo de la machine
 restart
-tap_text "Machine" && scroll_to_and_tap "Identifier les commandes" && shot 14-photo
+scroll_to_and_tap "Fiche de ton Electribe" && scroll_to_and_tap "Identifier les commandes" && shot 14-photo
 
 # Progression
 restart
