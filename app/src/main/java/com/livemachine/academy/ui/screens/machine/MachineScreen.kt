@@ -56,5 +56,3 @@ fun MachineScreen(onOpenSettings: () -> Unit) {
         }
     }
 }
-
-private fun Modifier.padding(vertical = 8.dp): Modifier = this.then(Modifier.padding(vertical = 8.dp))
