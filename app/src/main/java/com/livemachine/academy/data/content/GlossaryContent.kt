@@ -15,6 +15,9 @@ import com.livemachine.academy.data.model.ManualRef
  */
 object GlossaryContent {
     val terms: List<GlossaryTerm> = listOf(
+        GlossaryTerm("Step Jump", "Pendant la lecture, un pad fait sauter instantanément au pas correspondant ; plusieurs pads jouent les pas dans l'ordre d'enfoncement.", MACHINE, ManualRef("Description par section › Section du mode de pad", "24")),
+        GlossaryTerm("Event Recorder", "Enregistre une performance live (patterns, commandes, pads) sur la carte SD ; ne modifie pas les patterns. Demande CLOCK MODE sur Internal.", MACHINE, ManualRef("Autres réglages › 9. Event Recorder", "33–34")),
+        GlossaryTerm("Gate Arpeggiator", "Rejoue la part au tempo pendant qu'on tient son pad ; au pad tactile, X = vitesse du gate, Y = longueur du son.", MACHINE, ManualRef("Production de musique › 3. Gate Arpeggiator", "29")),
         GlossaryTerm("Pattern Set", "Patterns mémorisés sous les pads (4 groupes de 16) pour les lancer d'une pression pendant la lecture.", MACHINE, ManualRef("Production de musique › 5. Jeu avec un groupe de motifs", "30")),
         GlossaryTerm("CHAIN (CHAIN TO / CHAIN REPEAT)", "Enchaînement automatique : pattern suivant et nombre de répétitions. Demande CHAIN MODE sur On (menu Global).", MACHINE, ManualRef("1. PATTERN PARAMETERS", "3", PARAMETER_GUIDE)),
         GlossaryTerm("Motion sequence", "Enregistrement des mouvements de commandes d'une part (ou de l'effet maître), rejoués à chaque tour. Jusqu'à 24, modes Smooth ou Trigger Hold.", MACHINE, ManualRef("Enregistrement de données de jeu › 3. Motion Seq", "30–31")),

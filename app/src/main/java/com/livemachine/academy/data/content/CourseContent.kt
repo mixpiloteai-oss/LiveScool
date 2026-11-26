@@ -80,10 +80,10 @@ object CourseContent {
             id = "m8",
             number = 8,
             title = "Live et transitions",
-            summary = "Jouer en direct, enchaîner les patterns, gérer les mutes.",
-            goal = "Enchaîner les patterns sans coupure et jouer avec les parts en direct.",
+            summary = "Réglages de scène, mutes, Step Jump, pad tactile, transitions, enregistrement du live.",
+            goal = "Jouer en direct, enchaîner les morceaux sans coupure et enregistrer sa performance.",
             styleFocus = "Enchaînements fluides et ruptures franches, à la manière d'un live tekno.",
-            lessons = emptyList(),
+            lessons = Module8Content.lessons,
         ),
         CourseModule(
             id = "m9",
