@@ -1,50 +1,14 @@
-# Live Machine Academy (nom provisoire)
+# Live Machine Academy
 
-Application Android native pour apprendre de A à Z la **Korg Electribe Sampler 2 (rose)**.
-On lit la leçon sur le téléphone, puis on la refait sur la vraie machine. Pas de simulateur,
-pas de WebView, fonctionne hors ligne.
-
-Styles visés : mentalcore, tribe, tribeCore, hardtek, acidcore.
-
-## État actuel (v1.0.0)
-
-- Architecture, navigation et les 11 écrans de base en place.
-- **Module 1 (Interface et navigation) rédigé** : 6 leçons complètes, avec exercices et quiz, d'après
-  le manuel officiel (p. 22–34). Fiche Machine et glossaire de la machine, avec leurs pages.
-- **Module 2 (Parts et samples) rédigé** : 6 leçons (assigner, régler la lecture, SAMPLE EDIT, clavier,
-  copier/couper/effacer, rééchantillonnage), d'après le manuel (p. 23–38).
-- **Module 3 (Paramètres sonores) rédigé** : 6 leçons (pattern de travail et KNOB MODE, oscillateurs,
-  hauteur et glide, enveloppe, polyphonie et priorité, dynamique), d'après le Guide des paramètres.
-- **Module 4 (Séquenceur et patterns) rédigé** : 6 leçons (pas à pas, temps réel, longueur/beat/Last Step,
-  STEP EDIT, swing et groove, gammes et transposition).
-- **Module 5 (Filtres et effets) rédigé** : 6 leçons (filtres du sampler, coupure/résonance/EG Int,
-  atelier ligne acide, effet d'insertion, effet maître, effets maîtres de séquence).
-- **Module 6 (Motion Sequence et modulation) rédigé** : 6 leçons (section Modulation, sources,
-  enregistrement, édition/effacement, motion de l'effet maître, atelier montée).
-- **Module 7 (Variations et construction) rédigé** : 6 leçons (famille de patterns, soustraction,
-  transformation, CHAIN, Pattern Set, atelier morceau complet).
-- **Module 8 (Live et transitions) rédigé** : 6 leçons (réglages de scène, mutes, Step Jump, Gate Arp et
-  Touch Scale, transitions, Event Recorder).
-- **Module 9 (Préparer un set) rédigé** : 6 leçons (sauvegardes, organisation, alimentation,
-  branchements et synchro, dépannage, répétition générale).
-- **Les 9 modules sont complets : 54 leçons vérifiées.**, leçons à rédiger depuis le manuel (voir `docs/manual/README.md`).
-- Progression (leçons, exercices, meilleurs scores de quiz) et paramètres enregistrés sur l'appareil.
+App Android hors ligne pour apprendre la Korg electribe sampler, leçon par leçon, sur la vraie machine.
+Détails du projet : [PROJECT_RULES.md](PROJECT_RULES.md).
 
 ## Compiler
-
-Il faut le JDK 17 et le SDK Android (compileSdk 35).
-
+JDK 17 + SDK Android (compileSdk 35) :
 ```bash
-./gradlew testDebugUnitTest assembleDebug
-# APK : app/build/outputs/apk/debug/app-debug.apk
+./gradlew testDebugUnitTest assembleDebug   # APK : app/build/outputs/apk/debug/app-debug.apk
 ```
+Chaque push compile aussi sur GitHub Actions (onglet Actions → artefact `live-machine-academy-debug-apk`).
 
-Chaque push lance aussi la compilation sur GitHub Actions (`.github/workflows/android.yml`) :
-l'APK se télécharge depuis l'onglet **Actions**, dans les artefacts du run.
-
-## Installer sur Android
-
-Copie l'APK sur le téléphone, ouvre-le et autorise l'installation depuis cette source.
-Ou bien : `adb install app-debug.apk`.
-
-Voir aussi `docs/ARCHITECTURE.md`.
+## Installer
+Copier l'APK sur le téléphone et l'ouvrir (autoriser l'installation depuis cette source), ou `adb install app-debug.apk`.
