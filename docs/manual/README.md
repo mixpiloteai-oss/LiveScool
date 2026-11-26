@@ -7,8 +7,7 @@ Fichier utilisé : `ER2ER2S_OM_EFGS2.pdf` — manuel d'utilisation electribe/ele
 (Korg, 2015), en 4 langues. **Partie française : pages 20 à 38.** Les numéros de page cités dans
 l'application sont ceux imprimés dans le manuel, identiques aux pages du PDF.
 
-Le manuel n'est pas embarqué dans l'APK. C'est un document Korg protégé : si le dépôt devient
-public, retire-le du dépôt (il a été ajouté via GitHub malgré le `.gitignore`).
+Le manuel n'est ni dans le dépôt ni dans l'APK (document Korg protégé) : garde ta copie en local, dans ce dossier (les `*.pdf` y sont ignorés par git).
 
 Limite : ce manuel renvoie souvent au **« Guide des paramètres »** (Parameter Guide), un document
 Korg séparé, pour le détail des paramètres. Il sera nécessaire pour les Modules 3, 5 et 6.
