@@ -17,15 +17,17 @@ shot() {
 coords_of() {
   adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
   adb pull /sdcard/ui.xml /tmp/ui.xml >/dev/null 2>&1
-  python3 - "$1" <<'PY2'
+  python3 - "$1" "${2:-}" <<'PY2'
 import re, sys, xml.etree.ElementTree as ET
 target = sys.argv[1]
+exact = sys.argv[2] == "exact"
 try:
     root = ET.parse('/tmp/ui.xml').getroot()
 except Exception:
     sys.exit(0)
 for n in root.iter('node'):
-    if target in (n.get('text') or '') or target in (n.get('content-desc') or ''):
+    text, desc = n.get('text') or '', n.get('content-desc') or ''
+    if (text == target or desc == target) if exact else (target in text or target in desc):
         x1, y1, x2, y2 = map(int, re.findall(r'\d+', n.get('bounds')))
         print((x1 + x2) // 2, (y1 + y2) // 2)
         break
@@ -38,6 +40,18 @@ dismiss_system_dialogs() {
     local wait; wait=$(coords_of "Wait")
     [ -n "$wait" ] && adb shell input tap $wait && echo "Dialogue système fermé" && sleep 2
   fi
+}
+
+# Touche l'élément dont le texte est exactement $1 (onglets de la barre du bas).
+tap_tab() {
+  local coords=""
+  for _ in 1 2 3 4 5; do
+    dismiss_system_dialogs
+    coords=$(coords_of "$1" exact)
+    if [ -n "$coords" ]; then adb shell input tap $coords; sleep 2; return 0; fi
+    sleep 2
+  done
+  echo "ONGLET INTROUVABLE : $1"; FAILED=1; return 1
 }
 
 # Touche le premier élément dont le texte (ou la description) contient $1.
@@ -55,7 +69,8 @@ try:
 except Exception:
     sys.exit(0)
 for n in root.iter('node'):
-    if target in (n.get('text') or '') or target in (n.get('content-desc') or ''):
+    text, desc = n.get('text') or '', n.get('content-desc') or ''
+    if (text == target or desc == target) if exact else (target in text or target in desc):
         x1, y1, x2, y2 = map(int, re.findall(r'\d+', n.get('bounds')))
         print((x1 + x2) // 2, (y1 + y2) // 2)
         break
@@ -120,20 +135,20 @@ if [ "${1:-}" = "seed" ]; then
   restart
   shot 00-ancienne-version-demarrage
   diagnose "ancienne version au démarrage"
-  tap_text "Parcours" && tap_text "Interface et navigation" && tap_text "Vue d'ensemble de la façade"
+  tap_tab "Parcours" && tap_text "Interface et navigation" && tap_text "Vue d'ensemble de la façade"
   scroll_to_and_tap "Machine éteinte devant toi"
   scroll_to_and_tap "J'ai réussi l'exercice"
   scroll_to_and_tap "J'ai fait la leçon sur ma machine"
   scroll_to_and_tap "Lancer le quiz"
   tap_text "Régler le volume du casque" && tap_text "Valider"
   restart
-  tap_text "Progrès" && shot 00a-progression-avant-mise-a-jour
+  tap_tab "Progrès" && shot 00a-progression-avant-mise-a-jour
   exit $FAILED
 fi
 if [ "${1:-}" = "verify-upgrade" ]; then
   restart
   diagnose "nouvelle version après mise à jour"
-  tap_text "Progrès" && shot 00b-progression-apres-mise-a-jour
+  tap_tab "Progrès" && shot 00b-progression-apres-mise-a-jour
   for attendu in "1/54" "Réviser mes erreurs (1)"; do
     if [ -z "$(coords_of "$attendu")" ]; then echo "PROGRESSION PERDUE : « $attendu » absent"; FAILED=1; else echo "OK après mise à jour : $attendu"; fi
   done
@@ -142,7 +157,7 @@ fi
 
 restart
 shot 01-accueil
-tap_text "Parcours" && shot 02-parcours-verrous
+tap_tab "Parcours" && shot 02-parcours-verrous
 
 # Leçon : étape cochée, exercice validé, quiz avec une erreur volontaire
 tap_text "Interface et navigation" && shot 03-module-1
@@ -154,7 +169,7 @@ tap_text "Régler le volume du casque" && tap_text "Valider" && shot 08-quiz-err
 
 # Quiz final du module 1
 restart
-tap_text "Parcours" && tap_text "Interface et navigation"
+tap_tab "Parcours" && tap_text "Interface et navigation"
 scroll_to "Lancer le quiz final" && shot 09-module-quiz-final
 tap_text "Lancer le quiz final" && shot 10-quiz-final
 
@@ -173,13 +188,13 @@ scroll_to_and_tap "Fiche de ton Electribe" && scroll_to_and_tap "Identifier les 
 
 # Progression
 restart
-tap_text "Progrès" && shot 15-progression
+tap_tab "Progrès" && shot 15-progression
 swipe_up; shot 16-progression-suite
 tap_text "Paramètres" && shot 17-parametres
 
 # Autres écrans : glossaire (avec recherche), exercices, catalogue des modules
 restart
-tap_text "Glossaire" && tap_text "Rechercher un terme" && adb shell input text "filtre" && sleep 2 && shot 18-glossaire-recherche
+tap_tab "Glossaire" && tap_text "Rechercher un terme" && adb shell input text "filtre" && sleep 2 && shot 18-glossaire-recherche
 restart
 scroll_to_and_tap "À faire sur la vraie machine" && shot 19-exercices
 restart
@@ -195,7 +210,7 @@ tap_text "Electribe Sampler 2" && shot 26-retour-electribe
 
 # Taille de texte « Très grande »
 restart
-tap_text "Progrès" && tap_text "Paramètres" && tap_text "Très grande"
+tap_tab "Progrès" && tap_text "Paramètres" && tap_text "Très grande"
 restart
 shot 21-texte-xl-accueil
 tap_text "Continuer" && shot 22-texte-xl-lecon

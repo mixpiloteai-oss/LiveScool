@@ -128,7 +128,7 @@ fun HomeScreen(
                     }
                 }
             }
-            item { Shortcut(Icons.Outlined.Route, "Parcours", "Les ${state.modules.size} modules dans l'ordre conseillé", onOpenPath) }
+            item { Shortcut(Icons.Outlined.Route, "Parcours", if (state.modules.isEmpty()) "Parcours à venir" else "Les ${state.modules.size} modules dans l'ordre conseillé", onOpenPath) }
             item { Shortcut(Icons.Outlined.GridView, "Modules", "Accès direct à chaque module", onOpenModules) }
             if (state.reviewCount > 0) {
                 item { Shortcut(Icons.Outlined.Replay, "Réviser mes erreurs", "${state.reviewCount} question(s) à revoir", onOpenReview) }
