@@ -15,6 +15,9 @@ import com.livemachine.academy.data.model.ManualRef
  */
 object GlossaryContent {
     val terms: List<GlossaryTerm> = listOf(
+        GlossaryTerm("Effet d'insertion (IFX)", "Effet propre à chaque part : 38 types, intensité réglée par Edit, activé par IFX On.", MACHINE, ManualRef("9. Appendix › IFX Type List", "17", PARAMETER_GUIDE)),
+        GlossaryTerm("Effet maître (MFX)", "Effet unique du pattern (32 types), joué au pad tactile ; chaque part y est envoyée ou non avec MFX Send.", MACHINE, ManualRef("Production de musique › 4. Utilisation des effets maîtres", "29")),
+        GlossaryTerm("EG Int", "Intensité avec laquelle l'enveloppe de la section Amp/EG fait bouger la coupure du filtre.", MACHINE, ManualRef("Description par section › Section d'édition › Filter", "23")),
         GlossaryTerm("Last Step", "Dernier pas joué par une part (1 à 16) : permet des parts plus courtes que les autres, donc des polyrythmies.", MACHINE, ManualRef("2. PART PARAMETERS › LAST STEP", "4", PARAMETER_GUIDE)),
         GlossaryTerm("STEP EDIT", "Édition pas par pas : note (jusqu'à 4), gate time (00 à 96 ou TIE), vélocité (001 à 127).", MACHINE, ManualRef("3. STEP EDIT", "5", PARAMETER_GUIDE)),
         GlossaryTerm("Groove (GROOVE TYPE / DEPTH)", "Placement « joué » appliqué à une part : 25 types, intensité 0 à 127.", MACHINE, ManualRef("2. PART PARAMETERS", "4", PARAMETER_GUIDE)),

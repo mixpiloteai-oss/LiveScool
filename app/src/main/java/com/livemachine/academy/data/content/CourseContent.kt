@@ -53,10 +53,10 @@ object CourseContent {
             id = "m5",
             number = 5,
             title = "Filtres et effets",
-            summary = "Sculpter le son avec le filtre et les effets.",
+            summary = "Les trois filtres du sampler, l'effet d'insertion et l'effet maître.",
             goal = "Utiliser filtre et effets pour donner du caractère et créer de la tension.",
             styleFocus = "Acidcore et mentalcore : filtre résonant, distorsion, montées de tension.",
-            lessons = emptyList(),
+            lessons = Module5Content.lessons,
         ),
         CourseModule(
             id = "m6",
