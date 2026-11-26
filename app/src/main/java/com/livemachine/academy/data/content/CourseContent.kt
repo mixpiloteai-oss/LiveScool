@@ -71,10 +71,10 @@ object CourseContent {
             id = "m7",
             number = 7,
             title = "Variations et construction",
-            summary = "Décliner un pattern en variations et bâtir un morceau.",
-            goal = "Construire intro, montée, break et drop à partir de quelques patterns.",
+            summary = "Familles de patterns, variations, enchaînement automatique et Pattern Set.",
+            goal = "Construire un morceau complet, de l'intro à l'outro, à partir de quelques patterns.",
             styleFocus = "Tribecore et hardtek : longues montées et retours de kick percutants.",
-            lessons = emptyList(),
+            lessons = Module7Content.lessons,
         ),
         CourseModule(
             id = "m8",

@@ -15,6 +15,8 @@ import com.livemachine.academy.data.model.ManualRef
  */
 object GlossaryContent {
     val terms: List<GlossaryTerm> = listOf(
+        GlossaryTerm("Pattern Set", "Patterns mémorisés sous les pads (4 groupes de 16) pour les lancer d'une pression pendant la lecture.", MACHINE, ManualRef("Production de musique › 5. Jeu avec un groupe de motifs", "30")),
+        GlossaryTerm("CHAIN (CHAIN TO / CHAIN REPEAT)", "Enchaînement automatique : pattern suivant et nombre de répétitions. Demande CHAIN MODE sur On (menu Global).", MACHINE, ManualRef("1. PATTERN PARAMETERS", "3", PARAMETER_GUIDE)),
         GlossaryTerm("Motion sequence", "Enregistrement des mouvements de commandes d'une part (ou de l'effet maître), rejoués à chaque tour. Jusqu'à 24, modes Smooth ou Trigger Hold.", MACHINE, ManualRef("Enregistrement de données de jeu › 3. Motion Seq", "30–31")),
         GlossaryTerm("Type de modulation", "Combinaison source (enveloppe, LFO, S&H, aléatoire) + destination (Filter, Pitch, OSC, Level, Pan, IFX) : 72 types.", MACHINE, ManualRef("9. Appendix › Modulation Type List", "15–16", PARAMETER_GUIDE)),
         GlossaryTerm("Effet d'insertion (IFX)", "Effet propre à chaque part : 38 types, intensité réglée par Edit, activé par IFX On.", MACHINE, ManualRef("9. Appendix › IFX Type List", "17", PARAMETER_GUIDE)),
