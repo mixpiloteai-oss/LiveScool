@@ -17,13 +17,16 @@ enum class ContentStatus {
     VERIFIED,
 }
 
-/** Documents officiels Korg utilisés comme sources, avec leurs pages valides. */
+/** Documents officiels (Korg, Novation) utilisés comme sources, avec leurs pages valides. */
 enum class ManualDoc(val label: String, val validPages: IntRange) {
     /** Manuel d'utilisation electribe/electribe sampler (2015), partie française. */
     OWNERS_MANUAL("Manuel", 20..38),
 
     /** electribe sampler Parameter Guide (2016), en anglais. */
     PARAMETER_GUIDE("Guide des paramètres", 3..19),
+
+    /** Novation Circuit Tracks — Guide d'utilisation, Version 2, en français. */
+    CIRCUIT_TRACKS_GUIDE("Guide Circuit Tracks", 6..108),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */

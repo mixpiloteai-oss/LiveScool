@@ -210,6 +210,8 @@ restart
 tap_text "Circuit Tracks" && shot 23-accueil-circuit-tracks
 tap_text "Voir la fiche machine" && shot 24-fiche-circuit-tracks
 tap_text "Commencer l'apprentissage" && shot 25-parcours-circuit-tracks
+tap_text "Interface et navigation" && shot 27-module-circuit-tracks
+tap_text "La façade et le principe des vues" && shot 28-lecon-circuit-tracks
 restart
 tap_text "Electribe Sampler 2" && shot 26-retour-electribe
 

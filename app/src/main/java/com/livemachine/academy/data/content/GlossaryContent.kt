@@ -70,7 +70,8 @@ object GlossaryContent {
         GlossaryTerm("Mentalcore", "Tekno rapide et intense, aux sons acides et aux montées « mentales » qui durent.", STYLE),
         GlossaryTerm("Acidcore", "Hardcore construit autour de lignes de basse acides, filtre résonant très présent.", STYLE),
     )
-        // Les termes « Machine » actuels viennent tous des documents Korg de l'Electribe.
+        // Termes « Machine » ci-dessus : documents Korg de l'Electribe ; ceux de la Circuit Tracks viennent de son guide.
         .map { if (it.category == MACHINE) it.copy(machineId = MachineCatalog.ELECTRIBE_ID) else it }
+        .plus(CircuitTracksContent.glossary)
         .sortedBy { it.term.lowercase() }
 }

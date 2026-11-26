@@ -8,7 +8,6 @@ import com.livemachine.academy.data.repository.CourseRepository
 import com.livemachine.academy.data.repository.MachinePhotoRepository
 import com.livemachine.academy.domain.ProgressRules
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -57,15 +56,19 @@ class MultiMachineTest {
         val old = UserProgress(completedLessons = repo.modules(electribe)[0].lessons.map { it.id }.toSet())
         assertTrue(ProgressRules.isValidated(repo.modules(electribe)[0], old))
         assertEquals(repo.modules(electribe)[1].lessons[0].id, repo.nextLesson(electribe, old.completedLessons)?.id)
-        assertNull(repo.nextLesson(circuit, old.completedLessons))
-        assertTrue(repo.exercises(circuit).isEmpty())
-        assertTrue(repo.challenges(circuit).isEmpty())
+        assertEquals("ct-m1-l1", repo.nextLesson(circuit, old.completedLessons)?.id)
+        assertTrue(repo.exercises(circuit).all { it.id.startsWith("ct-") })
+        assertTrue(repo.challenges(circuit).all { it.id.startsWith("ct-") })
+        assertTrue(repo.exercises(electribe).none { it.id.startsWith("ct-") })
     }
 
     @Test
     fun `glossaire avec termes machine seulement pour leur machine`() {
         assertTrue(repo.glossary(electribe).any { it.category == GlossaryCategory.MACHINE })
-        assertTrue(repo.glossary(circuit).none { it.category == GlossaryCategory.MACHINE })
+        assertTrue(repo.glossary(circuit).filter { it.category == GlossaryCategory.MACHINE }
+            .all { it.machineId == circuit })
+        assertTrue(repo.glossary(circuit).any { it.category == GlossaryCategory.MACHINE })
+        assertTrue(repo.glossary(electribe).none { it.machineId == circuit })
         assertTrue(repo.glossary(circuit).isNotEmpty())
     }
 

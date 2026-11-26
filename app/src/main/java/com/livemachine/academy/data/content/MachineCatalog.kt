@@ -29,6 +29,9 @@ object MachineCatalog {
         note = CircuitTracksContent.note,
         sourcesLabel = CircuitTracksContent.sourcesLabel,
         modules = CircuitTracksContent.modules,
+        sections = CircuitTracksContent.sections,
+        identifiableControls = CircuitTracksContent.identifiableControls,
+        challenges = CircuitTracksContent.challenges,
     )
 
     val all: List<MachineProfile> = listOf(electribe, circuitTracks)
