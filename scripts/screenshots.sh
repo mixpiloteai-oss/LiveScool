@@ -68,23 +68,7 @@ tap_text() {
   local text="$1" coords=""
   for _ in 1 2 3 4 5; do
     dismiss_system_dialogs
-    adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
-    adb pull /sdcard/ui.xml /tmp/ui.xml >/dev/null 2>&1
-    coords=$(python3 - "$text" <<'PY'
-import re, sys, xml.etree.ElementTree as ET
-target = sys.argv[1]
-try:
-    root = ET.parse('/tmp/ui.xml').getroot()
-except Exception:
-    sys.exit(0)
-for n in root.iter('node'):
-    text, desc = n.get('text') or '', n.get('content-desc') or ''
-    if (text == target or desc == target) if exact else (target in text or target in desc):
-        x1, y1, x2, y2 = map(int, re.findall(r'\d+', n.get('bounds')))
-        print((x1 + x2) // 2, (y1 + y2) // 2)
-        break
-PY
-)
+    coords=$(coords_of "$text")
     if [ -n "$coords" ]; then
       adb shell input tap $coords
       sleep 2
@@ -92,7 +76,7 @@ PY
     fi
     sleep 2
   done
-  echo "ÉLÉMENT INTROUVABLE : $text"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"; { echo "$(date +%T) introuvable"; grep -o 'text="[^"]*"' /tmp/ui.xml | head -15; } >> "$OUT/diagnostic.txt"
+  echo "ÉLÉMENT INTROUVABLE : $text"; adb exec-out screencap -p > "$OUT/echec-$(date +%H%M%S).png"
   FAILED=1
   return 1
 }
