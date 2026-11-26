@@ -6,3 +6,5 @@
     topResumedActivity=ActivityRecord{1b61e7 u0 com.livemachine.academy/.MainActivity t8}
 == nouvelle version après mise à jour
     topResumedActivity=ActivityRecord{c0150f9 u0 com.livemachine.academy/.MainActivity t10}
+== ancienne version au démarrage
+    topResumedActivity=ActivityRecord{6d8e589 u0 com.livemachine.academy/.MainActivity t8}
