@@ -19,7 +19,8 @@ object MachineContent {
             "Le manuel d'utilisation couvre à la fois l'electribe et l'electribe sampler : les opérations de base " +
             "sont identiques, mais ses illustrations représentent l'electribe."
     const val manualSource =
-        "Manuel d'utilisation electribe/electribe sampler (Korg, 2015), partie française, p. 20–38."
+        "Manuel d'utilisation electribe/electribe sampler (Korg, 2015), partie française, p. 20–38, et " +
+            "electribe sampler Parameter Guide (Korg, 2016, en anglais), p. 3–19."
 
     private val P22 = ManualRef("Introduction › 1. Description par section", "22")
     private val P23 = ManualRef("Introduction › 1. Description par section", "22–23")

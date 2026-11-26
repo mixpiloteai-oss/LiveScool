@@ -35,10 +35,10 @@ object CourseContent {
             id = "m3",
             number = 3,
             title = "Paramètres sonores",
-            summary = "Façonner chaque sample : hauteur, enveloppe, niveau…",
-            goal = "Transformer un sample brut en son prêt pour le mix.",
+            summary = "Oscillateur, hauteur, enveloppe, polyphonie et dynamique de chaque part.",
+            goal = "Transformer un oscillateur ou un sample brut en son prêt pour le mix.",
             styleFocus = "Kicks courts et punchy en hardtek, sons plus longs et hypnotiques en tribe.",
-            lessons = emptyList(),
+            lessons = Module3Content.lessons,
         ),
         CourseModule(
             id = "m4",

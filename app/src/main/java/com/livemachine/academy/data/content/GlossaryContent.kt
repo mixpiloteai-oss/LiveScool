@@ -6,6 +6,7 @@ import com.livemachine.academy.data.model.GlossaryCategory.SEQUENCING
 import com.livemachine.academy.data.model.GlossaryCategory.SOUND
 import com.livemachine.academy.data.model.GlossaryCategory.STYLE
 import com.livemachine.academy.data.model.GlossaryTerm
+import com.livemachine.academy.data.model.ManualDoc.PARAMETER_GUIDE
 import com.livemachine.academy.data.model.ManualRef
 
 /**
@@ -14,6 +15,8 @@ import com.livemachine.academy.data.model.ManualRef
  */
 object GlossaryContent {
     val terms: List<GlossaryTerm> = listOf(
+        GlossaryTerm("KNOB MODE", "Réglage Global : Jump (la valeur saute à la commande), Catch (la valeur ne bouge qu'une fois rejointe), Value Scale (relatif).", MACHINE, ManualRef("6. GLOBAL PARAMETERS › KNOB MODE", "8", PARAMETER_GUIDE)),
+        GlossaryTerm("Oscillateur (OSC)", "Source sonore d'une part : 421 types d'usine en catégories (Analog, Audio In, Kick, Snare… PCM), plus les samples utilisateur.", MACHINE, ManualRef("9. Appendix › OSC Type List", "12–14", PARAMETER_GUIDE)),
         GlossaryTerm("Sample utilisateur", "Sample créé ou importé sur la machine. Jusqu'à 499, environ 270 s au total (mono). Perdu à l'extinction s'il n'est pas exporté sur carte.", MACHINE, ManualRef("Fonctions de l'electribe sampler", "34")),
         GlossaryTerm("Rééchantillonnage", "Enregistrer la sortie de la machine (un pattern ou une part) pour en faire un nouveau sample.", MACHINE, ManualRef("Enregistrement et édition d'échantillons › 2. Rééchantillonnage", "35–36")),
         GlossaryTerm("SAMPLE EDIT", "Menu d'édition des samples : points de départ, de fin et de boucle, accord, découpe, niveau, nom, effacement.", MACHINE, ManualRef("Enregistrement et édition d'échantillons › 3. Édition d'un échantillon", "36")),
@@ -25,7 +28,7 @@ object GlossaryContent {
         GlossaryTerm("Écran de sélection de pattern", "Écran affiché au démarrage, d'où l'on choisit le pattern. Deux pressions sur Exit y ramènent.", MACHINE, ManualRef("Pour produire du son › 1. Mise sous tension/hors tension", "27")),
         GlossaryTerm("Commande de valeur", "Change la valeur du paramètre affiché à l'écran.", MACHINE, ManualRef("Description par section › Section commune", "22")),
         GlossaryTerm("Menu d'édition", "S'ouvre avec Menu/Enter depuis l'écran de sélection de pattern ; < et > choisissent le paramètre.", MACHINE, ManualRef("Pour produire du son › 2. Manipulations de base", "27")),
-        GlossaryTerm("Menu Global", "Réglages généraux (métronome, contraste, Auto Power Off…), accessibles via « GLOBAL PARAMETER ». À sauvegarder avec Write.", MACHINE, ManualRef("Autres réglages", "32")),
+        GlossaryTerm("Menu Global", "Réglages généraux (métronome, contraste, Auto Power Off, KNOB MODE…), accessibles via « GLOBAL PARAMETER ». Sauvegarde avec Write.", MACHINE, ManualRef("Autres réglages", "32")),
         GlossaryTerm("Write", "Sauvegarde le pattern (et les réglages Global). Shift + Write : sauvegarde sous un nouveau nom.", MACHINE, ManualRef("Enregistrement de données de jeu › 4. Sauvegarde d'un motif", "31")),
         GlossaryTerm("Tap", "Bouton qui règle le tempo d'après l'intervalle entre quelques pressions successives.", MACHINE, ManualRef("Production de musique › 6. Réglage du tempo (BPM)", "30")),
         GlossaryTerm("Mode de pad", "Section de boutons (Trigger, Sequencer, Keyboard, Chord, Step Jump, Pattern Set) qui définit le rôle des pads de déclenchement.", MACHINE, ManualRef("Description par section › Section du mode de pad", "24")),

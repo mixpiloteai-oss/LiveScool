@@ -4,6 +4,7 @@ import com.livemachine.academy.data.model.ContentStatus
 import com.livemachine.academy.data.model.Exercise
 import com.livemachine.academy.data.model.Lesson
 import com.livemachine.academy.data.model.MachineControl
+import com.livemachine.academy.data.model.ManualDoc.PARAMETER_GUIDE
 import com.livemachine.academy.data.model.ManualRef
 import com.livemachine.academy.data.model.QuizQuestion
 
@@ -37,6 +38,11 @@ object Module1Content {
     private val MOTIF = ManualRef("Pour produire du son › 3. Lecture d'un motif", "27")
     private val PARTIE_SEL = ManualRef("Pour produire du son › 4. Sélection d'une partie", "27")
     private val TEMPO = ManualRef("Production de musique › 6. Réglage du tempo (BPM)", "30")
+    private val PG_BPM = ManualRef("1. PATTERN PARAMETERS › BPM", "3", PARAMETER_GUIDE)
+    private val PG_GLOBAL = ManualRef("6. GLOBAL PARAMETERS", "7", PARAMETER_GUIDE)
+    private val PG_AUTO_OFF = ManualRef("6. GLOBAL PARAMETERS › AUTO POWER OFF", "8", PARAMETER_GUIDE)
+    private val PG_METRONOME = ManualRef("6. GLOBAL PARAMETERS › METRONOME", "8", PARAMETER_GUIDE)
+    private val PG_SHORTCUTS = ManualRef("9. Appendix › Shortcut list", "11", PARAMETER_GUIDE)
     private val METRONOME = ManualRef("Autres réglages › 1. Réglage du métronome", "32")
     private val SAUVEGARDE = ManualRef("Enregistrement de données de jeu › 4. Sauvegarde d'un motif", "31")
     private val FACTORY = ManualRef("Autres réglages › 10. Formatage des données utilisateur", "34")
@@ -198,7 +204,7 @@ object Module1Content {
         order = 3,
         title = "Naviguer dans les menus",
         status = ContentStatus.VERIFIED,
-        manualRefs = listOf(COMMUNE, AFFICHAGE, MENUS, CONTRASTE, AUTO_OFF),
+        manualRefs = listOf(COMMUNE, AFFICHAGE, MENUS, CONTRASTE, AUTO_OFF, PG_GLOBAL, PG_AUTO_OFF),
         durationMinutes = 15,
         objective = "Ouvrir le menu d'édition et le menu Global, choisir un paramètre, changer sa valeur et la sauvegarder.",
         explanation = "La navigation repose sur quatre commandes. Menu/Enter ouvre le menu d'édition depuis l'écran de " +
@@ -206,8 +212,10 @@ object Module1Content {
             "valeur change la valeur du paramètre affiché. Exit, pressé deux fois, ramène à l'écran de sélection. " +
             "Shift + commande de valeur change la taille du pas de réglage (elle dépend du paramètre). " +
             "Les menus Global, Data Utility et Part Utility s'ouvrent depuis le menu d'édition : fais défiler avec " +
-            "< ou > jusqu'à leur nom, puis Menu/Enter. Pour garder un réglage Global, appuie sur Write : sinon il est " +
-            "perdu à l'extinction.",
+            "< ou > jusqu'à leur nom, puis Menu/Enter. Pour les réglages Global, appuie sur Write une fois tes changements " +
+            "faits. Les deux documents Korg ne disent pas la même chose : le manuel (2015) indique qu'ils sont perdus " +
+            "sans Write, le Guide des paramètres (2016) qu'ils sont sauvegardés automatiquement à l'extinction. " +
+            "Appuyer sur Write est sûr dans les deux cas.",
         controls = listOf(
             MachineControl("Menu/Enter", "Ouvre le menu d'édition ; entre dans un sous-menu ; valide.", COMMUNE),
             MachineControl("Boutons < et >", "Choisissent le paramètre à éditer.", COMMUNE),
@@ -231,7 +239,7 @@ object Module1Content {
             title = "Préparer la machine pour les longues sessions",
             instructions = listOf(
                 "Dans le menu Global, règle LCD CONTRAST pour que l'écran soit lisible dans ta pièce.",
-                "Toujours dans le menu Global, choisis la valeur de AUTO POWER OFF : « Off » pour qu'elle ne s'éteigne jamais seule, « 4 hours » pour économiser l'énergie.",
+                "Toujours dans le menu Global, choisis la valeur de AUTO POWER OFF : « Disable » pour qu'elle ne s'éteigne jamais seule (le manuel l'appelle « Off »), « 4 hours » pour économiser l'énergie. Même si un pattern tourne, elle s'éteint après 4 heures sans aucune manipulation.",
                 "Sauvegarde avec Write, puis reviens à l'écran de sélection de pattern.",
                 "Éteins, rallume, et vérifie dans le menu Global que tes deux réglages sont restés.",
             ),
@@ -239,7 +247,7 @@ object Module1Content {
             styleHint = "En free party ou en live, une machine qui s'éteint seule en plein set, c'est le cauchemar : vérifie AUTO POWER OFF avant chaque date.",
         ),
         commonMistakes = listOf(
-            "Oublier d'appuyer sur Write après un réglage Global : il est perdu à l'extinction (p. 32).",
+            "Ne pas appuyer sur Write après un réglage Global : selon le manuel (p. 32), il serait perdu à l'extinction. Le guide (p. 7) parle de sauvegarde automatique ; Write évite toute surprise.",
             "Tourner la commande de valeur sans vérifier quel paramètre est affiché : c'est toujours le paramètre affiché qui change (p. 22).",
             "Chercher le menu Global ailleurs que dans le menu d'édition : on y accède par « GLOBAL PARAMETER » puis Menu/Enter (p. 32).",
         ),
@@ -250,9 +258,9 @@ object Module1Content {
             q("$M-l3-q2", "Quels boutons choisissent le paramètre à éditer ?",
                 listOf("Les boutons < et >", "Les boutons <Part, Part>", "Les boutons Step"),
                 0, "Les boutons de curseur < et > servent à sélectionner le paramètre à éditer.", COMMUNE),
-            q("$M-l3-q3", "Tu as changé un réglage Global et tu éteins sans appuyer sur Write. Que se passe-t-il ?",
-                listOf("Le réglage est gardé", "Le réglage est perdu et l'ancien réglage revient", "La machine refuse de s'éteindre"),
-                1, "Sans sauvegarde, les réglages sont perdus au profit des réglages d'origine.", MENUS),
+            q("$M-l3-q3", "Quel bouton sauvegarde les réglages Global pendant que tu les édites ?",
+                listOf("Write", "Exit", "Tap"),
+                0, "Write sauvegarde les réglages Global. Le guide ajoute qu'ils sont aussi sauvegardés à l'extinction ; le manuel de 2015 dit le contraire, donc Write reste le bon réflexe.", PG_GLOBAL),
             q("$M-l3-q4", "Comment ouvrir le menu Global ?",
                 listOf("Maintenir Shift et appuyer sur Menu/Enter", "Dans le menu d'édition, afficher « GLOBAL PARAMETER » avec < ou >, puis Menu/Enter", "Appuyer deux fois sur Exit"),
                 1, "On ouvre le menu d'édition, on affiche GLOBAL PARAMETER avec < ou >, puis on appuie sur Menu/Enter.", MENUS),
@@ -338,19 +346,20 @@ object Module1Content {
         order = 5,
         title = "Régler le tempo",
         status = ContentStatus.VERIFIED,
-        manualRefs = listOf(TEMPO, METRONOME, COMMUNE),
+        manualRefs = listOf(TEMPO, METRONOME, COMMUNE, PG_BPM, PG_METRONOME, PG_SHORTCUTS),
         durationMinutes = 10,
         objective = "Régler le tempo au bouton Tap ou au paramètre BPM, et activer le métronome.",
         explanation = "Le tempo s'applique au pattern et au Gate Arpeggiator. Deux méthodes : taper le bouton Tap au tempo " +
             "voulu (l'intervalle entre tes pressions sert de base), ou choisir le paramètre BPM dans le menu d'édition " +
-            "et le régler avec la commande de valeur. Le métronome (METRONOME, menu Global) sonne sur chaque noire. " +
-            "Ses réglages « Rec 0 », « Rec 1 » et « Rec 2 » le font jouer seulement pendant l'enregistrement, « Off » " +
-            "le coupe. La plage de tempo n'est pas indiquée dans le manuel d'utilisation : elle figure dans le Guide " +
-            "des paramètres.",
+            "et le régler avec la commande de valeur : de 20.0 à 300.0 BPM, par pas de 1, ou de 0.1 avec Shift enfoncé. " +
+            "Raccourci : Shift + Tap affiche directement la page BPM. Le métronome (METRONOME, menu Global) sonne sur " +
+            "chaque noire. Avec « Rec 0 », « Rec 1 » ou « Rec 2 », il ne joue que pendant l'enregistrement (« Rec 0 » " +
+            "sans décompte) ; « Off » le coupe.",
         controls = listOf(
             MachineControl("Tap", "Quelques pressions au tempo voulu règlent le BPM.", TEMPO),
             MachineControl("Paramètre BPM (menu d'édition) + commande de valeur", "Réglage précis du tempo.", TEMPO),
-            MachineControl("Shift + commande de valeur", "Change la taille du pas de réglage.", COMMUNE),
+            MachineControl("Shift + commande de valeur", "Sur BPM : pas de 0.1 au lieu de 1.", PG_BPM),
+            MachineControl("Shift + Tap", "Affiche la page BPM.", PG_SHORTCUTS),
             MachineControl("METRONOME (menu Global)", "Réglage du métronome, qui sonne sur chaque noire.", METRONOME),
         ),
         steps = listOf(

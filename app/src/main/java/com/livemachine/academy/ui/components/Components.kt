@@ -133,7 +133,7 @@ fun StatusBadge(status: ContentStatus) {
 @Composable
 fun ManualRefLine(ref: ManualRef) {
     Text(
-        "Manuel — ${ref.chapter}, p. ${ref.pages}",
+        "${ref.doc.label} — ${ref.chapter}, p. ${ref.pages}",
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.secondary,
     )

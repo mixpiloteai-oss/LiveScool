@@ -51,17 +51,17 @@ class CourseContentTest {
     }
 
     @Test
-    fun `les modules 1 et 2 sont entierement verifies`() {
-        listOf("m1", "m2").forEach { id ->
+    fun `les modules 1 a 3 sont entierement verifies`() {
+        listOf("m1", "m2", "m3").forEach { id ->
             val module = modules.first { it.id == id }
             assertTrue("$id sans leçons", module.lessons.isNotEmpty())
             module.lessons.forEach { assertEquals("${it.id} non vérifiée", ContentStatus.VERIFIED, it.status) }
         }
     }
 
-    /** Toutes les pages citées doivent tomber dans la partie française du manuel (p. 20 à 38). */
+    /** Les pages citées doivent exister dans le document cité (manuel FR p. 20–38, guide p. 3–19). */
     @Test
-    fun `les pages citees existent dans la partie francaise du manuel`() {
+    fun `les pages citees existent dans le document cite`() {
         val refs = lessons.flatMap { l ->
             l.manualRefs + l.controls.mapNotNull { it.manualRef } + l.quiz.mapNotNull { it.manualRef }
         } + GlossaryContent.terms.mapNotNull { it.manualRef } +
@@ -69,7 +69,7 @@ class CourseContentTest {
         refs.forEach { ref ->
             val pages = Regex("\\d+").findAll(ref.pages).map { it.value.toInt() }.toList()
             assertTrue("Pages illisibles : ${ref.pages}", pages.isNotEmpty())
-            pages.forEach { assertTrue("Page hors manuel FR : $it (${ref.chapter})", it in 20..38) }
+            pages.forEach { assertTrue("Page $it hors ${ref.doc.label} (${ref.chapter})", it in ref.doc.validPages) }
         }
     }
 

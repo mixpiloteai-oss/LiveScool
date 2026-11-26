@@ -4,6 +4,7 @@ import com.livemachine.academy.data.model.ContentStatus
 import com.livemachine.academy.data.model.Exercise
 import com.livemachine.academy.data.model.Lesson
 import com.livemachine.academy.data.model.MachineControl
+import com.livemachine.academy.data.model.ManualDoc.PARAMETER_GUIDE
 import com.livemachine.academy.data.model.ManualRef
 import com.livemachine.academy.data.model.QuizQuestion
 
@@ -29,6 +30,7 @@ object Module2Content {
     private val ECHANTILLONNAGE = ManualRef("Enregistrement et édition d'échantillons › 1. Échantillonnage", "35")
     private val REECHANTILLONNAGE = ManualRef("Enregistrement et édition d'échantillons › 2. Rééchantillonnage", "35–36")
     private val EDITION = ManualRef("Enregistrement et édition d'échantillons › 3. Édition d'un échantillon", "36")
+    private val PG_TIME_SLICE = ManualRef("5. SAMPLE EDIT › About time slice", "6", PARAMETER_GUIDE)
     private val CONSERVER = ManualRef("Enregistrement et édition d'échantillons › 4. Importer/exporter des échantillons", "36")
     private val CLAVIER = ManualRef("Production de musique › 1. Jouer avec les pads › Mode de clavier", "28")
     private val ACCORD = ManualRef("Production de musique › 1. Jouer avec les pads › Mode d'accord", "28")
@@ -182,13 +184,13 @@ object Module2Content {
         order = 3,
         title = "Éditer un sample",
         status = ContentStatus.VERIFIED,
-        manualRefs = listOf(EDITION, CONSERVER, SAMPLER),
+        manualRefs = listOf(EDITION, CONSERVER, SAMPLER, PG_TIME_SLICE),
         durationMinutes = 20,
         objective = "Utiliser le menu SAMPLE EDIT pour recadrer, accorder, découper, renommer ou régler le niveau d'un sample.",
         explanation = "SAMPLE EDIT s'ouvre depuis le menu d'édition. On y choisit un sample par son numéro avec la " +
             "commande de valeur, puis la fonction avec < et > : RENAME, START POINT, END POINT, LOOP START POINT " +
             "(la lecture boucle de ce point jusqu'au END POINT), SAMPLE TUNE (hauteur), TIME SLICE (découpe en tranches " +
-            "rythmiques), CLEAR SLICE (annule la découpe), PLAY LEVEL (volume de lecture) et DELETE SAMPLE. Ces " +
+            "rythmiques, sur un sample mono uniquement), CLEAR SLICE (annule la découpe), PLAY LEVEL (volume de lecture) et DELETE SAMPLE. Ces " +
             "fonctions marchent aussi sur les samples d'usine. Pendant l'édition, on écoute avec un pad ou le pad " +
             "tactile en Touch Scale ; Filter, Modulation, Amp/EG et Insert FX sont indisponibles. Write sauvegarde. " +
             "Attention : les samples utilisateur sont perdus à l'extinction s'ils ne sont pas exportés sur carte " +
@@ -215,7 +217,7 @@ object Module2Content {
             lessonId = "$M-l3",
             title = "Recadrer et trancher une boucle",
             instructions = listOf(
-                "Choisis une boucle de batterie d'usine dans SAMPLE EDIT.",
+                "Choisis une boucle de batterie mono dans SAMPLE EDIT : TIME SLICE ne fonctionne pas sur un sample stéréo.",
                 "Recadre-la avec START POINT et END POINT pour qu'elle commence pile sur le premier coup.",
                 "Essaie TIME SLICE pour la découper, écoute au pad, puis annule avec CLEAR SLICE si le résultat ne te plaît pas.",
                 "Renomme-la avec RENAME et sauvegarde avec Write.",
@@ -226,6 +228,7 @@ object Module2Content {
         commonMistakes = listOf(
             "Éteindre la machine sans exporter ses samples utilisateur : ils sont perdus, même après Write (p. 36).",
             "Chercher à filtrer ou ajouter un effet pendant l'édition : Filter, Modulation, Amp/EG et Insert FX sont indisponibles en SAMPLE EDIT (p. 36).",
+            "Lancer TIME SLICE sur un sample stéréo : impossible, il faut un sample mono. Une fois découpé, le sample ne se rejoue plus en entier jusqu'à CLEAR SLICE (guide p. 6).",
             "Effacer un sample d'usine avec DELETE SAMPLE sans le vouloir : il ne peut plus être choisi avec la commande Oscillator (p. 36).",
         ),
         quiz = listOf(

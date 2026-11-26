@@ -17,10 +17,20 @@ enum class ContentStatus {
     VERIFIED,
 }
 
-/** Référence vers le manuel officiel (chapitre + pages). */
+/** Documents officiels Korg utilisés comme sources, avec leurs pages valides. */
+enum class ManualDoc(val label: String, val validPages: IntRange) {
+    /** Manuel d'utilisation electribe/electribe sampler (2015), partie française. */
+    OWNERS_MANUAL("Manuel", 20..38),
+
+    /** electribe sampler Parameter Guide (2016), en anglais. */
+    PARAMETER_GUIDE("Guide des paramètres", 3..19),
+}
+
+/** Référence vers un document officiel (chapitre + pages). */
 data class ManualRef(
     val chapter: String,
     val pages: String,
+    val doc: ManualDoc = ManualDoc.OWNERS_MANUAL,
 )
 
 /** Une commande physique de la machine (bouton, potentiomètre, combinaison). */

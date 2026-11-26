@@ -103,7 +103,7 @@ fun LessonScreen(
             item {
                 ListBlock(
                     "3 · Commandes utilisées",
-                    lesson.controls.map { c -> "${c.name} — ${c.role}" + (c.manualRef?.let { " (p. ${it.pages})" } ?: "") },
+                    lesson.controls.map { c -> "${c.name} — ${c.role}" + (c.manualRef?.let { " (${it.doc.label.lowercase()} p. ${it.pages})" } ?: "") },
                     numbered = false,
                 )
             }
