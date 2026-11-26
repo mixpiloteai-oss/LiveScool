@@ -30,15 +30,15 @@ Kotlin, Jetpack Compose, Material 3 (thème sombre unique, magenta), MVVM + Stat
 - Tests : `CourseContentTest`, `QuizSessionTest`, `ProgressRulesTest`. CI `android.yml` (tests, lint, APK debug + release) ; `screenshots.yml` (émulateur debug/release, options `upgrade_from` = tag pour tester la mise à jour, `script_mode` = smoke ; commite `docs/screenshots/`) ; `release.yml` (vérifie et publie les APK dans une Release GitHub).
 - Multi-machine : `MachineProfile` + `MachineCatalog` (Electribe `electribe-sampler`, Circuit Tracks `circuit-tracks`, ids futurs préfixés `ct-`). Machine choisie à l'accueil (`selectedMachineId`, Electribe par défaut) ; parcours, exercices, défis, glossaire, révision, photo et fiche filtrés par machine. Progression : ids inchangés, aucune migration. Photo Electribe : anciennes clés/fichier conservés.
 - Circuit Tracks : 12 modules × 3 leçons = 36 leçons `VERIFIED` (ids `ct-mN-lK`), 12 questions par module, fiche (5 sections), 24 commandes photo, 4 défis, 9 termes de glossaire. Test `CircuitTracksContentTest`.
+- PDF Circuit Tracks purgé de l'historique git (seul le commit d'upload a été retiré, tags intacts).
 - Release v1.2.0 publiée (GitHub Releases). Mise à jour v1.1.2 → v1.2.0 testée sur émulateur : progression conservée. Sur le Samsung (v1.1.2, ancienne clé) : désinstallation unique nécessaire.
 - APK release v1.1.2 installé et fonctionnel sur le Samsung de l'utilisateur. Texte « Très grande » vérifié sur émulateur.
 - Signature : `app/debug.keystore` versionnée (non secrète, signature stable entre runners) ; `LMA_KEYSTORE_*` prioritaire. Les APK ≤ 1.1.2 avaient une clé par runner → désinstallation unique nécessaire. Version lue via `BuildConfig`.
 
 ## Prochaines étapes
 1. Retours utilisateur sur la Circuit Tracks (firmware de sa machine, samples inversés, leçons à approfondir).
-2. Purger de l'historique git le PDF Circuit Tracks committé par l'upload GitHub (commit 2d71b2d), sur accord de l'utilisateur.
-3. Retours utilisateur Electribe : points 7.1 / 7.2, écran Photo.
-4. Clé release secrète de l'utilisateur si publication.
+2. Retours utilisateur Electribe : points 7.1 / 7.2, écran Photo.
+3. Clé release secrète de l'utilisateur si publication.
 
 ## Règles
 - N'inventer aucune fonction : toute info machine cite `ManualRef` ; `VERIFIED` seulement si vérifié dans le document.
