@@ -51,8 +51,8 @@ class CourseContentTest {
     }
 
     @Test
-    fun `les modules 1 a 5 sont entierement verifies`() {
-        listOf("m1", "m2", "m3", "m4", "m5").forEach { id ->
+    fun `les modules 1 a 6 sont entierement verifies`() {
+        listOf("m1", "m2", "m3", "m4", "m5", "m6").forEach { id ->
             val module = modules.first { it.id == id }
             assertTrue("$id sans leçons", module.lessons.isNotEmpty())
             module.lessons.forEach { assertEquals("${it.id} non vérifiée", ContentStatus.VERIFIED, it.status) }

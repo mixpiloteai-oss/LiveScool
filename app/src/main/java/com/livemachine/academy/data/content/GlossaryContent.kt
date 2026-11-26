@@ -15,6 +15,8 @@ import com.livemachine.academy.data.model.ManualRef
  */
 object GlossaryContent {
     val terms: List<GlossaryTerm> = listOf(
+        GlossaryTerm("Motion sequence", "Enregistrement des mouvements de commandes d'une part (ou de l'effet maître), rejoués à chaque tour. Jusqu'à 24, modes Smooth ou Trigger Hold.", MACHINE, ManualRef("Enregistrement de données de jeu › 3. Motion Seq", "30–31")),
+        GlossaryTerm("Type de modulation", "Combinaison source (enveloppe, LFO, S&H, aléatoire) + destination (Filter, Pitch, OSC, Level, Pan, IFX) : 72 types.", MACHINE, ManualRef("9. Appendix › Modulation Type List", "15–16", PARAMETER_GUIDE)),
         GlossaryTerm("Effet d'insertion (IFX)", "Effet propre à chaque part : 38 types, intensité réglée par Edit, activé par IFX On.", MACHINE, ManualRef("9. Appendix › IFX Type List", "17", PARAMETER_GUIDE)),
         GlossaryTerm("Effet maître (MFX)", "Effet unique du pattern (32 types), joué au pad tactile ; chaque part y est envoyée ou non avec MFX Send.", MACHINE, ManualRef("Production de musique › 4. Utilisation des effets maîtres", "29")),
         GlossaryTerm("EG Int", "Intensité avec laquelle l'enveloppe de la section Amp/EG fait bouger la coupure du filtre.", MACHINE, ManualRef("Description par section › Section d'édition › Filter", "23")),
