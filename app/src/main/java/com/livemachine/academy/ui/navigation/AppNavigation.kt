@@ -1,5 +1,7 @@
 package com.livemachine.academy.ui.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.MenuBook
@@ -65,6 +67,9 @@ fun LiveMachineAppRoot() {
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        // La barre d'état est gérée par la barre du haut de chaque écran : on ne garde
+        // ici que la barre de navigation système, pour éviter une double marge en haut.
+        contentWindowInsets = WindowInsets.navigationBars,
         bottomBar = {
             if (showBottomBar) {
                 NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceContainer) {

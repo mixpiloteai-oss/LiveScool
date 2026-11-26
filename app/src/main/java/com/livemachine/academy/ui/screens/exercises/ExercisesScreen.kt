@@ -64,7 +64,10 @@ fun ExercisesScreen(
                             )
                         }
                     }
-                    ex.styleHint?.let { Spacer(Modifier.height(4.dp)); Text(it, color = MaterialTheme.colorScheme.secondary) }
+                    ex.styleHint?.let {
+                        Spacer(Modifier.height(8.dp))
+                        Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                    }
                     TextButton(onClick = { onOpenLesson(ex.lessonId) }) { Text("Ouvrir la leçon") }
                 }
             }
