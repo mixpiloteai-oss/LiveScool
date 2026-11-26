@@ -19,7 +19,7 @@ Kotlin, Jetpack Compose, Material 3 (thème sombre unique, magenta), MVVM + Stat
 - Divergences signalées dans les leçons : sauvegarde Global (manuel p. 32 vs guide p. 7) ; AUTO POWER OFF « Off » (manuel) / « Disable » (guide).
 - Non documenté, à faire vérifier sur la machine : moment du changement de pattern en lecture (7.1), sauvegarde des Part Mute (7.2).
 
-## Fait (v1.1.1)
+## Fait (v1.1.2)
 - 11 écrans + Défis + Photo ; 9 modules × 6 leçons = 54 leçons `VERIFIED`, pages citées.
 - Leçon : étapes cochables, exercice validable, quiz (80 %). Quiz final par module (10 q.), révision des erreurs (`wrongQuestions`).
 - Déblocage : module N ouvert si N-1 validé (leçons faites OU quiz final ≥ 80 %), mode libre dans Paramètres. Compétence = leçons + quiz final. Règles pures dans `domain/ProgressRules.kt`.

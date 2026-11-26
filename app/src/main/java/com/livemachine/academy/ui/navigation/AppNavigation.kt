@@ -17,9 +17,12 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -74,6 +77,10 @@ fun LiveMachineAppRoot() {
         contentWindowInsets = WindowInsets.navigationBars,
         bottomBar = {
             if (showBottomBar) {
+                // Libellés courts : on plafonne leur taille pour qu'ils tiennent sur une ligne,
+                // même en « Très grande » ou avec une grande police système.
+                val density = LocalDensity.current
+                CompositionLocalProvider(LocalDensity provides Density(density.density, minOf(density.fontScale, 1.1f))) {
                 NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     topLevelDestinations.forEach { top ->
                         val selected = destination?.hierarchy?.any { it.hasRoute(top.routeClass) } == true
@@ -81,7 +88,7 @@ fun LiveMachineAppRoot() {
                             selected = selected,
                             onClick = { navController.navigateTopLevel(top.route) },
                             icon = { Icon(top.icon, contentDescription = null) },
-                            label = { Text(top.label) },
+                            label = { Text(top.label, maxLines = 1, softWrap = false) },
                             colors = NavigationBarItemDefaults.colors(
                                 indicatorColor = MaterialTheme.colorScheme.primaryContainer,
                                 selectedIconColor = MaterialTheme.colorScheme.primary,
@@ -89,6 +96,7 @@ fun LiveMachineAppRoot() {
                             ),
                         )
                     }
+                }
                 }
             }
         },
