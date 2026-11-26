@@ -32,10 +32,19 @@ for n in root.iter('node'):
 PY2
 }
 
+# Ferme les dialogues système « … isn't responding » (fréquents juste après le démarrage de l'émulateur).
+dismiss_system_dialogs() {
+  if [ -n "$(coords_of "isn't responding")" ]; then
+    local wait; wait=$(coords_of "Wait")
+    [ -n "$wait" ] && adb shell input tap $wait && echo "Dialogue système fermé" && sleep 2
+  fi
+}
+
 # Touche le premier élément dont le texte (ou la description) contient $1.
 tap_text() {
   local text="$1" coords=""
   for _ in 1 2 3 4 5; do
+    dismiss_system_dialogs
     adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
     adb pull /sdcard/ui.xml /tmp/ui.xml >/dev/null 2>&1
     coords=$(python3 - "$text" <<'PY'
@@ -88,6 +97,7 @@ restart() {
     sleep 1
   done
   sleep 4
+  dismiss_system_dialogs
 }
 
 # Diagnostic : activité au premier plan et plantages éventuels.
@@ -98,6 +108,7 @@ diagnose() {
 
 scroll_to() {
   for _ in $(seq 1 12); do
+    dismiss_system_dialogs
     [ -n "$(coords_of "$1")" ] && return 0
     swipe_up
   done
