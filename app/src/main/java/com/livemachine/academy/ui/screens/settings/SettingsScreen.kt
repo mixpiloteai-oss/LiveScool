@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.livemachine.academy.data.content.MachineContent
 import com.livemachine.academy.data.model.AppSettings
 import com.livemachine.academy.data.model.TextSize
 import com.livemachine.academy.data.repository.ProgressRepository
@@ -113,10 +114,10 @@ fun SettingsScreen(
             SectionCard {
                 Eyebrow("À propos")
                 Spacer(Modifier.height(8.dp))
-                Text("Live Machine Academy · version 0.1.0", style = MaterialTheme.typography.titleMedium)
+                Text("Live Machine Academy · version 0.2.0", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    "Application hors ligne. Source pédagogique unique : le manuel officiel Korg de l'Electribe Sampler. " +
+                    "Application hors ligne. Source pédagogique unique : " + MachineContent.manualSource + " " +
                         "Chaque leçon cite le chapitre et les pages du manuel. Application non officielle, non affiliée à Korg.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

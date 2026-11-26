@@ -6,11 +6,12 @@ pas de WebView, fonctionne hors ligne.
 
 Styles visés : mentalcore, tribe, tribeCore, hardtek, acidcore.
 
-## État actuel (v0.1.0)
+## État actuel (v0.2.0)
 
 - Architecture, navigation et les 11 écrans de base en place.
-- Les 9 modules sont définis. **Aucun contenu technique sur la machine n'est encore rédigé** :
-  il viendra uniquement du manuel officiel (voir `docs/manual/README.md`).
+- **Module 1 (Interface et navigation) rédigé** : 6 leçons complètes, avec exercices et quiz, d'après
+  le manuel officiel (p. 22–34). Fiche Machine et glossaire de la machine, avec leurs pages.
+- Modules 2 à 9 : définis, leçons à rédiger depuis le manuel (voir `docs/manual/README.md`).
 - Progression (leçons, exercices, meilleurs scores de quiz) et paramètres enregistrés sur l'appareil.
 
 ## Compiler

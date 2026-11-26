@@ -1,21 +1,32 @@
 package com.livemachine.academy.data.content
 
 import com.livemachine.academy.data.model.GlossaryCategory.LIVE
+import com.livemachine.academy.data.model.GlossaryCategory.MACHINE
 import com.livemachine.academy.data.model.GlossaryCategory.SEQUENCING
 import com.livemachine.academy.data.model.GlossaryCategory.SOUND
 import com.livemachine.academy.data.model.GlossaryCategory.STYLE
 import com.livemachine.academy.data.model.GlossaryTerm
+import com.livemachine.academy.data.model.ManualRef
 
 /**
- * Glossaire de notions musicales générales. Les termes propres à la machine
- * (noms de menus, de paramètres) seront ajoutés depuis le manuel officiel,
- * avec leur référence de page.
+ * Glossaire. Les termes de la catégorie MACHINE viennent du manuel officiel et
+ * citent leur page ; les autres sont des notions musicales générales.
  */
 object GlossaryContent {
     val terms: List<GlossaryTerm> = listOf(
+        GlossaryTerm("Pattern (« motif »)", "Bloc de composition constitué de 16 parts et d'un effet maître. La machine en mémorise jusqu'à 250.", MACHINE, ManualRef("Pour produire du son › 3. Lecture d'un motif", "27")),
+        GlossaryTerm("Part (« partie »)", "Plus petit bloc d'un pattern : son, rythmes ou phrases, état des effets, données de jeu.", MACHINE, ManualRef("Pour produire du son › 4. Sélection d'une partie", "27")),
+        GlossaryTerm("Écran de sélection de pattern", "Écran affiché au démarrage, d'où l'on choisit le pattern. Deux pressions sur Exit y ramènent.", MACHINE, ManualRef("Pour produire du son › 1. Mise sous tension/hors tension", "27")),
+        GlossaryTerm("Commande de valeur", "Change la valeur du paramètre affiché à l'écran.", MACHINE, ManualRef("Description par section › Section commune", "22")),
+        GlossaryTerm("Menu d'édition", "S'ouvre avec Menu/Enter depuis l'écran de sélection de pattern ; < et > choisissent le paramètre.", MACHINE, ManualRef("Pour produire du son › 2. Manipulations de base", "27")),
+        GlossaryTerm("Menu Global", "Réglages généraux (métronome, contraste, Auto Power Off…), accessibles via « GLOBAL PARAMETER ». À sauvegarder avec Write.", MACHINE, ManualRef("Autres réglages", "32")),
+        GlossaryTerm("Write", "Sauvegarde le pattern (et les réglages Global). Shift + Write : sauvegarde sous un nouveau nom.", MACHINE, ManualRef("Enregistrement de données de jeu › 4. Sauvegarde d'un motif", "31")),
+        GlossaryTerm("Tap", "Bouton qui règle le tempo d'après l'intervalle entre quelques pressions successives.", MACHINE, ManualRef("Production de musique › 6. Réglage du tempo (BPM)", "30")),
+        GlossaryTerm("Mode de pad", "Section de boutons (Trigger, Sequencer, Keyboard, Chord, Step Jump, Pattern Set) qui définit le rôle des pads de déclenchement.", MACHINE, ManualRef("Description par section › Section du mode de pad", "24")),
+        GlossaryTerm("Pad tactile", "Surface qui pilote le Gate Arpeggiator, le Touch Scale ou l'effet maître.", MACHINE, ManualRef("Description par section › Section du pad tactile", "22")),
+        GlossaryTerm("Auto Power Off", "Extinction automatique après 4 heures sans manipulation ; réglable dans le menu Global.", MACHINE, ManualRef("Autres réglages › 5. Coupure automatique d'alimentation", "33")),
         GlossaryTerm("BPM", "Battements par minute : le tempo du morceau.", SEQUENCING),
         GlossaryTerm("Pas (step)", "Une case d'une grille de séquenceur. Une mesure en 4/4 découpée en doubles croches compte 16 pas.", SEQUENCING),
-        GlossaryTerm("Pattern", "Une boucle rythmique et mélodique de quelques mesures, rejouée en boucle.", SEQUENCING),
         GlossaryTerm("Swing", "Léger décalage d'un pas sur deux pour donner un groove moins mécanique.", SEQUENCING),
         GlossaryTerm("Sample", "Un enregistrement audio court (kick, voix, boucle…) rejoué par la machine.", SOUND),
         GlossaryTerm("Filtre passe-bas", "Coupe les fréquences aiguës au-dessus de la fréquence de coupure.", SOUND),

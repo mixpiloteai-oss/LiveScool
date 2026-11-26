@@ -6,22 +6,11 @@ import com.livemachine.academy.data.model.Lesson
 /**
  * Programme du cours, hors ligne.
  *
- * IMPORTANT : aucune fonction de la machine n'est décrite ici tant que le manuel
- * officiel n'a pas été fourni et lu. Les leçons sont des emplacements prévus
- * (statut AWAITING_MANUAL) : leur contenu, leurs commandes et leurs pages seront
- * rédigés uniquement à partir du manuel.
+ * Source unique : le manuel officiel (voir [MachineContent.manualSource]).
+ * Un module dont les leçons ne sont pas encore rédigées a une liste vide : on
+ * n'écrit rien sur la machine sans l'avoir lu dans le manuel, page à l'appui.
  */
 object CourseContent {
-
-    private fun plannedLessons(moduleId: String, vararg titles: String): List<Lesson> =
-        titles.mapIndexed { index, title ->
-            Lesson(
-                id = "$moduleId-l${index + 1}",
-                moduleId = moduleId,
-                order = index + 1,
-                title = title,
-            )
-        }
 
     val modules: List<CourseModule> = listOf(
         CourseModule(
@@ -31,14 +20,7 @@ object CourseContent {
             summary = "Se repérer sur la façade et dans les menus.",
             goal = "Retrouver sans hésiter chaque zone de la façade et naviguer dans l'écran.",
             styleFocus = "Base indispensable : en live, chaque seconde perdue à chercher un bouton casse l'énergie.",
-            lessons = plannedLessons(
-                "m1",
-                "Vue d'ensemble de la façade",
-                "Allumer la machine et lire l'écran",
-                "Lancer, arrêter et choisir un pattern",
-                "Régler le tempo",
-                "Sauvegarder son travail",
-            ),
+            lessons = Module1Content.lessons,
         ),
         CourseModule(
             id = "m2",
