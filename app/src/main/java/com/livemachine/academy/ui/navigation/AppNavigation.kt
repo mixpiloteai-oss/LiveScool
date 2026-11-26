@@ -28,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.livemachine.academy.ui.screens.challenges.ChallengesScreen
 import com.livemachine.academy.ui.screens.exercises.ExercisesScreen
 import com.livemachine.academy.ui.screens.glossary.GlossaryScreen
 import com.livemachine.academy.ui.screens.home.HomeScreen
@@ -36,6 +37,7 @@ import com.livemachine.academy.ui.screens.machine.MachineScreen
 import com.livemachine.academy.ui.screens.modules.ModuleDetailScreen
 import com.livemachine.academy.ui.screens.modules.ModulesScreen
 import com.livemachine.academy.ui.screens.path.PathScreen
+import com.livemachine.academy.ui.screens.photo.PhotoScreen
 import com.livemachine.academy.ui.screens.progress.ProgressScreen
 import com.livemachine.academy.ui.screens.quiz.QuizScreen
 import com.livemachine.academy.ui.screens.settings.SettingsScreen
@@ -108,6 +110,8 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
     val back: () -> Unit = { navController.popBackStack() }
     val openModule: (String) -> Unit = { navController.navigate(ModuleRoute(it)) }
     val openLesson: (String) -> Unit = { navController.navigate(LessonRoute(it)) }
+    val openChallenges: () -> Unit = { navController.navigate(ChallengesRoute) }
+    val openReview: () -> Unit = { navController.navigate(QuizRoute(QuizKind.REVIEW, "all")) }
 
     NavHost(navController = navController, startDestination = HomeRoute, modifier = modifier) {
         composable<HomeRoute> {
@@ -118,6 +122,8 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
                 onOpenExercises = { navController.navigate(ExercisesRoute) },
                 onOpenMachine = { navController.navigateTopLevel(MachineRoute) },
                 onOpenSettings = { navController.navigate(SettingsRoute) },
+                onOpenChallenges = openChallenges,
+                onOpenReview = openReview,
             )
         }
         composable<PathRoute> {
@@ -128,22 +134,35 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
             )
         }
         composable<MachineRoute> {
-            MachineScreen(onOpenSettings = { navController.navigate(SettingsRoute) })
+            MachineScreen(
+                onOpenSettings = { navController.navigate(SettingsRoute) },
+                onOpenPhoto = { navController.navigate(PhotoRoute) },
+            )
         }
         composable<ModulesRoute> { ModulesScreen(onBack = back, onOpenModule = openModule) }
-        composable<ModuleRoute> { ModuleDetailScreen(onBack = back, onOpenLesson = openLesson) }
+        composable<ModuleRoute> {
+            ModuleDetailScreen(
+                onBack = back,
+                onOpenLesson = openLesson,
+                onOpenFinalQuiz = { navController.navigate(QuizRoute(QuizKind.FINAL, it)) },
+            )
+        }
         composable<LessonRoute> {
             LessonScreen(
                 onBack = back,
-                onOpenQuiz = { navController.navigate(QuizRoute(it)) },
+                onOpenQuiz = { navController.navigate(QuizRoute(QuizKind.LESSON, it)) },
             )
         }
         composable<QuizRoute> { QuizScreen(onBack = back) }
         composable<ExercisesRoute> { ExercisesScreen(onBack = back, onOpenLesson = openLesson) }
+        composable<ChallengesRoute> { ChallengesScreen(onBack = back) }
+        composable<PhotoRoute> { PhotoScreen(onBack = back) }
         composable<ProgressRoute> {
             ProgressScreen(
                 onOpenModule = openModule,
                 onOpenExercises = { navController.navigate(ExercisesRoute) },
+                onOpenChallenges = openChallenges,
+                onOpenReview = openReview,
                 onOpenSettings = { navController.navigate(SettingsRoute) },
             )
         }

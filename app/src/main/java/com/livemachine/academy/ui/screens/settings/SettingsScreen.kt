@@ -58,6 +58,10 @@ class SettingsViewModel(
         viewModelScope.launch { settingsRepository.setKeepScreenOn(enabled) }
     }
 
+    fun setUnlockAll(enabled: Boolean) {
+        viewModelScope.launch { settingsRepository.setUnlockAllModules(enabled) }
+    }
+
     fun resetProgress() {
         viewModelScope.launch { progressRepository.reset() }
     }
@@ -109,6 +113,20 @@ fun SettingsScreen(
                 }
             }
             SectionCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Mode libre", style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            "Tous les modules et défis débloqués, sans valider les modules précédents.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Spacer(Modifier.width(16.dp))
+                    Switch(checked = settings.unlockAllModules, onCheckedChange = viewModel::setUnlockAll)
+                }
+            }
+            SectionCard {
                 Eyebrow("Progression")
                 Spacer(Modifier.height(8.dp))
                 OutlinedButton(onClick = { confirmReset = true }) { Text("Réinitialiser ma progression") }
@@ -116,7 +134,7 @@ fun SettingsScreen(
             SectionCard {
                 Eyebrow("À propos")
                 Spacer(Modifier.height(8.dp))
-                Text("Live Machine Academy · version 1.0.0", style = MaterialTheme.typography.titleMedium)
+                Text("Live Machine Academy · version 1.1.0", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(6.dp))
                 Text(
                     "Application hors ligne. Source pédagogique unique : " + MachineContent.manualSource + " " +
@@ -132,7 +150,7 @@ fun SettingsScreen(
         AlertDialog(
             onDismissRequest = { confirmReset = false },
             title = { Text("Réinitialiser ?") },
-            text = { Text("Les leçons, exercices et scores de quiz seront effacés.") },
+            text = { Text("Leçons, étapes, exercices, défis, scores et erreurs à réviser seront effacés.") },
             confirmButton = {
                 TextButton(onClick = { viewModel.resetProgress(); confirmReset = false }) { Text("Effacer") }
             },

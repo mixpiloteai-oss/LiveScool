@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.FitnessCenter
+import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Route
 import androidx.compose.material.icons.outlined.Tune
@@ -43,6 +45,8 @@ fun HomeScreen(
     onOpenExercises: () -> Unit,
     onOpenMachine: () -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenChallenges: () -> Unit,
+    onOpenReview: () -> Unit,
     viewModel: OverviewViewModel = viewModel(factory = OverviewViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -81,7 +85,11 @@ fun HomeScreen(
             }
             item { Shortcut(Icons.Outlined.Route, "Parcours", "Les 9 modules dans l'ordre conseillé", onOpenPath) }
             item { Shortcut(Icons.Outlined.GridView, "Modules", "Accès direct à chaque module", onOpenModules) }
+            if (state.reviewCount > 0) {
+                item { Shortcut(Icons.Outlined.Replay, "Réviser mes erreurs", "${state.reviewCount} question(s) à revoir", onOpenReview) }
+            }
             item { Shortcut(Icons.Outlined.FitnessCenter, "Exercices", "À faire sur la vraie machine", onOpenExercises) }
+            item { Shortcut(Icons.Outlined.EmojiEvents, "Défis par style", "Hardtek, tribe, acidcore, mentalcore", onOpenChallenges) }
             item { Shortcut(Icons.Outlined.Tune, "La machine", "Fiche de ton Electribe Sampler", onOpenMachine) }
             item {
                 SectionCard {

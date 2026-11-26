@@ -17,6 +17,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
             textSize = prefs[TEXT_SIZE]?.let { name -> TextSize.entries.firstOrNull { it.name == name } }
                 ?: TextSize.NORMAL,
             keepScreenOn = prefs[KEEP_SCREEN_ON] ?: true,
+            unlockAllModules = prefs[UNLOCK_ALL] ?: false,
         )
     }
 
@@ -28,8 +29,13 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { it[KEEP_SCREEN_ON] = enabled }
     }
 
+    suspend fun setUnlockAllModules(enabled: Boolean) {
+        dataStore.edit { it[UNLOCK_ALL] = enabled }
+    }
+
     private companion object {
         val TEXT_SIZE = stringPreferencesKey("text_size")
         val KEEP_SCREEN_ON = booleanPreferencesKey("keep_screen_on")
+        val UNLOCK_ALL = booleanPreferencesKey("unlock_all_modules")
     }
 }

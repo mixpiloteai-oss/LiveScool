@@ -24,7 +24,7 @@ import com.livemachine.academy.ui.components.SectionCard
 
 /** Fiche de la machine (pas de simulateur : uniquement des repères pour la vraie machine). */
 @Composable
-fun MachineScreen(onOpenSettings: () -> Unit) {
+fun MachineScreen(onOpenSettings: () -> Unit, onOpenPhoto: () -> Unit) {
     Column(Modifier.fillMaxSize()) {
         AppTopBar(title = "La machine", onOpenSettings = onOpenSettings)
         LazyColumn(contentPadding = ScreenPadding, verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -36,6 +36,17 @@ fun MachineScreen(onOpenSettings: () -> Unit) {
                     Text(MachineContent.modelNote, style = MaterialTheme.typography.bodyMedium)
                     Spacer(Modifier.height(8.dp))
                     Text(MachineContent.manualSource, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            item {
+                SectionCard(onClick = onOpenPhoto) {
+                    Text("Identifier les commandes sur ta photo", style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "Repère les commandes sur une photo de ta propre machine, puis entraîne-toi à les retrouver.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
             items(MachineContent.sections, key = { it.title }) { section ->

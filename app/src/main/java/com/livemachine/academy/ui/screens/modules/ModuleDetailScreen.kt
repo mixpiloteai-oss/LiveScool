@@ -11,7 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
+import androidx.compose.material.icons.outlined.WorkspacePremium
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,6 +33,8 @@ import com.livemachine.academy.data.model.CourseModule
 import com.livemachine.academy.data.model.UserProgress
 import com.livemachine.academy.data.repository.CourseRepository
 import com.livemachine.academy.data.repository.ProgressRepository
+import com.livemachine.academy.data.repository.SettingsRepository
+import com.livemachine.academy.domain.ProgressRules
 import com.livemachine.academy.ui.appViewModelFactory
 import com.livemachine.academy.ui.components.AppTopBar
 import com.livemachine.academy.ui.components.AwaitingManualNotice
@@ -40,23 +45,40 @@ import com.livemachine.academy.ui.components.ScreenPadding
 import com.livemachine.academy.ui.components.SectionCard
 import com.livemachine.academy.ui.components.StatusBadge
 import com.livemachine.academy.ui.navigation.ModuleRoute
+import com.livemachine.academy.ui.theme.Acid
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+
+data class ModuleDetailState(
+    val progress: UserProgress = UserProgress(),
+    val unlocked: Boolean = true,
+    val previousTitle: String? = null,
+)
 
 class ModuleDetailViewModel(
     savedStateHandle: SavedStateHandle,
     course: CourseRepository,
     progressRepository: ProgressRepository,
+    settingsRepository: SettingsRepository,
 ) : ViewModel() {
     val module: CourseModule? = course.module(savedStateHandle.toRoute<ModuleRoute>().moduleId)
 
-    val progress: StateFlow<UserProgress> = progressRepository.progress
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), UserProgress())
+    val state: StateFlow<ModuleDetailState> =
+        combine(progressRepository.progress, settingsRepository.settings) { progress, settings ->
+            val modules = course.modules()
+            val index = modules.indexOfFirst { it.id == module?.id }
+            ModuleDetailState(
+                progress = progress,
+                unlocked = ProgressRules.isUnlocked(modules, index, progress, settings.unlockAllModules),
+                previousTitle = modules.getOrNull(index - 1)?.let { "Module ${it.number} · ${it.title}" },
+            )
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ModuleDetailState())
 
     companion object {
         val Factory = appViewModelFactory { c, handle ->
-            ModuleDetailViewModel(handle, c.courseRepository, c.progressRepository)
+            ModuleDetailViewModel(handle, c.courseRepository, c.progressRepository, c.settingsRepository)
         }
     }
 }
@@ -65,10 +87,12 @@ class ModuleDetailViewModel(
 fun ModuleDetailScreen(
     onBack: () -> Unit,
     onOpenLesson: (String) -> Unit,
+    onOpenFinalQuiz: (String) -> Unit,
     viewModel: ModuleDetailViewModel = viewModel(factory = ModuleDetailViewModel.Factory),
 ) {
     val module = viewModel.module
-    val progress by viewModel.progress.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val progress = state.progress
 
     Column(Modifier.fillMaxSize()) {
         AppTopBar(title = module?.let { "Module ${it.number}" } ?: "Module", onBack = onBack)
@@ -76,6 +100,11 @@ fun ModuleDetailScreen(
             EmptyState("Module introuvable", "Ce module n'existe pas.")
             return@Column
         }
+        val finalScore = progress.bestQuizScores[ProgressRules.finalQuizId(module.id)]
+        val competence = ProgressRules.competenceAcquired(module, progress)
+        val lessonsDone = ProgressRules.lessonsDone(module, progress)
+        val finalPassed = ProgressRules.finalPassed(module, progress)
+
         LazyColumn(contentPadding = ScreenPadding, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
                 HeroBanner {
@@ -84,6 +113,42 @@ fun ModuleDetailScreen(
                     Text(module.title, style = MaterialTheme.typography.headlineSmall)
                     Spacer(Modifier.height(10.dp))
                     Text("Objectif : ${module.goal}", style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+            if (!state.unlocked) {
+                item {
+                    SectionCard {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Outlined.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
+                            Spacer(Modifier.width(12.dp))
+                            Text(
+                                "Module verrouillé. Valide d'abord ${state.previousTitle ?: "le module précédent"} : " +
+                                    "termine ses leçons ou réussis son quiz final. (Mode libre dans les Paramètres.)",
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
+                }
+            }
+            item {
+                SectionCard {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Outlined.WorkspacePremium,
+                            contentDescription = null,
+                            tint = if (competence) Acid else MaterialTheme.colorScheme.outline,
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Eyebrow(if (competence) "Compétence acquise" else "Compétence visée", color = if (competence) Acid else MaterialTheme.colorScheme.secondary)
+                            Text(module.goal, style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                "Leçons : ${if (lessonsDone) "toutes faites" else "à terminer"} · Quiz final : ${if (finalPassed) "réussi" else "à réussir"}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
                 }
             }
             item {
@@ -97,17 +162,21 @@ fun ModuleDetailScreen(
             if (module.lessons.isEmpty()) {
                 item {
                     AwaitingManualNotice(
-                        message = "Les leçons de ce module seront définies et rédigées à partir du manuel " +
-                            "officiel, chapitre par chapitre.",
+                        message = "Les leçons de ce module seront définies et rédigées à partir du manuel officiel.",
                     )
                 }
             }
             items(module.lessons, key = { it.id }) { lesson ->
                 val done = progress.isLessonDone(lesson.id)
-                SectionCard(onClick = { onOpenLesson(lesson.id) }) {
+                val click: (() -> Unit)? = if (state.unlocked) ({ onOpenLesson(lesson.id) }) else null
+                SectionCard(onClick = click) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            if (done) Icons.Filled.CheckCircle else Icons.Outlined.RadioButtonUnchecked,
+                            when {
+                                !state.unlocked -> Icons.Outlined.Lock
+                                done -> Icons.Filled.CheckCircle
+                                else -> Icons.Outlined.RadioButtonUnchecked
+                            },
                             contentDescription = if (done) "Terminée" else "À faire",
                             tint = if (done) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline,
                         )
@@ -116,6 +185,30 @@ fun ModuleDetailScreen(
                             Text("${module.number}.${lesson.order}  ${lesson.title}", style = MaterialTheme.typography.titleMedium)
                             Spacer(Modifier.height(6.dp))
                             StatusBadge(lesson.status)
+                        }
+                    }
+                }
+            }
+            if (module.lessons.isNotEmpty()) {
+                item {
+                    SectionCard {
+                        Eyebrow("Quiz final du module")
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            "${ProgressRules.FINAL_QUIZ_SIZE} questions tirées de toutes les leçons du module. " +
+                                "Réussi à 80 % : il valide le module et débloque le suivant.",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        finalScore?.let {
+                            Text(
+                                "Meilleur score : ${it.correct}/${it.total}" + if (finalPassed) " · réussi" else "",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = if (finalPassed) Acid else MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Spacer(Modifier.height(10.dp))
+                        Button(onClick = { onOpenFinalQuiz(module.id) }, enabled = state.unlocked) {
+                            Text("Lancer le quiz final")
                         }
                     }
                 }

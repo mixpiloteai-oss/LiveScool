@@ -8,8 +8,19 @@ import kotlinx.serialization.Serializable
 @Serializable data object ModulesRoute
 @Serializable data class ModuleRoute(val moduleId: String)
 @Serializable data class LessonRoute(val lessonId: String)
-@Serializable data class QuizRoute(val lessonId: String)
+
+/** [kind] : [QuizKind.LESSON] (id = leçon), [QuizKind.FINAL] (id = module), [QuizKind.REVIEW] (id ignoré). */
+@Serializable data class QuizRoute(val kind: String, val id: String)
+
+object QuizKind {
+    const val LESSON = "lesson"
+    const val FINAL = "final"
+    const val REVIEW = "review"
+}
+
 @Serializable data object ExercisesRoute
+@Serializable data object ChallengesRoute
+@Serializable data object PhotoRoute
 @Serializable data object ProgressRoute
 @Serializable data object GlossaryRoute
 @Serializable data object SettingsRoute

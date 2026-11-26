@@ -65,7 +65,9 @@ class CourseContentTest {
         val refs = lessons.flatMap { l ->
             l.manualRefs + l.controls.mapNotNull { it.manualRef } + l.quiz.mapNotNull { it.manualRef }
         } + GlossaryContent.terms.mapNotNull { it.manualRef } +
-            MachineContent.sections.flatMap { s -> s.controls.mapNotNull { it.manualRef } + s.manualRef }
+            MachineContent.sections.flatMap { s -> s.controls.mapNotNull { it.manualRef } + s.manualRef } +
+            MachineContent.identifiableControls.map { it.manualRef } +
+            com.livemachine.academy.data.content.ChallengeContent.challenges.flatMap { it.manualRefs }
         refs.forEach { ref ->
             val pages = Regex("\\d+").findAll(ref.pages).map { it.value.toInt() }.toList()
             assertTrue("Pages illisibles : ${ref.pages}", pages.isNotEmpty())

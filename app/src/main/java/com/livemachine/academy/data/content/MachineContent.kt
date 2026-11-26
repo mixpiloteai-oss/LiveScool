@@ -1,5 +1,6 @@
 package com.livemachine.academy.data.content
 
+import com.livemachine.academy.data.model.IdentifiableControl
 import com.livemachine.academy.data.model.MachineControl
 import com.livemachine.academy.data.model.ManualRef
 
@@ -26,6 +27,38 @@ object MachineContent {
     private val P23 = ManualRef("Introduction › 1. Description par section", "22–23")
     private val P24 = ManualRef("Introduction › 1. Description par section", "24")
     private val P25 = ManualRef("Introduction › 2. Connexions", "25")
+
+
+    /** Commandes à repérer sur la photo de l'utilisateur (manuel p. 22–24). */
+    val identifiableControls: List<IdentifiableControl> = listOf(
+        IdentifiableControl("power", "Bouton d'alimentation", "Allume et éteint la machine.", P22),
+        IdentifiableControl("volume", "Volume", "Volume de la sortie ligne et du casque.", P22),
+        IdentifiableControl("input", "Input Level", "Niveau d'entrée Audio In.", P22),
+        IdentifiableControl("display", "Écran", "Affiche patterns, parts et paramètres.", P22),
+        IdentifiableControl("touchpad", "Pad tactile", "Gate Arp, Touch Scale ou effet maître.", P22),
+        IdentifiableControl("masterfx", "Master Fx", "Commande de l'effet maître au pad tactile.", P22),
+        IdentifiableControl("rec", "Rec", "Enregistrement.", P22),
+        IdentifiableControl("stop", "Stop", "Arrête la lecture.", P22),
+        IdentifiableControl("play", "Play/Pause", "Lance ou met en pause.", P22),
+        IdentifiableControl("tap", "Tap", "Tempo par pressions successives.", P22),
+        IdentifiableControl("value", "Commande de valeur", "Change la valeur affichée.", P22),
+        IdentifiableControl("menu", "Menu/Enter", "Ouvre les menus et valide.", P23),
+        IdentifiableControl("exit", "Exit", "Deux pressions : retour à la sélection de pattern.", P23),
+        IdentifiableControl("shift", "Shift", "Fonctions secondaires.", P23),
+        IdentifiableControl("write", "Write", "Sauvegarde.", P23),
+        IdentifiableControl("osc", "Commande Oscillator", "Choix de l'oscillateur ou du sample.", P23),
+        IdentifiableControl("filter", "Commande Filter", "Fréquence de coupure.", P23),
+        IdentifiableControl("modulation", "Commande Modulation", "Type de modulation.", P23),
+        IdentifiableControl("level", "Commande Level", "Volume de la part.", P23),
+        IdentifiableControl("ifx", "Commande Insert Fx", "Type d'effet d'insertion.", P23),
+        IdentifiableControl("part", "<Part, Part>", "Choix de la part.", P24),
+        IdentifiableControl("partmute", "Part Mute", "Couper une part.", P24),
+        IdentifiableControl("trigger", "Trigger", "Les pads déclenchent les parts.", P24),
+        IdentifiableControl("sequencer", "Sequencer", "Les pads entrent les pas.", P24),
+        IdentifiableControl("keyboard", "Keyboard", "Les pads jouent comme un clavier.", P24),
+        IdentifiableControl("patternset", "Pattern Set", "Lancer un pattern mémorisé sous un pad.", P24),
+        IdentifiableControl("pads", "Pads de déclenchement", "Leur rôle dépend du mode de pad.", P24),
+    )
 
     val sections: List<MachineSection> = listOf(
         MachineSection(

@@ -26,9 +26,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.toRoute
-import com.livemachine.academy.data.model.Lesson
 import com.livemachine.academy.data.repository.CourseRepository
 import com.livemachine.academy.data.repository.ProgressRepository
+import com.livemachine.academy.domain.ProgressRules
 import com.livemachine.academy.ui.appViewModelFactory
 import com.livemachine.academy.ui.components.AppTopBar
 import com.livemachine.academy.ui.components.EmptyState
@@ -36,37 +36,90 @@ import com.livemachine.academy.ui.components.Eyebrow
 import com.livemachine.academy.ui.components.ManualRefLine
 import com.livemachine.academy.ui.components.ProgressLine
 import com.livemachine.academy.ui.components.SectionCard
+import com.livemachine.academy.ui.navigation.QuizKind
 import com.livemachine.academy.ui.navigation.QuizRoute
 import com.livemachine.academy.ui.theme.Acid
 import com.livemachine.academy.ui.theme.ErrorRed
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+data class QuizUiState(
+    val title: String = "Quiz",
+    val loading: Boolean = true,
+    val session: QuizSession = QuizSession(emptyList()),
+    val emptyMessage: String = "Pas de question pour ce quiz.",
+)
+
 class QuizViewModel(
     savedStateHandle: SavedStateHandle,
-    course: CourseRepository,
+    private val course: CourseRepository,
     private val progressRepository: ProgressRepository,
 ) : ViewModel() {
-    val lesson: Lesson? = course.lesson(savedStateHandle.toRoute<QuizRoute>().lessonId)
+    private val route = savedStateHandle.toRoute<QuizRoute>()
 
-    private val _session = MutableStateFlow(QuizSession(lesson?.quiz.orEmpty()))
-    val session: StateFlow<QuizSession> = _session.asStateFlow()
+    /** Identifiant sous lequel le meilleur score est enregistré (aucun pour la révision). */
+    private val scoreId: String? = when (route.kind) {
+        QuizKind.LESSON -> route.id
+        QuizKind.FINAL -> ProgressRules.finalQuizId(route.id)
+        else -> null
+    }
 
-    fun select(option: Int) = _session.update { it.select(option) }
-    fun validate() = _session.update { it.validate() }
-    fun restart() = _session.update { it.restart() }
+    private val _state = MutableStateFlow(QuizUiState())
+    val state: StateFlow<QuizUiState> = _state.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _state.value = when (route.kind) {
+                QuizKind.LESSON -> {
+                    val lesson = course.lesson(route.id)
+                    QuizUiState(title = "Quiz", loading = false, session = QuizSession(lesson?.quiz.orEmpty()))
+                }
+                QuizKind.FINAL -> {
+                    val module = course.module(route.id)
+                    QuizUiState(
+                        title = module?.let { "Quiz final · Module ${it.number}" } ?: "Quiz final",
+                        loading = false,
+                        session = QuizSession(module?.let { ProgressRules.finalQuizQuestions(it) }.orEmpty()),
+                    )
+                }
+                else -> {
+                    val progress = progressRepository.progress.first()
+                    QuizUiState(
+                        title = "Révision des erreurs",
+                        loading = false,
+                        session = QuizSession(ProgressRules.reviewQuestions(course.modules(), progress).take(15)),
+                        emptyMessage = "Aucune erreur à réviser. Les questions ratées dans les quiz apparaîtront ici.",
+                    )
+                }
+            }
+        }
+    }
+
+    fun select(option: Int) = _state.update { it.copy(session = it.session.select(option)) }
+
+    fun validate() {
+        val before = _state.value.session
+        val after = before.validate()
+        if (after === before) return
+        _state.update { it.copy(session = after) }
+        val question = after.current ?: return
+        viewModelScope.launch { progressRepository.recordAnswer(question.id, after.isCurrentCorrect) }
+    }
 
     fun next() {
-        _session.update { it.next() }
-        val s = _session.value
-        val id = lesson?.id
+        _state.update { it.copy(session = it.session.next()) }
+        val s = _state.value.session
+        val id = scoreId
         if (s.isFinished && id != null && s.questions.isNotEmpty()) {
             viewModelScope.launch { progressRepository.recordQuizScore(id, s.score) }
         }
     }
+
+    fun restart() = _state.update { it.copy(session = it.session.restart()) }
 
     companion object {
         val Factory = appViewModelFactory { c, handle -> QuizViewModel(handle, c.courseRepository, c.progressRepository) }
@@ -78,12 +131,14 @@ fun QuizScreen(
     onBack: () -> Unit,
     viewModel: QuizViewModel = viewModel(factory = QuizViewModel.Factory),
 ) {
-    val session by viewModel.session.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val session = state.session
 
     Column(Modifier.fillMaxSize()) {
-        AppTopBar(title = "Quiz", onBack = onBack)
+        AppTopBar(title = state.title, onBack = onBack)
+        if (state.loading) return@Column
         if (session.questions.isEmpty()) {
-            EmptyState("Pas encore de quiz", "Les questions seront écrites à partir du manuel officiel.")
+            EmptyState("Rien à faire ici", state.emptyMessage)
             return@Column
         }
         Column(
@@ -93,19 +148,21 @@ fun QuizScreen(
             ProgressLine(session.index.toFloat() / session.questions.size)
             val q = session.current
             if (q == null) {
+                val passed = session.score.ratio >= ProgressRules.PASS_RATIO
                 SectionCard {
-                    Eyebrow("Résultat")
+                    Eyebrow(if (passed) "Réussi" else "À retravailler", color = if (passed) Acid else ErrorRed)
                     Spacer(Modifier.height(8.dp))
                     Text("${session.correctCount} / ${session.questions.size}", style = MaterialTheme.typography.displaySmall)
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        if (session.score.ratio >= 0.8f) "Bravo, passe à la pratique sur ta machine."
-                        else "Relis la leçon et refais les étapes sur la machine avant de réessayer.",
+                        if (passed) "Bravo. Les questions ratées restent dans « Révision des erreurs »."
+                        else "Il faut 80 % pour réussir. Relis la leçon, refais les étapes sur la machine, puis réessaie. " +
+                            "Tes erreurs sont dans « Révision des erreurs ».",
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
                 OutlinedButton(onClick = viewModel::restart, modifier = Modifier.fillMaxWidth()) { Text("Recommencer") }
-                Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) { Text("Retour à la leçon") }
+                Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) { Text("Terminer") }
                 return@Column
             }
             Eyebrow("Question ${session.index + 1} / ${session.questions.size}")
