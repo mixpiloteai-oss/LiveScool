@@ -26,9 +26,10 @@ Kotlin, Jetpack Compose, Material 3 (thème sombre unique, magenta), MVVM + Stat
 - Déblocage : module N ouvert si N-1 validé (leçons faites OU quiz final ≥ 80 %), mode libre dans Paramètres. Compétence = leçons + quiz final. Règles pures dans `domain/ProgressRules.kt`.
 - 8 défis par style (`ChallengeContent`), débloqués par module.
 - Photo : l'utilisateur photographie SA machine, repère les commandes (`MachineContent.identifiableControls`), puis quiz « Où est… ? ». Aucune image Korg ni schéma inventé.
-- Tests : `CourseContentTest`, `QuizSessionTest`, `ProgressRulesTest`. CI `android.yml` (tests, lint, APK debug + release) ; `screenshots.yml` (émulateur debug ou release, teste les interactions, commite `docs/screenshots/`) ; `release.yml` (vérifie et publie les APK dans une Release GitHub).
+- Tests : `CourseContentTest`, `QuizSessionTest`, `ProgressRulesTest`. CI `android.yml` (tests, lint, APK debug + release) ; `screenshots.yml` (émulateur debug/release, options `upgrade_from` = tag pour tester la mise à jour, `script_mode` = smoke ; commite `docs/screenshots/`) ; `release.yml` (vérifie et publie les APK dans une Release GitHub).
 - Multi-machine : `MachineProfile` + `MachineCatalog` (Electribe `electribe-sampler`, Circuit Tracks `circuit-tracks`, ids futurs préfixés `ct-`). Machine choisie à l'accueil (`selectedMachineId`, Electribe par défaut) ; parcours, exercices, défis, glossaire, révision, photo et fiche filtrés par machine. Progression : ids inchangés, aucune migration. Photo Electribe : anciennes clés/fichier conservés.
 - Circuit Tracks : fiche (nom, Novation, description, photo utilisateur, « Commencer l'apprentissage »), parcours vide en attente du manuel Novation.
+- Release v1.2.0 publiée (GitHub Releases). Mise à jour v1.1.2 → v1.2.0 testée sur émulateur : progression conservée. Sur le Samsung (v1.1.2, ancienne clé) : désinstallation unique nécessaire.
 - APK release v1.1.2 installé et fonctionnel sur le Samsung de l'utilisateur. Texte « Très grande » vérifié sur émulateur.
 - Signature : `app/debug.keystore` versionnée (non secrète, signature stable entre runners) ; `LMA_KEYSTORE_*` prioritaire. Les APK ≤ 1.1.2 avaient une clé par runner → désinstallation unique nécessaire. Version lue via `BuildConfig`.
 
