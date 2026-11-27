@@ -3,6 +3,8 @@ name: Publier l'APK
 # Lancé à la demande : construit les APK debug et release, les vérifie
 # (aapt, apksigner, absence de permission réseau) et les publie dans une
 # Release GitHub, téléchargeable directement depuis le téléphone.
+# Produit aussi l'AAB (Android App Bundle) pour Google Play, en artefact du workflow :
+# publiable seulement s'il est signé avec la clé d'envoi secrète (secrets LMA_*).
 on:
   workflow_dispatch:
 
@@ -30,12 +32,12 @@ jobs:
           else
             echo "Pas de clé release : la release sera signée avec la clé debug."
           fi
-      - name: Tests et APK
+      - name: Tests, APK et AAB
         env:
           LMA_KEYSTORE_PASSWORD: ${{ secrets.LMA_KEYSTORE_PASSWORD }}
           LMA_KEY_ALIAS: ${{ secrets.LMA_KEY_ALIAS }}
           LMA_KEY_PASSWORD: ${{ secrets.LMA_KEY_PASSWORD }}
-        run: ./gradlew --no-daemon testDebugUnitTest assembleDebug assembleRelease
+        run: ./gradlew --no-daemon testDebugUnitTest assembleDebug assembleRelease bundleRelease
       - name: Vérifier les APK
         run: |
           set -e
@@ -54,6 +56,26 @@ jobs:
             "$BT/apksigner" verify --print-certs "$apk" | head -3
           done
           sha256sum dist/*.apk | tee dist/SHA256SUMS.txt
+      - name: Vérifier l'AAB Google Play
+        run: |
+          set -e
+          mkdir -p play
+          AAB="play/LiveMachineAcademy-$VERSION.aab"
+          cp app/build/outputs/bundle/release/app-release.aab "$AAB"
+          echo "=== $AAB ($(stat -c %s "$AAB") octets)"
+          CERT=$(keytool -printcert -jarfile "$AAB")
+          echo "$CERT" | head -4
+          # Empreinte SHA-256 de app/debug.keystore (clé partagée, non secrète)
+          if echo "$CERT" | grep -q "7C:11:9A:55:3D:B8:77:5D:91:F1:E6:0B:A2:78:FF:B3:9C:DC:39:B7:D6:34:ED:1A:69:EF:46:1E:36:71:78:C2"; then
+            echo "::warning::AAB signé avec la clé debug partagée : refusé par Google Play. Ajouter les secrets LMA_KEYSTORE_* (clé d'envoi)."
+          else
+            echo "AAB signé avec la clé d'envoi : prêt pour Google Play."
+          fi
+          sha256sum "$AAB" | tee play/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-machine-academy-aab-google-play
+          path: play/
       - uses: actions/upload-artifact@v4
         with:
           name: live-machine-academy-apk

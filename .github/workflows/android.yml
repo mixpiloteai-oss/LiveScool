@@ -20,7 +20,7 @@ jobs:
       - name: Analyse lint
         run: ./gradlew --no-daemon lintDebug
       - name: APK debug et release
-        run: ./gradlew --no-daemon assembleDebug assembleRelease
+        run: ./gradlew --no-daemon assembleDebug assembleRelease bundleRelease
       - uses: actions/upload-artifact@v4
         with:
           name: live-machine-academy-debug-apk

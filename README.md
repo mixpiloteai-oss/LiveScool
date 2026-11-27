@@ -37,8 +37,11 @@ Pour publier hors de ton téléphone (Play Store…), utilise ta propre clé sec
    export LMA_KEYSTORE_PATH=$PWD/lma-release.jks LMA_KEYSTORE_PASSWORD=... LMA_KEY_ALIAS=lma LMA_KEY_PASSWORD=...
    ./gradlew assembleRelease
    ```
+   Pour Google Play : `./gradlew bundleRelease` → `app/build/outputs/bundle/release/app-release.aab`.
 3. Sur GitHub : ajouter les secrets `LMA_KEYSTORE_BASE64` (sortie de `base64 -w0 lma-release.jks`), `LMA_KEYSTORE_PASSWORD`,
-   `LMA_KEY_ALIAS`, `LMA_KEY_PASSWORD`, puis lancer « Publier l'APK ».
+   `LMA_KEY_ALIAS`, `LMA_KEY_PASSWORD`, puis lancer « Publier l'APK ». L'AAB pour Google Play est dans l'artefact
+   `live-machine-academy-aab-google-play` du workflow (pas dans la Release). Activer Play App Signing : cette clé devient
+   la clé d'envoi ; incrémenter `versionCode` à chaque envoi.
 
 Ne jamais committer le fichier `.jks` ni ses mots de passe. Une app signée avec une autre clé ne peut pas mettre à jour
 celle déjà installée : il faut alors la désinstaller d'abord.
