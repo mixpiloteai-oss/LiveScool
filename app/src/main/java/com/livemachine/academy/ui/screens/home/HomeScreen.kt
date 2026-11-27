@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.EmojiEvents
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.FitnessCenter
 import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.material.icons.outlined.GridView
@@ -50,6 +51,7 @@ fun HomeScreen(
     onOpenSettings: () -> Unit,
     onOpenChallenges: () -> Unit,
     onOpenReview: () -> Unit,
+    onOpenAssistant: () -> Unit = {},
     viewModel: OverviewViewModel = viewModel(factory = OverviewViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -133,6 +135,7 @@ fun HomeScreen(
             if (state.reviewCount > 0) {
                 item { Shortcut(Icons.Outlined.Replay, "Réviser mes erreurs", "${state.reviewCount} question(s) à revoir", onOpenReview) }
             }
+            item { Shortcut(Icons.Outlined.AutoAwesome, "Assistant IA", "Questions sur ta ${state.machine.name}, idées de live", onOpenAssistant) }
             item { Shortcut(Icons.Outlined.FitnessCenter, "Exercices", "À faire sur la vraie machine", onOpenExercises) }
             if (state.workshops.isNotEmpty()) {
                 item { Shortcut(Icons.Outlined.EmojiEvents, "Ateliers et défis", "Création guidée et défis par style", onOpenChallenges) }

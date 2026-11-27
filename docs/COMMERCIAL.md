@@ -19,7 +19,8 @@
 | Abonnements | `data/commerce/EntitlementRepository` | `FreeEntitlementRepository` (toujours gratuit) |
 | Compte facultatif | `data/account/AccountRepository` | `GuestAccountRepository` (invité) |
 | Synchro progression | `data/sync/ProgressSync` (par machine) | `LocalOnlyProgressSync` |
-| Assistant IA, analyse audio | `data/services/PremiumServices.kt` | `Unavailable…` |
+| Assistant IA | `MusicAssistant` | **MVP actif** : `HttpAssistantClient` → `backend/assistant` (v1.6.0) |
+| Analyse audio | `data/services/PremiumServices.kt` | `UnavailableAudioAnalyzer` |
 | Erreurs / réseau | `domain/result/AppResult`, `AppError` (`Offline`, `Unauthorized`, `RequiresPremium`, `NotAvailable`, `Unexpected`) | `appResultOf {}` |
 
 Branchement unique : `di/AppContainer`. Paramètres affiche l'offre (« Gratuite ») et les fonctions prévues. Test : `CommerceTest`.
@@ -29,4 +30,4 @@ Branchement unique : `di/AppContainer`. Paramètres affiche l'offre (« Gratuite
 2. Politique de confidentialité, fiche Play, avis juridique marques.
 3. Compte : Credential Manager (Google), seule fonction réseau → première permission `INTERNET`.
 4. Abonnements : Google Play Billing + vérification serveur des achats → `EntitlementRepository` réel.
-5. Synchro, puis assistant IA (réponses ancrées sur les manuels cités) et analyse audio (traitement local de préférence, envoi seulement avec accord).
+5. Synchro, assistant en Premium si souhaité, analyse audio (traitement local de préférence, envoi seulement avec accord).

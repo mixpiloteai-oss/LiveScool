@@ -33,10 +33,12 @@ jobs:
             echo "Pas de clé release : la release sera signée avec la clé debug."
           fi
       - name: Tests, APK et AAB
+        # Adresse publique du backend de l'assistant (variable de dépôt, pas un secret).
         env:
           LMA_KEYSTORE_PASSWORD: ${{ secrets.LMA_KEYSTORE_PASSWORD }}
           LMA_KEY_ALIAS: ${{ secrets.LMA_KEY_ALIAS }}
           LMA_KEY_PASSWORD: ${{ secrets.LMA_KEY_PASSWORD }}
+          LMA_ASSISTANT_URL: ${{ vars.LMA_ASSISTANT_URL }}
         run: ./gradlew --no-daemon testDebugUnitTest assembleDebug assembleRelease bundleRelease
       - name: Vérifier les APK
         run: |
@@ -52,7 +54,9 @@ jobs:
             "$BT/aapt" dump badging "$apk" | grep -E "^package|sdkVersion|targetSdkVersion|launchable-activity"
             PERMS=$("$BT/aapt" dump permissions "$apk")
             echo "$PERMS"
-            if echo "$PERMS" | grep -q "android.permission.INTERNET"; then echo "ERREUR : permission réseau"; exit 1; fi
+            # Seule permission autorisée : INTERNET (assistant IA). Toute autre fait échouer la publication.
+            OTHER=$(echo "$PERMS" | grep "uses-permission" | grep -v "android.permission.INTERNET" | grep -v "DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" || true)
+            if [ -n "$OTHER" ]; then echo "ERREUR : permission non prévue : $OTHER"; exit 1; fi
             "$BT/apksigner" verify --print-certs "$apk" | head -3
           done
           sha256sum dist/*.apk | tee dist/SHA256SUMS.txt

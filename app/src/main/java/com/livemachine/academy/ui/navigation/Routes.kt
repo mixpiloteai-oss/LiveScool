@@ -22,6 +22,8 @@ object QuizKind {
 @Serializable data object ChallengesRoute
 /** [focus] : ids de commandes séparés par des virgules (vide = toutes les commandes de la machine). */
 @Serializable data class PhotoRoute(val machineId: String, val focus: String = "")
+/** [lessonId] : leçon d'où l'assistant est ouvert (vide = contexte de la machine choisie). */
+@Serializable data class AssistantRoute(val lessonId: String = "")
 @Serializable data object ProgressRoute
 @Serializable data object GlossaryRoute
 @Serializable data object SettingsRoute

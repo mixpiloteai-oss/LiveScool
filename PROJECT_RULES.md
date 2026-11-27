@@ -4,7 +4,7 @@
 App Android native, APK installable, 100 % hors ligne : apprendre une vraie machine leçon par leçon (lire sur le téléphone, pratiquer sur la machine). Styles : hardtek, tribe, tribeCore, acidcore, mentalcore. Pas de cours Ableton ni import SD (déjà maîtrisés).
 
 ## Interdits
-Simulateur, WebView, site web. Permission réseau : interdite tant que l'utilisateur n'a pas validé une fonction en ligne (voir `docs/COMMERCIAL.md`).
+Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistant IA (permission `INTERNET`, validée par l'utilisateur) ; tout le reste hors ligne. Toute autre permission fait échouer `release.yml`.
 
 ## Machines (`data/content/MachineCatalog.kt`)
 | Machine | id | Préfixe ids | Contenu |
@@ -29,20 +29,26 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - Ids immuables : leçon `<m>-l<n>`, exercice `-ex`, question `-q<n>`, étape `<id>#<i>`, quiz final `final-<module>`.
 - Module N ouvert si N-1 validé (leçons ou quiz final ≥ 80 %) ; mode libre dans Paramètres. Règles : `domain/ProgressRules.kt`.
 
-## Commercial (structure inactive)
-`domain/commerce` (`Feature`, `Plan`, `FeatureGate`), `domain/result` (`AppResult`), `data/commerce|account|sync|services` : implémentations locales (gratuit, invité, pas de synchro, IA/audio indisponibles), branchées dans `AppContainer`. Contenu actuel 100 % gratuit ; Premium prévu : synchro, IA, analyse audio. Pas de chatbot ni paiement. Audit et étapes : `docs/COMMERCIAL.md`.
+## Assistant IA (MVP v1.6.0)
+- App : `ui/screens/assistant` (chat, historique local par machine `assistant_history`, chargement, erreurs, 500 car.), `domain/assistant/AssistantContextBuilder` (leçon ouverte + 3 leçons proches par mots-clés, extraits ≤ 650 car. avec `ManualRef`, 6 messages d'historique, niveau), `data/assistant/HttpAssistantClient` (HttpURLConnection, `AppError`). Entrées : accueil, bouton de chaque leçon.
+- Backend : `backend/assistant` (Node, SDK Anthropic, `claude-opus-5-5`, effort medium, repli serveur), contrat `POST /v1/assistant`, règles « contexte uniquement, citer, ne rien inventer, idées = Suggestion », limites + 20 req./10 min/IP. Fournisseur interchangeable (`src/providers`). Tests `node --test`, CI `backend.yml`.
+- URL du backend : `LMA_ASSISTANT_URL` (variable de dépôt GitHub / propriété `lmaAssistantUrl`) ; vide = « Assistant non configuré ». Clé API seulement sur le serveur.
+- Gratuit pendant le MVP (`Feature.AI_ASSISTANT`, `Plan.FREE`).
 
-## Fait (v1.5.0)
+## Commercial (structure inactive)
+`domain/commerce` (`Feature`, `Plan`, `FeatureGate`), `domain/result` (`AppResult`), `data/commerce|account|sync|services` : implémentations locales (gratuit, invité, pas de synchro, IA/audio indisponibles), branchées dans `AppContainer`. Contenu actuel 100 % gratuit ; Premium prévu : synchro, analyse audio. Pas de chatbot ni paiement. Audit et étapes : `docs/COMMERCIAL.md`.
+
+## Fait (v1.6.0)
 - Electribe : 9 modules × 6 leçons `VERIFIED`, 8 défis par style.
 - Circuit Tracks : 12 modules × 3 leçons `VERIFIED` (12 q./module), fiche 5 sections, 24 commandes photo, 4 défis, 7 ateliers (pattern, variation, automation, macros, 2 transitions, séquence live ; étapes cochables + validation), 9 termes.
 - Leçon : 8 rubriques, étapes cochables, exercice validé à la main, quiz corrigé (80 %), photo ciblée sur la leçon. Quiz final 10 q., révision des erreurs.
 - Photo : l'utilisateur photographie SA machine ; aucune image constructeur.
-- Tests : `CourseContentTest`, `CircuitTracksContentTest`, `MultiMachineTest`, `ProgressRepositoryTest`, `CommerceTest`, `QuizSessionTest`, `ProgressRulesTest`.
+- Tests : `CourseContentTest`, `CircuitTracksContentTest`, `MultiMachineTest`, `ProgressRepositoryTest`, `CommerceTest`, `AssistantTest`, `QuizSessionTest`, `ProgressRulesTest`.
 - CI : `android.yml` (tests, lint, APK debug + release) ; `screenshots.yml` (émulateur ; `variant`, `upgrade_from`, `script_mode=smoke` ; commite `docs/screenshots/`) ; `release.yml` (vérifie, refuse INTERNET, publie les APK ; AAB Play en artefact, alerte si signé avec la clé partagée). Release publiée : v1.4.0.
 - Signature : `app/debug.keystore` partagée non secrète ; `LMA_KEYSTORE_*` prioritaire. APK ≤ 1.1.2 : désinstallation unique.
 
 ## Prochaine tâche
-Décisions Play (`docs/COMMERCIAL.md`) : clé d'envoi secrète (secrets `LMA_*`), confidentialité, avis marques. Puis retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
+Déployer le backend (HTTPS) et définir `LMA_ASSISTANT_URL`, puis décisions Play (`docs/COMMERCIAL.md`) : clé d'envoi secrète (secrets `LMA_*`), confidentialité, avis marques. Puis retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
 
 ## Règles de travail
 - Aucune fonction inventée : toute info machine cite sa `ManualRef` ; `VERIFIED` seulement si vérifié.

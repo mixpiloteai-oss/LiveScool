@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Application 100 % hors ligne : aucune permission réseau. -->
+    <!-- Seul l'assistant IA utilise le réseau (backend de l'app) ; tout le reste fonctionne hors ligne. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name=".LiveMachineApp"
         android:allowBackup="true"

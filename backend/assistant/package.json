@@ -1,0 +1,15 @@
+{
+  "name": "live-machine-academy-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend de l'assistant IA de Live Machine Academy : seule la clé du serveur appelle le fournisseur IA.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.14.0"
+  }
+}

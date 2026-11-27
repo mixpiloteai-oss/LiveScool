@@ -45,6 +45,7 @@ import com.livemachine.academy.ui.screens.progress.ProgressScreen
 import com.livemachine.academy.ui.screens.quiz.QuizScreen
 import com.livemachine.academy.ui.screens.settings.SettingsScreen
 import kotlin.reflect.KClass
+import com.livemachine.academy.ui.screens.assistant.AssistantScreen
 
 private data class TopLevelDestination(
     val route: Any,
@@ -132,8 +133,10 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
                 onOpenSettings = { navController.navigate(SettingsRoute) },
                 onOpenChallenges = openChallenges,
                 onOpenReview = openReview,
+                onOpenAssistant = { navController.navigate(AssistantRoute()) },
             )
         }
+        composable<AssistantRoute> { AssistantScreen(onBack = back) }
         composable<PathRoute> {
             PathScreen(
                 onOpenModule = openModule,
@@ -161,6 +164,7 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
                 onBack = back,
                 onOpenQuiz = { navController.navigate(QuizRoute(QuizKind.LESSON, it)) },
                 onOpenPhoto = { machineId, focus -> navController.navigate(PhotoRoute(machineId, focus)) },
+                onOpenAssistant = { navController.navigate(AssistantRoute(it)) },
             )
         }
         composable<QuizRoute> { QuizScreen(onBack = back) }

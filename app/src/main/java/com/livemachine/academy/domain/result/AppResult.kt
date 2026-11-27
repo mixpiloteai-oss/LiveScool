@@ -6,6 +6,10 @@ sealed interface AppError {
     data object Offline : AppError
     data object Unauthorized : AppError
     data object RequiresPremium : AppError
+    /** Trop de requêtes : réessayer plus tard. */
+    data object RateLimited : AppError
+    /** Requête refusée par le serveur, avec un message affichable. */
+    data class Rejected(val message: String) : AppError
     /** Fonction pas encore disponible dans cette version. */
     data object NotAvailable : AppError
     data class Unexpected(val message: String) : AppError

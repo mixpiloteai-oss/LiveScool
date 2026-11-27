@@ -6,7 +6,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.livemachine.academy.BuildConfig
 import com.livemachine.academy.data.account.AccountRepository
+import com.livemachine.academy.data.assistant.AssistantHistoryRepository
+import com.livemachine.academy.data.assistant.HttpAssistantClient
 import com.livemachine.academy.data.account.GuestAccountRepository
 import com.livemachine.academy.data.commerce.EntitlementRepository
 import com.livemachine.academy.data.commerce.FreeEntitlementRepository
@@ -28,6 +31,7 @@ import com.livemachine.academy.data.repository.SettingsRepository
 
 private val Context.progressStore: DataStore<Preferences> by preferencesDataStore(name = "progress")
 private val Context.settingsStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+private val Context.assistantStore: DataStore<Preferences> by preferencesDataStore(name = "assistant_history")
 private val Context.photoStore: DataStore<Preferences> by preferencesDataStore(name = "machine_photo")
 
 /** Injection de dépendances manuelle : suffisante pour une app de cette taille. */
@@ -52,11 +56,15 @@ class AppContainer(context: Context) {
         scope.launch { progressRepository.migrateLegacy() }
     }
 
-    // Structure commerciale : implémentations locales, rien n'est activé (pas de réseau, pas de paiement).
+    // Structure commerciale : compte, abonnement et synchro restent locaux (pas de paiement) ; seul l'assistant utilise le réseau.
     val entitlementRepository: EntitlementRepository = FreeEntitlementRepository()
     val accountRepository: AccountRepository = GuestAccountRepository()
     val progressSync: ProgressSync = LocalOnlyProgressSync()
-    val musicAssistant: MusicAssistant = UnavailableMusicAssistant()
+    /** Adresse publique du backend (aucun secret) ; vide = assistant non configuré dans ce build. */
+    val assistantConfigured: Boolean = BuildConfig.ASSISTANT_URL.isNotBlank()
+    val musicAssistant: MusicAssistant =
+        if (assistantConfigured) HttpAssistantClient(BuildConfig.ASSISTANT_URL) else UnavailableMusicAssistant()
+    val assistantHistoryRepository = AssistantHistoryRepository(appContext.assistantStore)
     val audioAnalyzer: AudioAnalyzer = UnavailableAudioAnalyzer()
     val settingsRepository = SettingsRepository(appContext.settingsStore)
     val photoRepository = MachinePhotoRepository(appContext, appContext.photoStore)

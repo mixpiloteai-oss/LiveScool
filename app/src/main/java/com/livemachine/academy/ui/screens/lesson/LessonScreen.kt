@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material.icons.outlined.Quiz
 import androidx.compose.material3.Button
@@ -100,6 +101,7 @@ fun LessonScreen(
     onBack: () -> Unit,
     onOpenQuiz: (String) -> Unit,
     onOpenPhoto: (machineId: String, focus: String) -> Unit = { _, _ -> },
+    onOpenAssistant: (lessonId: String) -> Unit = {},
     viewModel: LessonViewModel = viewModel(factory = LessonViewModel.Factory),
 ) {
     val lesson = viewModel.lesson
@@ -255,6 +257,13 @@ fun LessonScreen(
                             Text("Lancer le quiz")
                         }
                     }
+                }
+            }
+            item {
+                OutlinedButton(onClick = { onOpenAssistant(lesson.id) }, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Outlined.AutoAwesome, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Poser une question sur cette leçon")
                 }
             }
             item {
