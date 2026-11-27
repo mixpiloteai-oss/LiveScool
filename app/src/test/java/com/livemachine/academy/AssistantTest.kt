@@ -11,6 +11,8 @@ import com.livemachine.academy.data.model.UserProgress
 import com.livemachine.academy.domain.assistant.AssistantContextBuilder
 import com.livemachine.academy.domain.result.AppError
 import com.livemachine.academy.domain.result.AppResult
+import com.sun.net.httpserver.HttpExchange
+import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -81,12 +83,15 @@ class AssistantTest {
     private fun <T> withServer(status: Int, body: String, block: (String, () -> String) -> T): T {
         var received = ""
         val server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
-        server.createContext("/v1/assistant") { ex ->
-            received = ex.requestBody.bufferedReader().readText()
-            val bytes = body.toByteArray()
-            ex.sendResponseHeaders(status, bytes.size.toLong())
-            ex.responseBody.use { it.write(bytes) }
-        }
+        server.createContext(
+            "/v1/assistant",
+            HttpHandler { ex: HttpExchange ->
+                received = ex.requestBody.bufferedReader().readText()
+                val bytes = body.toByteArray()
+                ex.sendResponseHeaders(status, bytes.size.toLong())
+                ex.responseBody.use { out -> out.write(bytes) }
+            },
+        )
         server.start()
         try {
             return block("http://127.0.0.1:${server.address.port}/") { received }
