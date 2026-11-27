@@ -44,6 +44,9 @@ jobs:
           LMA_KEY_ALIAS: ${{ secrets.LMA_KEY_ALIAS }}
           LMA_KEY_PASSWORD: ${{ secrets.LMA_KEY_PASSWORD }}
           LMA_ASSISTANT_URL: ${{ vars.LMA_ASSISTANT_URL }}
+          # Clé publique des jetons de droits (non secrète) et interrupteur des paiements (défaut false).
+          LMA_ENTITLEMENT_PUBLIC_KEY: ${{ vars.LMA_ENTITLEMENT_PUBLIC_KEY }}
+          LMA_BILLING_ENABLED: ${{ vars.LMA_BILLING_ENABLED }}
         run: ./gradlew --no-daemon testDebugUnitTest assembleDebug assembleRelease bundleRelease
       - name: Vérifier les APK
         run: |
