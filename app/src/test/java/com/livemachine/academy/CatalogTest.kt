@@ -12,7 +12,9 @@ import java.io.File
 
 class CatalogTest {
     private val all = MachineCatalog.all
-    private val pending = CatalogMachines.all
+    /** Machines dont le cours est rédigé d'après leur manuel officiel. */
+    private val withCourse = setOf(MachineCatalog.ELECTRIBE_ID, MachineCatalog.CIRCUIT_TRACKS_ID, CatalogMachines.digitaktII.id)
+    private val pending = all.filter { it.id !in withCourse }
 
     @Test
     fun `catalogue de 20 machines aux identifiants et prefixes uniques`() {
@@ -40,12 +42,13 @@ class CatalogTest {
     fun `un manuel par modele exact`() {
         val files = all.flatMap { m -> m.manuals.map { it.fileName } }
         assertEquals(files.size, files.toSet().size)
-        pending.forEach { m -> assertEquals(m.id, 1, m.manuals.size) }
+        CatalogMachines.all.forEach { m -> assertEquals(m.id, 1, m.manuals.size) }
     }
 
     @Test
     fun `aucun cours sans manuel officiel`() {
-        assertEquals(18, pending.size)
+        assertEquals(withCourse, all.filter { it.hasCourse }.map { it.id }.toSet())
+        assertEquals(17, pending.size)
         pending.forEach { m ->
             assertFalse(m.id, m.hasCourse)
             assertTrue(m.id, m.modules.isEmpty() && m.sections.isEmpty() && m.identifiableControls.isEmpty())
@@ -63,7 +66,7 @@ class CatalogTest {
 
     @Test
     fun `progression routee vers la bonne machine`() {
-        pending.forEach { m ->
+        CatalogMachines.all.forEach { m ->
             assertEquals(m.id, MachineCatalog.machineOfProgressId("${m.progressPrefix}m1-l1"))
             assertEquals(m.id, MachineCatalog.machineOfProgressId("final-${m.progressPrefix}m1"))
         }

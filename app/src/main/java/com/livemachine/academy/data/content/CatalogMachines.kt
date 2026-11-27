@@ -11,7 +11,8 @@ import com.livemachine.academy.data.model.MachineProfile
 import com.livemachine.academy.data.model.ManualSpec
 
 /**
- * Les 18 machines du catalogue sans cours : fiche de présentation générale uniquement.
+ * Les 18 machines du catalogue hors Electribe et Circuit Tracks : fiche de présentation générale,
+ * puis cours dès que le manuel officiel est intégré (Digitakt II).
  * Aucune manipulation, page ou commande n'est enseignée tant que le PDF officiel du modèle exact
  * (voir [ManualSpec.fileName]) n'est pas déposé dans docs/manual/ et le cours rédigé à partir de lui.
  * Pour ajouter un cours : remplir `modules` (préfixe d'ids = progressPrefix) en citant ce manuel.
@@ -51,13 +52,19 @@ object CatalogMachines {
         manuals = listOf(manual),
     )
 
+    /** Cours rédigé d'après le manuel officiel (v2.1.0). */
     val digitaktII = pending(
         "elektron-digitakt-ii", "dt2-", "Elektron", "Digitakt II", SAMPLER, "Sampler et séquenceur",
-        "Boîte à rythmes à samples et séquenceur Elektron, référence des sets techno et hardtek.",
+        "Boîte à rythmes à samples et séquenceur Elektron : 16 pistes audio ou MIDI, échantillonnage stéréo, 128 pas.",
         "Apprendre le séquençage pas à pas façon Elektron : variations par pas (parameter locks) et conditions de déclenchement.",
         "Patterns enchaînés et variations jouées en direct, idéal comme cœur rythmique d'un set.",
         listOf("Techno", "Hardtek", "TribeCore"),
-        ManualSpec("elektron-digitakt-ii.pdf", "manuel d'utilisation officiel du Digitakt II (Elektron)"),
+        ManualSpec("elektron-digitakt-ii.pdf", "Digitakt II User Manual, OS 1.17 (Elektron, anglais)"),
+    ).copy(
+        note = DigitaktIIContent.note,
+        sourcesLabel = DigitaktIIContent.sourcesLabel,
+        modules = DigitaktIIContent.modules,
+        sections = DigitaktIIContent.sections,
     )
     val octatrackMkII = pending(
         "elektron-octatrack-mkii", "ot2-", "Elektron", "Octatrack MKII", SAMPLER, "Sampler de performance",

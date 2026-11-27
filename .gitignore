@@ -12,6 +12,7 @@
 *.aab
 # Le manuel officiel est un document Korg protégé : ne pas le versionner
 docs/manual/*.pdf
+/*.pdf
 
 # Clés de signature
 *.jks

@@ -27,6 +27,9 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Novation Circuit Tracks — Guide d'utilisation, Version 2, en français. */
     CIRCUIT_TRACKS_GUIDE("Guide Circuit Tracks", 6..108),
+
+    /** Elektron Digitakt II — User Manual, OS 1.17 (en anglais). */
+    DIGITAKT_II_MANUAL("Manuel Digitakt II", 10..118),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */
