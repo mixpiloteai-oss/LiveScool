@@ -48,6 +48,7 @@ import kotlin.reflect.KClass
 import com.livemachine.academy.ui.screens.assistant.AssistantScreen
 import com.livemachine.academy.ui.screens.audio.AudioAnalysisScreen
 import com.livemachine.academy.ui.screens.premium.PremiumScreen
+import com.livemachine.academy.ui.screens.legal.LegalScreen
 
 private data class TopLevelDestination(
     val route: Any,
@@ -188,6 +189,13 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
         composable<GlossaryRoute> {
             GlossaryScreen(onOpenSettings = { navController.navigate(SettingsRoute) })
         }
-        composable<SettingsRoute> { SettingsScreen(onBack = back, onOpenPremium = { navController.navigate(PremiumRoute) }) }
+        composable<SettingsRoute> {
+            SettingsScreen(
+                onBack = back,
+                onOpenPremium = { navController.navigate(PremiumRoute) },
+                onOpenLegal = { navController.navigate(LegalRoute(it)) },
+            )
+        }
+        composable<LegalRoute> { LegalScreen(onBack = back) }
     }
 }

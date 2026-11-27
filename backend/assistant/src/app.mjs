@@ -20,6 +20,25 @@ export function createRateLimiter({ max = 20, windowMs = 10 * 60 * 1000, now = (
   };
 }
 
+/** Coupe-circuit de coût : nombre maximal d'appels IA par jour (UTC), tous utilisateurs confondus. */
+export function createDailyBudget({ aiRequests = Infinity, audioAnalyses = Infinity } = {}, now = () => Date.now()) {
+  const counts = new Map();
+  const limits = { ai: aiRequests, audio: audioAnalyses };
+  return {
+    take(kind) {
+      const key = `${kind}:${new Date(now()).toISOString().slice(0, 10)}`;
+      const used = counts.get(key) ?? 0;
+      if (used >= limits[kind]) return false;
+      counts.set(key, used + 1);
+      return true;
+    },
+    give(kind) {
+      const key = `${kind}:${new Date(now()).toISOString().slice(0, 10)}`;
+      counts.set(key, Math.max(0, (counts.get(key) ?? 1) - 1));
+    },
+  };
+}
+
 /**
  * Gestionnaire HTTP (node:http) :
  * - POST /v1/assistant : question à l'assistant ;
@@ -38,6 +57,7 @@ export function createHandler({
   audioRateLimiter = createRateLimiter({ max: 6 }),
   commerce = null,
   rtdnSecret = null,
+  dailyBudget = createDailyBudget(),
   log = console,
 }) {
   return async (req, res) => {
@@ -110,11 +130,18 @@ export function createHandler({
       }
     }
 
+    // Coupe-circuit global (coût IA du jour)
+    const budgetKind = route === 'audio' ? 'audio' : 'ai';
+    if (!dailyBudget.take(budgetKind)) {
+      return error(503, 'capacity_reached', 'Service très demandé aujourd\'hui : réessaie demain.');
+    }
+
     // Quota du plan vérifié côté serveur (jamais d'après ce que dit l'app)
     let quota = null;
     if (commerce) {
       quota = commerce.consume(installId, route === 'audio' ? 'audio' : 'ai');
       if (!quota.ok) {
+        dailyBudget.give(budgetKind);
         const what = route === 'audio' ? 'analyses audio' : 'questions à l\'assistant';
         return send(429, {
           error: {
@@ -128,13 +155,17 @@ export function createHandler({
 
     if (route === 'audio') {
       const ok = await handleAudio(body, provider, send, error, log, quota?.plan ?? 'free');
-      if (!ok) quota?.refund?.();
+      if (!ok) {
+        quota?.refund?.();
+        dailyBudget.give(budgetKind);
+      }
       return;
     }
 
     const parsed = parseRequest(body);
     if (!parsed.ok) {
       quota?.refund?.();
+      dailyBudget.give(budgetKind);
       return error(400, parsed.code, parsed.message);
     }
     try {
@@ -142,6 +173,7 @@ export function createHandler({
       return send(200, { reply: result.text, truncated: result.truncated });
     } catch (e) {
       quota?.refund?.(); // une erreur ne consomme pas de quota
+      dailyBudget.give(budgetKind);
       return providerFailure(e, error, log);
     }
   };

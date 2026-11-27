@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Seul l'assistant IA utilise le réseau (backend de l'app) ; tout le reste fonctionne hors ligne. -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -8,6 +9,10 @@
     <application
         android:name=".LiveMachineApp"
         android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        tools:targetApi="31"
+        android:fullBackupContent="@xml/backup_rules"
+        android:usesCleartextTraffic="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"

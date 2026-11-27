@@ -22,6 +22,11 @@ class AssistantHistoryRepository(private val dataStore: DataStore<Preferences>) 
         }
     }
 
+    /** Efface l'historique de toutes les machines (écran Confidentialité). */
+    suspend fun clearAll() {
+        dataStore.edit { prefs -> prefs.asMap().keys.filter { it.name.startsWith("history_") }.forEach { prefs.remove(it) } }
+    }
+
     suspend fun clear(machineId: String) {
         dataStore.edit { it.remove(key(machineId)) }
     }

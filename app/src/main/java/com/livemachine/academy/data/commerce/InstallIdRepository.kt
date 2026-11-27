@@ -19,6 +19,11 @@ class InstallIdRepository(private val dataStore: DataStore<Preferences>) {
         return id
     }
 
+    /** Nouvel identifiant : l'usage passé n'est plus rattaché ; un abonnement se récupère par « Restaurer mes achats ». */
+    suspend fun reset() {
+        dataStore.edit { it.remove(KEY) }
+    }
+
     private companion object {
         val KEY = stringPreferencesKey("install_id")
     }

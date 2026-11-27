@@ -5,7 +5,7 @@ import { createPublicKey, verify } from 'node:crypto';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createHandler } from '../src/app.mjs';
+import { createDailyBudget, createHandler } from '../src/app.mjs';
 import { DEFAULT_PLAN_CONFIG, loadPlanConfig } from '../src/commerce/config.mjs';
 import { createStore } from '../src/commerce/store.mjs';
 import { createCommerce, generateSigningKey } from '../src/commerce/entitlements.mjs';
@@ -241,5 +241,23 @@ test('stockage fichier : abonnements et compteurs conservés au redémarrage', (
     assert.equal(s2.usage('ai:a'), 3);
   } finally {
     rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('coupe-circuit de coût : plafond global quotidien, erreurs non comptées', async () => {
+  const env = setup();
+  const server = createServer(createHandler({ provider: env.provider, commerce: env.commerce, dailyBudget: createDailyBudget({ aiRequests: 2, audioAnalyses: 1 }), log: {} }));
+  await new Promise((r) => server.listen(0, r));
+  const url = `http://127.0.0.1:${server.address().port}/v1/assistant`;
+  const post = (install, body = ask) => fetch(url, { method: 'POST', headers: { 'content-type': 'application/json', 'x-lma-install': install }, body: JSON.stringify(body) });
+  try {
+    assert.equal((await post(A, { ...ask, message: '' })).status, 400); // invalide : non compté
+    assert.equal((await post(A)).status, 200);
+    assert.equal((await post(B)).status, 200);
+    const r = await post(B);
+    assert.equal(r.status, 503);
+    assert.equal((await r.json()).error.code, 'capacity_reached');
+  } finally {
+    server.close();
   }
 });

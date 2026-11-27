@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ : le jeton de droits Premium n'est jamais sauvegardé ni transféré (il est revérifié par le serveur).
+     Le cache (fichiers audio temporaires) n'est jamais sauvegardé par Android. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="datastore/entitlement.preferences_pb" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="datastore/entitlement.preferences_pb" />
+    </device-transfer>
+</data-extraction-rules>

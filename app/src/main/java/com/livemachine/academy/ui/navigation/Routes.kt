@@ -26,6 +26,14 @@ object QuizKind {
 @Serializable data class AssistantRoute(val lessonId: String = "")
 @Serializable data object AudioAnalysisRoute
 @Serializable data object PremiumRoute
+
+/** [kind] : [PRIVACY] (politique de confidentialité + contrôle des données) ou [TERMS] (conditions d'utilisation). */
+@Serializable data class LegalRoute(val kind: String) {
+    companion object {
+        const val PRIVACY = "privacy"
+        const val TERMS = "terms"
+    }
+}
 @Serializable data object ProgressRoute
 @Serializable data object GlossaryRoute
 @Serializable data object SettingsRoute

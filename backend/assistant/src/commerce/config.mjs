@@ -9,6 +9,8 @@ export const DEFAULT_PLAN_CONFIG = Object.freeze({
   products: { subscriptionId: 'lma_premium', monthlyBasePlan: 'mensuel', annualBasePlan: 'annuel' },
   /** Validité maximale d'un jeton de droits avant nouvelle vérification (hors ligne compris). */
   entitlementTtlHours: 72,
+  /** Plafond global de coût IA par jour, toutes installations confondues (coupe-circuit). */
+  dailyBudget: { aiRequests: 3000, audioAnalyses: 500 },
   /** false : les quotas ne sont pas appliqués (phase de test). */
   enforceQuotas: true,
 });
@@ -34,7 +36,7 @@ export function loadPlanConfig(env = process.env) {
     }
   }
   const cfg = merge(DEFAULT_PLAN_CONFIG, extra);
-  for (const plan of ['free', 'premium']) {
+  for (const plan of ['free', 'premium', 'dailyBudget']) {
     for (const [k, v] of Object.entries(cfg[plan])) {
       if (!Number.isInteger(v) || v < 0) throw new Error(`Limite invalide ${plan}.${k}`);
     }

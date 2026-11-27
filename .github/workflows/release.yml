@@ -7,6 +7,11 @@ name: Publier l'APK
 # publiable seulement s'il est signé avec la clé d'envoi secrète (secrets LMA_*).
 on:
   workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publier une Release GitHub (sinon : APK et AAB seulement en artefacts du workflow)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -80,11 +85,22 @@ jobs:
         with:
           name: live-machine-academy-aab-google-play
           path: play/
+      - name: Aucun secret dans l'APK ni l'AAB
+        run: |
+          set -e
+          mkdir -p /tmp/scan
+          for f in dist/*.apk play/*.aab; do unzip -o -q "$f" -d "/tmp/scan/$(basename "$f")"; done
+          # Clés et identifiants qui ne doivent jamais être embarqués (la clé publique des droits est autorisée)
+          if grep -R -a -l -E "sk-ant-[A-Za-z0-9_-]{10,}|BEGIN (RSA |EC )?PRIVATE KEY|\"private_key\"|client_email|ANTHROPIC_API_KEY|RTDN_SECRET" /tmp/scan; then
+            echo "ERREUR : secret potentiel trouvé dans un paquet"; exit 1
+          fi
+          echo "Aucun secret détecté dans les paquets."
       - uses: actions/upload-artifact@v4
         with:
           name: live-machine-academy-apk
           path: dist/
       - name: Publier la Release GitHub
+        if: ${{ inputs.publish }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

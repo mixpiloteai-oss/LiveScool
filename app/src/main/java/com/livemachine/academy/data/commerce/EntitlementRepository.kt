@@ -32,6 +32,9 @@ interface EntitlementRepository {
 
     /** Envoie un achat Google Play au serveur, qui le vérifie auprès de Google avant d'accorder Premium. */
     suspend fun verifyPurchase(purchaseToken: String): AppResult<Unit> = AppResult.Failure(AppError.NotAvailable)
+
+    /** Oublie le jeton local (après réinitialisation de l'identifiant d'installation). */
+    suspend fun clearLocal() {}
 }
 
 /** Sans serveur configuré : toujours l'offre gratuite. */
@@ -107,6 +110,10 @@ class RemoteEntitlementRepository(
         } finally {
             connection.disconnect()
         }
+    }
+
+    override suspend fun clearLocal() {
+        dataStore.edit { it.remove(RESPONSE) }
     }
 
     private companion object {

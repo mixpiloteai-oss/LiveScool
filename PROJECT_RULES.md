@@ -46,7 +46,11 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - Paiements réels OFF : `LMA_BILLING_ENABLED`/`lmaBillingEnabled` (défaut false) ; verrous appliqués seulement si ON (`commerceEnforced`). Activer uniquement pour les tests Google Play (licences de test), puis production.
 - Prévu : compte, synchro (`data/account`, `data/sync`). Audit : `docs/COMMERCIAL.md`.
 
-## Fait (v1.8.0)
+## Publication (v1.9.0)
+- Fiche Play, icône 512, image 1024×500, formulaire sécurité des données : `docs/play/`. Textes légaux : source `scripts/legal_texts.py` → `docs/legal/*.md` (à héberger) + `LegalTexts.kt` (écrans Confidentialité et Conditions, Paramètres). Champs `[À COMPLÉTER]` : éditeur, contact, hébergeur.
+- Sécurité : trafic en clair interdit, jeton de droits exclu des sauvegardes Android (`res/xml`), effacement historique IA + réinitialisation de l'identifiant (écran Confidentialité), plafond global IA/jour (`dailyBudget`, 503 `capacity_reached`), `release.yml` refuse tout secret dans APK/AAB et ne publie une Release GitHub que si `publish=true`.
+
+## Fait (v1.9.0)
 - Electribe : 9 modules × 6 leçons `VERIFIED`, 8 défis par style.
 - Circuit Tracks : 12 modules × 3 leçons `VERIFIED` (12 q./module), fiche 5 sections, 24 commandes photo, 4 défis, 7 ateliers (pattern, variation, automation, macros, 2 transitions, séquence live ; étapes cochables + validation), 9 termes.
 - Leçon : 8 rubriques, étapes cochables, exercice validé à la main, quiz corrigé (80 %), photo ciblée sur la leçon. Quiz final 10 q., révision des erreurs.

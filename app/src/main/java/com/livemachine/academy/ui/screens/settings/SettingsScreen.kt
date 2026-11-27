@@ -43,6 +43,7 @@ import com.livemachine.academy.data.repository.SettingsRepository
 import com.livemachine.academy.ui.appViewModelFactory
 import com.livemachine.academy.ui.components.AppTopBar
 import com.livemachine.academy.ui.components.Eyebrow
+import com.livemachine.academy.ui.navigation.LegalRoute
 import com.livemachine.academy.ui.components.SectionCard
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -86,6 +87,7 @@ class SettingsViewModel(
 fun SettingsScreen(
     onBack: () -> Unit,
     onOpenPremium: () -> Unit = {},
+    onOpenLegal: (String) -> Unit = {},
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory),
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
@@ -163,6 +165,12 @@ fun SettingsScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 OutlinedButton(onClick = { confirmReset = true }) { Text("Réinitialiser la ${MachineCatalog.byId(settings.selectedMachineId).name}") }
+            }
+            SectionCard {
+                Eyebrow("Confidentialité et conditions")
+                Spacer(Modifier.height(8.dp))
+                OutlinedButton(onClick = { onOpenLegal(LegalRoute.PRIVACY) }) { Text("Confidentialité et mes données") }
+                OutlinedButton(onClick = { onOpenLegal(LegalRoute.TERMS) }) { Text("Conditions d'utilisation") }
             }
             SectionCard {
                 Eyebrow("À propos")

@@ -203,7 +203,7 @@ fun PhotoScreen(
                     Text(
                         "Prends ta propre ${viewModel.machine.name} en photo, vue de dessus, puis choisis-la ici. " +
                             "Tu repères d'abord chaque commande en la touchant sur la photo ; l'app t'interroge ensuite " +
-                            "(« Où est Write ? ») en comparant avec tes repères. La photo reste sur ton téléphone.",
+                            "(« Où est ${viewModel.controls.firstOrNull()?.name ?: "cette commande"} ? ») en comparant avec tes repères. La photo reste sur ton téléphone.",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Spacer(Modifier.height(6.dp))

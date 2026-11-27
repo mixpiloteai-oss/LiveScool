@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import { createHandler } from './app.mjs';
+import { createDailyBudget, createHandler } from './app.mjs';
 import { createProvider } from './providers/provider.mjs';
 import { loadPlanConfig } from './commerce/config.mjs';
 import { createStore } from './commerce/store.mjs';
@@ -16,6 +16,7 @@ import { createFakePlayClient, createGooglePlayClient } from './commerce/googleP
 const env = process.env;
 const provider = await createProvider(env.ASSISTANT_PROVIDER || 'anthropic', env);
 
+const planConfig = loadPlanConfig(env);
 let commerce = null;
 if (env.LMA_ENTITLEMENT_PRIVATE_KEY) {
   let play;
@@ -29,13 +30,13 @@ if (env.LMA_ENTITLEMENT_PRIVATE_KEY) {
   }
   commerce = createCommerce({
     store: createStore({ file: env.LMA_DATA_FILE || null }),
-    config: loadPlanConfig(env),
+    config: planConfig,
     play,
     signingKey: loadSigningKey(env.LMA_ENTITLEMENT_PRIVATE_KEY),
   });
 }
 
 const port = Number(env.PORT || 8080);
-createServer(createHandler({ provider, commerce, rtdnSecret: env.RTDN_SECRET || null })).listen(port, () => {
+createServer(createHandler({ provider, commerce, rtdnSecret: env.RTDN_SECRET || null, dailyBudget: createDailyBudget(planConfig.dailyBudget) })).listen(port, () => {
   console.log(`Live Machine Academy : port ${port}, IA ${provider.name}, offres ${commerce ? 'actives' : 'désactivées'}`);
 });
