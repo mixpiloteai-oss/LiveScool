@@ -101,7 +101,7 @@ fun MachineScreen(
                         Column(Modifier.weight(1f)) {
                             Eyebrow(machine.manufacturer, color = MaterialTheme.colorScheme.onPrimaryContainer)
                             Text(machine.name, style = MaterialTheme.typography.headlineSmall)
-                            Text("${machine.kind} · ${machine.category.label}", style = MaterialTheme.typography.labelMedium)
+                            Text(machine.typeLabel, style = MaterialTheme.typography.labelMedium)
                         }
                     }
                     Spacer(Modifier.height(8.dp))

@@ -39,6 +39,8 @@ data class MachineProfile(
     val fullName: String get() = "$manufacturer $name"
     val lessons: List<Lesson> get() = modules.flatMap { it.lessons }
     val hasCourse: Boolean get() = lessons.isNotEmpty()
+    /** « Type · catégorie », sans répéter la catégorie quand le type la contient déjà. */
+    val typeLabel: String get() = if (kind.contains(category.label, ignoreCase = true)) kind else "$kind · ${category.label}"
     val courseStatusLabel: String get() = if (hasCourse) "Cours disponible" else PENDING_COURSE_LABEL
 
     companion object {

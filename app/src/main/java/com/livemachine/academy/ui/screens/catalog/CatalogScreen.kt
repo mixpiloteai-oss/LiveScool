@@ -148,7 +148,7 @@ private fun MachineCard(machine: MachineProfile, selected: Boolean, onClick: () 
                 Eyebrow(machine.manufacturer, color = MaterialTheme.colorScheme.secondary)
                 Text(machine.name, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    "${machine.kind} · ${machine.category.label}",
+                    machine.typeLabel,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
