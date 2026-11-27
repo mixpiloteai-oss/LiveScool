@@ -3,6 +3,7 @@ import { ProviderError } from './providers/provider.mjs';
 import { AudioFormatError, decodeWav } from './audio/wav.mjs';
 import { AUDIO_LIMITS, analyzeAudio, summarize } from './audio/analyze.mjs';
 import { GOALS, STYLES, buildAudioConversation } from './audio/advice.mjs';
+import { INSTALL_ID } from './commerce/entitlements.mjs';
 
 export const AUDIO_BODY_MAX_BYTES = 6 * 1024 * 1024;
 
@@ -23,7 +24,11 @@ export function createRateLimiter({ max = 20, windowMs = 10 * 60 * 1000, now = (
  * Gestionnaire HTTP (node:http) :
  * - POST /v1/assistant : question à l'assistant ;
  * - POST /v1/audio-analysis : mesures d'un extrait WAV + conseils IA ;
+ * - GET /v1/entitlement : droits signés, limites et usage de l'installation ;
+ * - POST /v1/billing/verify : vérification d'un achat Google Play ;
+ * - POST /v1/billing/rtdn?secret=… : notifications Google Play (Pub/Sub push) ;
  * - GET /health.
+ * Avec `commerce`, chaque appel IA exige l'en-tête X-LMA-Install et consomme le quota du plan vérifié côté serveur.
  * Aucun contenu (texte ou audio) n'est journalisé ni écrit sur disque : l'audio n'existe qu'en mémoire
  * le temps de la requête.
  */
@@ -31,6 +36,8 @@ export function createHandler({
   provider,
   rateLimiter = createRateLimiter(),
   audioRateLimiter = createRateLimiter({ max: 6 }),
+  commerce = null,
+  rtdnSecret = null,
   log = console,
 }) {
   return async (req, res) => {
@@ -40,10 +47,24 @@ export function createHandler({
     };
     const error = (status, code, message) => send(status, { error: { code, message } });
 
-    if (req.method === 'GET' && req.url === '/health') return send(200, { ok: true, provider: provider.name });
-    const route = req.url === '/v1/assistant' ? 'assistant' : req.url === '/v1/audio-analysis' ? 'audio' : null;
+    const url = new URL(req.url, 'http://local');
+    const path = url.pathname;
+    const installId = String(req.headers['x-lma-install'] ?? '').toLowerCase();
+    const validInstall = INSTALL_ID.test(installId);
+
+    if (req.method === 'GET' && path === '/health') return send(200, { ok: true, provider: provider.name });
+    if (req.method === 'GET' && path === '/v1/entitlement') {
+      if (!commerce) return error(503, 'commerce_disabled', 'Offres non configurées sur ce serveur.');
+      if (!validInstall) return error(400, 'install_required', 'Identifiant d\'installation manquant.');
+      return send(200, commerce.entitlement(installId));
+    }
+    const routes = { '/v1/assistant': 'assistant', '/v1/audio-analysis': 'audio', '/v1/billing/verify': 'verify', '/v1/billing/rtdn': 'rtdn' };
+    const route = routes[path] ?? null;
     if (!route) return error(404, 'not_found', 'Ressource inconnue.');
     if (req.method !== 'POST') return error(405, 'method_not_allowed', 'Utiliser POST.');
+    if ((route === 'verify' || route === 'rtdn') && !commerce) return error(503, 'commerce_disabled', 'Offres non configurées sur ce serveur.');
+    if (route === 'rtdn' && (!rtdnSecret || url.searchParams.get('secret') !== rtdnSecret)) return error(403, 'forbidden', 'Accès refusé.');
+    if (commerce && route !== 'rtdn' && !validInstall) return error(400, 'install_required', 'Identifiant d\'installation manquant.');
 
     const ip = String(req.headers['x-forwarded-for'] ?? req.socket.remoteAddress ?? '').split(',')[0].trim();
     const limiter = route === 'audio' ? audioRateLimiter : rateLimiter;
@@ -65,14 +86,62 @@ export function createHandler({
     try { body = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { return error(400, 'invalid_request', 'JSON invalide.'); }
     chunks.length = 0;
 
-    if (route === 'audio') return handleAudio(body, provider, send, error, log);
+    if (route === 'rtdn') {
+      // Pub/Sub : { message: { data: base64(JSON { subscriptionNotification: { purchaseToken } }) } }
+      try {
+        const data = JSON.parse(Buffer.from(body?.message?.data ?? '', 'base64').toString('utf8') || '{}');
+        const token = data?.subscriptionNotification?.purchaseToken;
+        if (token) await commerce.onNotification(token);
+      } catch (e) {
+        log.warn?.(`rtdn: ${e.message}`);
+      }
+      return send(200, { ok: true }); // toujours 200 pour que Pub/Sub ne réessaie pas indéfiniment
+    }
+    if (route === 'verify') {
+      const purchaseToken = typeof body?.purchaseToken === 'string' ? body.purchaseToken.slice(0, 4096) : '';
+      if (!purchaseToken) return error(400, 'invalid_request', 'Jeton d\'achat manquant.');
+      try {
+        const result = await commerce.verifyPurchase(installId, purchaseToken);
+        if (!result.ok) return error(422, result.code, result.message);
+        return send(200, result.entitlement);
+      } catch (e) {
+        log.warn?.(`billing: vérification impossible (${e.message})`);
+        return error(502, 'play_unavailable', 'Vérification Google Play momentanément impossible, réessaie.');
+      }
+    }
+
+    // Quota du plan vérifié côté serveur (jamais d'après ce que dit l'app)
+    let quota = null;
+    if (commerce) {
+      quota = commerce.consume(installId, route === 'audio' ? 'audio' : 'ai');
+      if (!quota.ok) {
+        const what = route === 'audio' ? 'analyses audio' : 'questions à l\'assistant';
+        return send(429, {
+          error: {
+            code: 'quota_exceeded',
+            message: `Limite atteinte : ${quota.limit} ${what} par ${quota.period} avec l'offre ${quota.plan === 'premium' ? 'Premium' : 'gratuite'}.`,
+          },
+          quota: { plan: quota.plan, limit: quota.limit, used: quota.used, period: quota.period },
+        });
+      }
+    }
+
+    if (route === 'audio') {
+      const ok = await handleAudio(body, provider, send, error, log, quota?.plan ?? 'free');
+      if (!ok) quota?.refund?.();
+      return;
+    }
 
     const parsed = parseRequest(body);
-    if (!parsed.ok) return error(400, parsed.code, parsed.message);
+    if (!parsed.ok) {
+      quota?.refund?.();
+      return error(400, parsed.code, parsed.message);
+    }
     try {
       const result = await provider.complete(buildConversation(parsed.value));
       return send(200, { reply: result.text, truncated: result.truncated });
     } catch (e) {
+      quota?.refund?.(); // une erreur ne consomme pas de quota
       return providerFailure(e, error, log);
     }
   };
@@ -109,34 +178,46 @@ export function parseAudioMeta(body) {
   };
 }
 
-async function handleAudio(body, provider, send, error, log) {
+/** Retourne true si des mesures ont été produites (le quota est alors consommé). */
+async function handleAudio(body, provider, send, error, log, plan) {
   const meta = parseAudioMeta(body);
-  if (!meta.ok) return error(meta.code === 'unsupported_format' ? 415 : 400, meta.code ?? 'invalid_request', meta.message);
+  if (!meta.ok) {
+    error(meta.code === 'unsupported_format' ? 415 : 400, meta.code ?? 'invalid_request', meta.message);
+    return false;
+  }
   let audio;
   try {
     audio = decodeWav(Buffer.from(body.audio.base64, 'base64'));
   } catch (e) {
-    if (e instanceof AudioFormatError) return error(415, e.code, e.message);
-    return error(400, 'invalid_request', 'Audio illisible.');
+    if (e instanceof AudioFormatError) error(415, e.code, e.message);
+    else error(400, 'invalid_request', 'Audio illisible.');
+    return false;
   } finally {
     body.audio = null; // l'audio encodé n'est plus référencé
   }
   if (audio.durationSec < AUDIO_LIMITS.minSeconds) {
-    return error(400, 'audio_too_short', `Extrait trop court (minimum ${AUDIO_LIMITS.minSeconds} s).`);
+    error(400, 'audio_too_short', `Extrait trop court (minimum ${AUDIO_LIMITS.minSeconds} s).`);
+    return false;
   }
   if (audio.durationSec > AUDIO_LIMITS.maxSeconds + 1) {
-    return error(413, 'audio_too_long', `Extrait trop long (maximum ${AUDIO_LIMITS.maxSeconds} s).`);
+    error(413, 'audio_too_long', `Extrait trop long (maximum ${AUDIO_LIMITS.maxSeconds} s).`);
+    return false;
   }
   const measures = analyzeAudio(audio);
   audio = null; // les échantillons ne sont plus utilisés
   const summary = summarize(measures);
-  if (measures.silent) return send(200, { measures, summary, advice: null, adviceError: 'Extrait silencieux : pas de conseils.' });
+  if (measures.silent) {
+    send(200, { measures, summary, advice: null, adviceError: 'Extrait silencieux : pas de conseils.' });
+    return false;
+  }
   try {
-    const result = await provider.complete(buildAudioConversation({ ...meta.value, measures, summary }));
-    return send(200, { measures, summary, advice: result.text, adviceError: null });
+    const result = await provider.complete(buildAudioConversation({ ...meta.value, measures, summary, plan }));
+    send(200, { measures, summary, advice: result.text, adviceError: null, plan });
+    return true;
   } catch (e) {
     // Les mesures restent utiles même si l'IA est indisponible.
     log.warn?.(`audio: conseils indisponibles (${e?.code ?? e?.name})`);
-    return send(200, { measures, summary, advice: null, adviceError: 'Conseils IA indisponibles pour le moment ; les mesures ci-dessus restent valables.' });
+    send(200, { measures, summary, advice: null, adviceError: 'Conseils IA indisponibles pour le moment ; les mesures ci-dessus restent valables.' });
+    return true;
   }
 }

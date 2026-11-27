@@ -10,7 +10,8 @@
   "scripts": {
     "start": "node src/server.mjs",
     "test": "node --test test/*.test.mjs",
-    "analyze": "node src/cli.mjs"
+    "analyze": "node src/cli.mjs",
+    "keys": "node src/keys.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.14.0"

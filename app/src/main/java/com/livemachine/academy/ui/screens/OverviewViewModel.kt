@@ -11,13 +11,17 @@ import com.livemachine.academy.data.model.Lesson
 import com.livemachine.academy.data.model.QuizScore
 import com.livemachine.academy.data.model.StyleChallenge
 import com.livemachine.academy.data.model.UserProgress
+import com.livemachine.academy.data.commerce.EntitlementRepository
 import com.livemachine.academy.data.repository.CourseRepository
 import com.livemachine.academy.data.repository.ProgressRepository
 import com.livemachine.academy.data.repository.SettingsRepository
 import com.livemachine.academy.domain.ProgressRules
+import com.livemachine.academy.domain.commerce.CommerceRules
+import com.livemachine.academy.domain.commerce.Entitlements
 import com.livemachine.academy.ui.appViewModelFactory
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -31,6 +35,8 @@ data class ModuleProgress(
     val validated: Boolean = false,
     val competenceAcquired: Boolean = false,
     val finalScore: QuizScore? = null,
+    /** Module hors de l'offre gratuite (uniquement quand les paiements sont activés). */
+    val premiumLocked: Boolean = false,
 ) {
     val total: Int get() = module.lessons.size
     val fraction: Float get() = if (total == 0) 0f else completed.toFloat() / total
@@ -51,7 +57,13 @@ data class OverviewUiState(
     val unlockAll: Boolean = false,
     val machine: MachineProfile = MachineCatalog.electribe,
     val machines: List<MachineProfile> = MachineCatalog.all,
+    val entitlements: Entitlements = Entitlements.Free,
+    val commerceEnforced: Boolean = false,
 ) {
+    /** Défi ou atelier inclus dans l'offre (son module requis l'est). */
+    fun isIncluded(moduleId: String) =
+        CommerceRules.isModuleIdIncluded(moduleId, modules.map { it.module.id }, entitlements, commerceEnforced)
+
     val totalLessons: Int get() = modules.sumOf { it.total }
     val completedLessons: Int get() = modules.sumOf { it.completed }
     val fraction: Float get() = if (totalLessons == 0) 0f else completedLessons.toFloat() / totalLessons
@@ -65,21 +77,26 @@ class OverviewViewModel(
     private val course: CourseRepository,
     private val progressRepository: ProgressRepository,
     private val settingsRepository: SettingsRepository,
+    entitlementRepository: EntitlementRepository,
+    private val commerceEnforced: Boolean,
 ) : ViewModel() {
 
     /** Progression lue dans le fichier de la machine choisie uniquement. */
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<OverviewUiState> = settingsRepository.settings.flatMapLatest { settings ->
         progressRepository.progressOf(settings.selectedMachineId).map { progress -> settings to progress }
-    }.map { (settings, progress) ->
+    }.combine(entitlementRepository.entitlements) { pair, entitlements -> Triple(pair.first, pair.second, entitlements) }
+        .map { (settings, progress, entitlements) ->
         val machineId = settings.selectedMachineId
         val modules = course.modules(machineId)
         OverviewUiState(
             modules = modules.mapIndexed { index, module ->
+                val included = CommerceRules.isModuleIncluded(index, entitlements, commerceEnforced)
                 ModuleProgress(
                     module = module,
                     completed = module.lessons.count { progress.isLessonDone(it.id) },
-                    unlocked = ProgressRules.isUnlocked(modules, index, progress, settings.unlockAllModules),
+                    unlocked = included && ProgressRules.isUnlocked(modules, index, progress, settings.unlockAllModules),
+                    premiumLocked = !included,
                     validated = ProgressRules.isValidated(module, progress),
                     competenceAcquired = ProgressRules.competenceAcquired(module, progress),
                     finalScore = progress.bestQuizScores[ProgressRules.finalQuizId(module.id)],
@@ -97,6 +114,8 @@ class OverviewViewModel(
             unlockAll = settings.unlockAllModules,
             machine = course.machine(machineId),
             machines = course.machines(),
+            entitlements = entitlements,
+            commerceEnforced = commerceEnforced,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), OverviewUiState())
 
@@ -128,7 +147,7 @@ class OverviewViewModel(
 
     companion object {
         val Factory = appViewModelFactory { c, _ ->
-            OverviewViewModel(c.courseRepository, c.progressRepository, c.settingsRepository)
+            OverviewViewModel(c.courseRepository, c.progressRepository, c.settingsRepository, c.entitlementRepository, c.commerceEnforced)
         }
     }
 }

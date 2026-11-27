@@ -47,6 +47,7 @@ import com.livemachine.academy.ui.screens.settings.SettingsScreen
 import kotlin.reflect.KClass
 import com.livemachine.academy.ui.screens.assistant.AssistantScreen
 import com.livemachine.academy.ui.screens.audio.AudioAnalysisScreen
+import com.livemachine.academy.ui.screens.premium.PremiumScreen
 
 private data class TopLevelDestination(
     val route: Any,
@@ -138,8 +139,9 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
                 onOpenAudio = { navController.navigate(AudioAnalysisRoute) },
             )
         }
-        composable<AssistantRoute> { AssistantScreen(onBack = back) }
-        composable<AudioAnalysisRoute> { AudioAnalysisScreen(onBack = back) }
+        composable<AssistantRoute> { AssistantScreen(onBack = back, onOpenPremium = { navController.navigate(PremiumRoute) }) }
+        composable<AudioAnalysisRoute> { AudioAnalysisScreen(onBack = back, onOpenPremium = { navController.navigate(PremiumRoute) }) }
+        composable<PremiumRoute> { PremiumScreen(onBack = back) }
         composable<PathRoute> {
             PathScreen(
                 onOpenModule = openModule,
@@ -186,6 +188,6 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
         composable<GlossaryRoute> {
             GlossaryScreen(onOpenSettings = { navController.navigate(SettingsRoute) })
         }
-        composable<SettingsRoute> { SettingsScreen(onBack = back) }
+        composable<SettingsRoute> { SettingsScreen(onBack = back, onOpenPremium = { navController.navigate(PremiumRoute) }) }
     }
 }

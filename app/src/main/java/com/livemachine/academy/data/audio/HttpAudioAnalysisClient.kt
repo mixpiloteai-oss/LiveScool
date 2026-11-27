@@ -16,6 +16,8 @@ class HttpAudioAnalysisClient(
     private val baseUrl: String,
     private val connectTimeoutMs: Int = 15_000,
     private val readTimeoutMs: Int = 120_000,
+    /** Identifiant d\'installation envoyé au serveur pour les quotas (en-tête X-LMA-Install). */
+    private val installId: suspend () -> String? = { null },
 ) : AudioAnalyzer {
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true; explicitNulls = false }
 
@@ -33,6 +35,7 @@ class HttpAudioAnalysisClient(
             connection.doOutput = true
             connection.setFixedLengthStreamingMode(payload.size)
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
+            installId()?.let { connection.setRequestProperty("X-LMA-Install", it) }
             connection.outputStream.use { it.write(payload) }
             val code = connection.responseCode
             val body = (if (code in 200..299) connection.inputStream else connection.errorStream)
@@ -43,7 +46,11 @@ class HttpAudioAnalysisClient(
                 if (result.summary.isEmpty()) return@withContext AppResult.Failure(AppError.Unexpected("Aucune mesure reçue."))
                 AppResult.Success(result)
             } else {
-                val message = runCatching { json.decodeFromString(ApiErrorBody.serializer(), body).error?.message }.getOrNull().orEmpty()
+                val apiError = runCatching { json.decodeFromString(ApiErrorBody.serializer(), body).error }.getOrNull()
+                if (code == 429 && apiError?.code == "quota_exceeded") {
+                    return@withContext AppResult.Failure(AppError.QuotaExceeded(apiError.message))
+                }
+                val message = runCatching { apiError?.message }.getOrNull().orEmpty()
                 AppResult.Failure(
                     when (code) {
                         429 -> AppError.RateLimited

@@ -220,6 +220,8 @@ scroll_to_and_tap "Assistant IA" && shot 31-assistant
 restart
 scroll_to_and_tap "Analyse audio IA" && shot 32-analyse-audio
 restart
+tap_tab "Progrès" && tap_text "Paramètres" && scroll_to_and_tap "Gratuit ou Premium, abonnement" && shot 33-premium
+restart
 tap_text "Electribe Sampler 2" && shot 26-retour-electribe
 
 # Taille de texte « Très grande »

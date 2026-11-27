@@ -4,7 +4,7 @@
 App Android native, APK installable, 100 % hors ligne : apprendre une vraie machine leçon par leçon (lire sur le téléphone, pratiquer sur la machine). Styles : hardtek, tribe, tribeCore, acidcore, mentalcore. Pas de cours Ableton ni import SD (déjà maîtrisés).
 
 ## Interdits
-Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistant IA et l'analyse audio (permissions `INTERNET`, `RECORD_AUDIO` demandée au clic « Enregistrer ») ; tout le reste hors ligne. Toute autre permission fait échouer `release.yml`. Jamais d'enregistrement ni d'envoi audio sans action explicite.
+Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistant IA et l'analyse audio (permissions `INTERNET`, `RECORD_AUDIO` demandée au clic « Enregistrer », `BILLING` de Play Billing) ; tout le reste hors ligne. Toute autre permission fait échouer `release.yml`. Jamais d'enregistrement ni d'envoi audio sans action explicite.
 
 ## Machines (`data/content/MachineCatalog.kt`)
 | Machine | id | Préfixe ids | Contenu |
@@ -40,20 +40,23 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - Backend `POST /v1/audio-analysis` (WAV base64 ≤ 6 Mo, 5–75 s, 6 req./10 min/IP) : `src/audio/wav.mjs` (décodage en mémoire, aucun fichier), `analyze.mjs` (niveaux, bandes, tempo par autocorrélation + affinage, stabilité, kick, graves entre kicks, énergie, breaks, sections ; liste « non mesuré »), `advice.mjs` (l'IA reçoit seulement les mesures : Mesures / Ce que ça suggère / Conseils / Non mesuré). Mesures renvoyées même si l'IA échoue. `npm run analyze -- f.wav`.
 - Gratuit pendant le MVP (`Feature.AUDIO_ANALYSIS`). Pas d'écoute en temps réel.
 
-## Commercial (structure inactive)
-`domain/commerce` (`Feature`, `Plan`, `FeatureGate`), `domain/result` (`AppResult`), `data/commerce|account|sync|services` : implémentations locales (gratuit, invité, pas de synchro, IA/audio indisponibles), branchées dans `AppContainer`. Contenu actuel 100 % gratuit ; Premium prévu : synchro. Pas de chatbot ni paiement. Audit et étapes : `docs/COMMERCIAL.md`.
+## Offres gratuite / Premium (v1.8.0)
+- Serveur (`backend/assistant/src/commerce`) : `config.mjs` (limites dans `LMA_PLAN_CONFIG` : modules gratuits/machine 3, IA 5/j vs 60/j, audio 3/mois vs 40/mois, produit `lma_premium` + offres `mensuel`/`annuel`, `enforceQuotas`), `subscription.mjs` (états Google → Premium si actif, grâce ou annulé avant échéance), `googlePlay.mjs` (API subscriptionsv2 + acknowledge, compte de service ; faux client `BILLING_MODE=fake` pour tests), `entitlements.mjs` (quotas par installation, jeton de droits signé ECDSA P-256, TTL ≤ 72 h), `store.mjs` (mémoire ou `LMA_DATA_FILE`). Routes `GET /v1/entitlement`, `POST /v1/billing/verify`, `POST /v1/billing/rtdn?secret=`. En-tête `X-LMA-Install` obligatoire, 429 `quota_exceeded`. `npm run keys`.
+- App : `InstallIdRepository` (UUID), `EntitlementVerifier` (clé publique `LMA_ENTITLEMENT_PUBLIC_KEY`), `RemoteEntitlementRepository` (jeton revérifié à chaque lecture), `BillingManager` (Play Billing 7.1.1 : offres, achat, restauration ; n'accorde jamais Premium lui-même), `domain/commerce` (`Feature`, `Entitlements.isPremium` = vérifié, `CommerceRules`, `PremiumTexts`), écran `ui/screens/premium` (offre, usage, comparatif, abonnement, restaurer, gérer sur Google Play). Verrous : modules, leçons, défis/ateliers avancés.
+- Paiements réels OFF : `LMA_BILLING_ENABLED`/`lmaBillingEnabled` (défaut false) ; verrous appliqués seulement si ON (`commerceEnforced`). Activer uniquement pour les tests Google Play (licences de test), puis production.
+- Prévu : compte, synchro (`data/account`, `data/sync`). Audit : `docs/COMMERCIAL.md`.
 
-## Fait (v1.7.0)
+## Fait (v1.8.0)
 - Electribe : 9 modules × 6 leçons `VERIFIED`, 8 défis par style.
 - Circuit Tracks : 12 modules × 3 leçons `VERIFIED` (12 q./module), fiche 5 sections, 24 commandes photo, 4 défis, 7 ateliers (pattern, variation, automation, macros, 2 transitions, séquence live ; étapes cochables + validation), 9 termes.
 - Leçon : 8 rubriques, étapes cochables, exercice validé à la main, quiz corrigé (80 %), photo ciblée sur la leçon. Quiz final 10 q., révision des erreurs.
 - Photo : l'utilisateur photographie SA machine ; aucune image constructeur.
-- Tests : `CourseContentTest`, `CircuitTracksContentTest`, `MultiMachineTest`, `ProgressRepositoryTest`, `CommerceTest`, `AssistantTest`, `AudioAnalysisTest`, `QuizSessionTest`, `ProgressRulesTest`.
+- Tests : `CourseContentTest`, `CircuitTracksContentTest`, `MultiMachineTest`, `ProgressRepositoryTest`, `CommerceTest` (offres, jetons, verrous, droits), `AssistantTest`, `AudioAnalysisTest`, `QuizSessionTest`, `ProgressRulesTest`.
 - CI : `android.yml` (tests, lint, APK debug + release) ; `screenshots.yml` (émulateur ; `variant`, `upgrade_from`, `script_mode=smoke` ; commite `docs/screenshots/`) ; `release.yml` (vérifie, refuse INTERNET, publie les APK ; AAB Play en artefact, alerte si signé avec la clé partagée). Release publiée : v1.4.0.
 - Signature : `app/debug.keystore` partagée non secrète ; `LMA_KEYSTORE_*` prioritaire. APK ≤ 1.1.2 : désinstallation unique.
 
 ## Prochaine tâche
-Déployer le backend (HTTPS) et définir `LMA_ASSISTANT_URL`, puis décisions Play (`docs/COMMERCIAL.md`) : clé d'envoi secrète (secrets `LMA_*`), confidentialité, avis marques. Puis retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
+Déployer le backend (HTTPS, `LMA_ENTITLEMENT_PRIVATE_KEY`, compte de service Play, `RTDN_SECRET`) et définir `LMA_ASSISTANT_URL` + `LMA_ENTITLEMENT_PUBLIC_KEY` ; créer `lma_premium` (mensuel/annuel) dans la Play Console ; tests internes avec `LMA_BILLING_ENABLED=true` et licences de test ; clé d'envoi, confidentialité, avis marques. Puis retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
 
 ## Règles de travail
 - Aucune fonction inventée : toute info machine cite sa `ManualRef` ; `VERIFIED` seulement si vérifié.

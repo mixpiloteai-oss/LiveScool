@@ -18,6 +18,8 @@ class HttpAssistantClient(
     private val baseUrl: String,
     private val connectTimeoutMs: Int = 15_000,
     private val readTimeoutMs: Int = 90_000,
+    /** Identifiant d\'installation envoyé au serveur pour les quotas (en-tête X-LMA-Install). */
+    private val installId: suspend () -> String? = { null },
 ) : MusicAssistant {
 
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true; explicitNulls = false }
@@ -34,6 +36,7 @@ class HttpAssistantClient(
             connection.readTimeout = readTimeoutMs
             connection.doOutput = true
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
+            installId()?.let { connection.setRequestProperty("X-LMA-Install", it) }
             connection.setRequestProperty("Accept", "application/json")
             connection.outputStream.use { it.write(json.encodeToString(AssistantRequest.serializer(), request).toByteArray()) }
             val code = connection.responseCode
@@ -45,7 +48,11 @@ class HttpAssistantClient(
                 if (reply.reply.isBlank()) return@withContext AppResult.Failure(AppError.Unexpected("Réponse vide."))
                 AppResult.Success(reply.reply)
             } else {
-                val message = runCatching { json.decodeFromString(ApiErrorBody.serializer(), body).error?.message }
+                val apiError = runCatching { json.decodeFromString(ApiErrorBody.serializer(), body).error }.getOrNull()
+                if (code == 429 && apiError?.code == "quota_exceeded") {
+                    return@withContext AppResult.Failure(AppError.QuotaExceeded(apiError.message))
+                }
+                val message = runCatching { apiError?.message }
                     .getOrNull().orEmpty()
                 AppResult.Failure(
                     when (code) {

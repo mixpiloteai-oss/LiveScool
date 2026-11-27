@@ -70,7 +70,8 @@ fun ChallengesScreen(
                     WorkshopCard(
                         workshop = w,
                         progress = state.progress,
-                        open = state.unlockAll || state.isModuleValidated(w.requiredModuleId),
+                        open = state.isIncluded(w.requiredModuleId) && (state.unlockAll || state.isModuleValidated(w.requiredModuleId)),
+                        premium = !state.isIncluded(w.requiredModuleId),
                         moduleLabel = state.modules.firstOrNull { it.module.id == w.requiredModuleId }?.module
                             ?.let { "Module ${it.number} (${it.title})" } ?: "",
                         onToggleStep = { viewModel.toggleWorkshopStep(w.id, it) },
@@ -97,7 +98,8 @@ fun ChallengesScreen(
             }
             items(shown, key = { it.id }) { ch ->
                 val module = state.modules.firstOrNull { it.module.id == ch.requiredModuleId }?.module
-                val open = state.unlockAll || state.isModuleValidated(ch.requiredModuleId)
+                val premium = !state.isIncluded(ch.requiredModuleId)
+                val open = !premium && (state.unlockAll || state.isModuleValidated(ch.requiredModuleId))
                 val done = ch.id in state.progress.completedChallenges
                 SectionCard {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -115,7 +117,8 @@ fun ChallengesScreen(
                     if (!open) {
                         Spacer(Modifier.height(6.dp))
                         Text(
-                            "Se débloque quand le Module ${module?.number ?: "?"} (${module?.title ?: ""}) est validé.",
+                            if (premium) "Défi avancé inclus dans Premium."
+                            else "Se débloque quand le Module ${module?.number ?: "?"} (${module?.title ?: ""}) est validé.",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -146,6 +149,7 @@ private fun WorkshopCard(
     workshop: CreativeWorkshop,
     progress: UserProgress,
     open: Boolean,
+    premium: Boolean = false,
     moduleLabel: String,
     onToggleStep: (Int) -> Unit,
     onValidate: () -> Unit,
@@ -168,7 +172,7 @@ private fun WorkshopCard(
         if (!open) {
             Spacer(Modifier.height(6.dp))
             Text(
-                "Se débloque quand le $moduleLabel est validé.",
+                if (premium) "Atelier avancé inclus dans Premium." else "Se débloque quand le $moduleLabel est validé.",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

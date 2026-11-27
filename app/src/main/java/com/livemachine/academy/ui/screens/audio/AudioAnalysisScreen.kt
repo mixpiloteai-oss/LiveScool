@@ -68,6 +68,7 @@ import com.livemachine.academy.data.repository.SettingsRepository
 import com.livemachine.academy.data.services.AudioAnalyzer
 import com.livemachine.academy.domain.assistant.AssistantContextBuilder
 import com.livemachine.academy.domain.audio.AudioClipRules
+import com.livemachine.academy.domain.result.AppError
 import com.livemachine.academy.domain.result.AppResult
 import com.livemachine.academy.ui.appViewModelFactory
 import com.livemachine.academy.ui.components.AppTopBar
@@ -104,6 +105,7 @@ data class AudioUiState(
     val result: AudioAnalysisResult? = null,
     val error: String? = null,
     val info: String? = null,
+    val quotaReached: Boolean = false,
 )
 
 class AudioAnalysisViewModel(
@@ -213,7 +215,7 @@ class AudioAnalysisViewModel(
                     _state.update { it.copy(sending = false, result = result.value) }
                 }
                 is AppResult.Failure -> _state.update {
-                    it.copy(sending = false, error = AssistantViewModel.messageFor(result.error))
+                    it.copy(sending = false, error = AssistantViewModel.messageFor(result.error), quotaReached = result.error is AppError.QuotaExceeded)
                 }
             }
         }
@@ -244,6 +246,7 @@ class AudioAnalysisViewModel(
 @Composable
 fun AudioAnalysisScreen(
     onBack: () -> Unit,
+    onOpenPremium: () -> Unit = {},
     viewModel: AudioAnalysisViewModel = viewModel(factory = AudioAnalysisViewModel.Factory),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -420,7 +423,12 @@ fun AudioAnalysisScreen(
                     Text("Analyse en cours…", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
-            state.error?.let { SectionCard { Text(it, color = MaterialTheme.colorScheme.error) } }
+            state.error?.let {
+                SectionCard {
+                    Text(it, color = MaterialTheme.colorScheme.error)
+                    if (state.quotaReached) OutlinedButton(onClick = onOpenPremium) { Text("Voir Premium") }
+                }
+            }
             state.result?.let { ResultCards(it) }
         }
     }

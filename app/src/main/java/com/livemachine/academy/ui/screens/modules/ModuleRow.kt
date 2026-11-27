@@ -44,6 +44,7 @@ fun ModuleRow(item: ModuleProgress, highlighted: Boolean = false, onClick: () ->
         ProgressLine(item.fraction)
         Spacer(Modifier.height(4.dp))
         val status = when {
+            item.premiumLocked -> "Premium · inclus dans l'abonnement"
             !item.unlocked -> "Verrouillé · valide le module précédent"
             item.competenceAcquired -> "Compétence acquise"
             item.validated -> "Module validé"

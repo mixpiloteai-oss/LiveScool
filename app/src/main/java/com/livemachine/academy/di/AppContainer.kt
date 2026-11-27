@@ -16,7 +16,10 @@ import com.livemachine.academy.data.audio.HttpAudioAnalysisClient
 import com.livemachine.academy.data.audio.TempAudioStore
 import com.livemachine.academy.data.account.GuestAccountRepository
 import com.livemachine.academy.data.commerce.EntitlementRepository
+import com.livemachine.academy.data.commerce.BillingManager
 import com.livemachine.academy.data.commerce.FreeEntitlementRepository
+import com.livemachine.academy.data.commerce.InstallIdRepository
+import com.livemachine.academy.data.commerce.RemoteEntitlementRepository
 import com.livemachine.academy.data.content.MachineCatalog
 import com.livemachine.academy.data.services.AudioAnalyzer
 import com.livemachine.academy.data.services.MusicAssistant
@@ -36,6 +39,7 @@ import com.livemachine.academy.data.repository.SettingsRepository
 private val Context.progressStore: DataStore<Preferences> by preferencesDataStore(name = "progress")
 private val Context.settingsStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 private val Context.assistantStore: DataStore<Preferences> by preferencesDataStore(name = "assistant_history")
+private val Context.entitlementStore: DataStore<Preferences> by preferencesDataStore(name = "entitlement")
 private val Context.photoStore: DataStore<Preferences> by preferencesDataStore(name = "machine_photo")
 
 /** Injection de dépendances manuelle : suffisante pour une app de cette taille. */
@@ -60,14 +64,26 @@ class AppContainer(context: Context) {
         scope.launch { progressRepository.migrateLegacy() }
     }
 
-    // Structure commerciale : compte, abonnement et synchro restent locaux (pas de paiement) ; seul l'assistant utilise le réseau.
-    val entitlementRepository: EntitlementRepository = FreeEntitlementRepository()
+    /** Adresse publique du backend (aucun secret) ; vide = assistant, analyse et offres non configurés. */
+    val assistantConfigured: Boolean = BuildConfig.ASSISTANT_URL.isNotBlank()
+    val installIdRepository = InstallIdRepository(appContext.settingsStore)
+    private val installId: suspend () -> String? = { installIdRepository.get() }
+
+    /** Droits : uniquement d'après un jeton signé par le serveur et vérifié avec la clé publique de l'app. */
+    val entitlementRepository: EntitlementRepository =
+        if (assistantConfigured && BuildConfig.ENTITLEMENT_PUBLIC_KEY.isNotBlank()) {
+            RemoteEntitlementRepository(appContext.entitlementStore, installIdRepository, BuildConfig.ASSISTANT_URL, BuildConfig.ENTITLEMENT_PUBLIC_KEY)
+        } else {
+            FreeEntitlementRepository()
+        }
+
+    /** Offre appliquée (modules et défis Premium) seulement quand les paiements sont activés dans ce build. */
+    val commerceEnforced: Boolean = BuildConfig.BILLING_ENABLED && entitlementRepository is RemoteEntitlementRepository
+    val billingManager = BillingManager(appContext, entitlementRepository, installIdRepository, enabled = commerceEnforced)
     val accountRepository: AccountRepository = GuestAccountRepository()
     val progressSync: ProgressSync = LocalOnlyProgressSync()
-    /** Adresse publique du backend (aucun secret) ; vide = assistant non configuré dans ce build. */
-    val assistantConfigured: Boolean = BuildConfig.ASSISTANT_URL.isNotBlank()
     val audioAnalyzer: AudioAnalyzer =
-        if (assistantConfigured) HttpAudioAnalysisClient(BuildConfig.ASSISTANT_URL) else UnavailableAudioAnalyzer()
+        if (assistantConfigured) HttpAudioAnalysisClient(BuildConfig.ASSISTANT_URL, installId = installId) else UnavailableAudioAnalyzer()
     val audioDecoder = AudioDecoder(appContext)
     val audioRecorder = AudioRecorder(appContext)
     val tempAudioStore = TempAudioStore(appContext.cacheDir)
@@ -75,9 +91,11 @@ class AppContainer(context: Context) {
     init {
         // Aucun audio ne survit à un redémarrage de l'app (fichiers temporaires d'une session interrompue).
         tempAudioStore.clear()
+        // Droits rafraîchis au démarrage (sans réseau : le dernier jeton signé reste valable jusqu'à son expiration).
+        scope.launch { entitlementRepository.refresh() }
     }
     val musicAssistant: MusicAssistant =
-        if (assistantConfigured) HttpAssistantClient(BuildConfig.ASSISTANT_URL) else UnavailableMusicAssistant()
+        if (assistantConfigured) HttpAssistantClient(BuildConfig.ASSISTANT_URL, installId = installId) else UnavailableMusicAssistant()
     val assistantHistoryRepository = AssistantHistoryRepository(appContext.assistantStore)
     val settingsRepository = SettingsRepository(appContext.settingsStore)
     val photoRepository = MachinePhotoRepository(appContext, appContext.photoStore)

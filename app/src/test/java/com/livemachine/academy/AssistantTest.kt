@@ -91,6 +91,10 @@ class AssistantTest {
         withServer(429, """{"error":{"code":"rate_limited","message":"Trop"}}""") { url, _ ->
             assertEquals(AppResult.Failure(AppError.RateLimited), runBlocking { HttpAssistantClient(url).ask(request) })
         }
+        withServer(429, """{"error":{"code":"quota_exceeded","message":"Limite atteinte : 5 questions à l'assistant par jour avec l'offre gratuite."}}""") { url, received ->
+            val result = runBlocking { HttpAssistantClient(url, installId = { "11111111-1111-4111-8111-111111111111" }).ask(request) }
+            assertEquals(AppResult.Failure(AppError.QuotaExceeded("Limite atteinte : 5 questions à l'assistant par jour avec l'offre gratuite.")), result)
+        }
         withServer(400, """{"error":{"code":"message_too_long","message":"Message limité à 500 caractères."}}""") { url, _ ->
             assertEquals(AppResult.Failure(AppError.Rejected("Message limité à 500 caractères.")), runBlocking { HttpAssistantClient(url).ask(request) })
         }

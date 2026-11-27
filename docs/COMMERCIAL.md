@@ -16,7 +16,7 @@
 | Besoin | Contrat | Implémentation actuelle |
 |---|---|---|
 | Gratuit / Premium | `domain/commerce/Features.kt` : `Feature`, `Plan`, `Entitlements`, `FeatureGate` | tout le contenu actuel `FREE` ; Premium = `PLANNED` |
-| Abonnements | `data/commerce/EntitlementRepository` | `FreeEntitlementRepository` (toujours gratuit) |
+| Abonnements | Play Billing + `/v1/billing/verify` + jeton signé | **Actif côté code, paiements OFF** (v1.8.0) |
 | Compte facultatif | `data/account/AccountRepository` | `GuestAccountRepository` (invité) |
 | Synchro progression | `data/sync/ProgressSync` (par machine) | `LocalOnlyProgressSync` |
 | Assistant IA | `MusicAssistant` | **MVP actif** : `HttpAssistantClient` → `backend/assistant` (v1.6.0) |
@@ -29,5 +29,5 @@ Branchement unique : `di/AppContainer`. Paramètres affiche l'offre (« Gratuite
 1. Clé d'envoi secrète (secrets `LMA_*`) : l'AAB devient publiable.
 2. Politique de confidentialité, fiche Play, avis juridique marques.
 3. Compte : Credential Manager (Google), seule fonction réseau → première permission `INTERNET`.
-4. Abonnements : Google Play Billing + vérification serveur des achats → `EntitlementRepository` réel.
+4. ~~Abonnements~~ fait en v1.8.0 : reste la création du produit dans la Play Console et les tests avec licences de test.
 5. Synchro, assistant en Premium si souhaité, analyse audio (traitement local de préférence, envoi seulement avec accord).

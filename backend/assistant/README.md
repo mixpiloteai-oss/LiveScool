@@ -8,6 +8,11 @@ ne contient aucun secret, seulement l'adresse publique de ce serveur.
 - `POST /v1/audio-analysis` : `{ machine, style, goal, level, context, audio:{format:'wav', base64} }` → `{ measures, summary,
   advice, adviceError }`. WAV PCM/flottant, 5–75 s, 6 Mo, 6 analyses / 10 min par IP. L'audio est décodé et mesuré
   **en mémoire** (aucun fichier écrit), puis oublié ; l'IA ne reçoit que les mesures. Autre format → 415.
+- Offres (avec `LMA_ENTITLEMENT_PRIVATE_KEY`) : `GET /v1/entitlement`, `POST /v1/billing/verify {purchaseToken}`,
+  `POST /v1/billing/rtdn?secret=RTDN_SECRET` (Pub/Sub). En-tête `X-LMA-Install` (UUID) obligatoire ; quotas du plan
+  vérifié côté serveur (`LMA_PLAN_CONFIG`), 429 `quota_exceeded`. Premium = abonnement Google Play vérifié (API
+  subscriptionsv2, compte de service `GOOGLE_SERVICE_ACCOUNT_JSON`, `PLAY_PACKAGE_NAME`), jamais une valeur de l'app.
+  `npm run keys` génère la paire de clés (privée : serveur ; publique : `LMA_ENTITLEMENT_PUBLIC_KEY` de l'app).
 - `GET /health`.
 - Limites : message 500 caractères, 6 messages d'historique, 5 extraits de contexte de 700 caractères, 24 Ko,
   20 questions / 10 min par IP. Aucun contenu de conversation n'est journalisé.

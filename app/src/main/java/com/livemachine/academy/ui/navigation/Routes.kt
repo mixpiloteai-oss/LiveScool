@@ -25,6 +25,7 @@ object QuizKind {
 /** [lessonId] : leçon d'où l'assistant est ouvert (vide = contexte de la machine choisie). */
 @Serializable data class AssistantRoute(val lessonId: String = "")
 @Serializable data object AudioAnalysisRoute
+@Serializable data object PremiumRoute
 @Serializable data object ProgressRoute
 @Serializable data object GlossaryRoute
 @Serializable data object SettingsRoute

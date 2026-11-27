@@ -85,6 +85,7 @@ class SettingsViewModel(
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
+    onOpenPremium: () -> Unit = {},
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory),
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
@@ -141,14 +142,16 @@ fun SettingsScreen(
             SectionCard {
                 Eyebrow("Ton offre")
                 Spacer(Modifier.height(8.dp))
-                Text(if (entitlements.plan == Plan.PREMIUM) "Premium" else "Gratuite", style = MaterialTheme.typography.titleMedium)
+                Text(if (entitlements.isPremium) "Premium" else "Gratuite", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    "Tout le contenu actuel est inclus, hors ligne. Prévu plus tard : " +
+                    "Prévu plus tard : " +
                         Feature.entries.filter { it.availability == Availability.PLANNED }.joinToString(", ") { it.label.lowercase() } + ".",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                Spacer(Modifier.height(8.dp))
+                OutlinedButton(onClick = onOpenPremium) { Text("Gratuit ou Premium, abonnement") }
             }
             SectionCard {
                 Eyebrow("Progression")

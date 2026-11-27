@@ -34,7 +34,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.toRoute
+import com.livemachine.academy.data.commerce.EntitlementRepository
 import com.livemachine.academy.data.content.MachineCatalog
+import com.livemachine.academy.domain.commerce.CommerceRules
 import com.livemachine.academy.data.model.ContentStatus
 import com.livemachine.academy.data.model.IdentifiableControl
 import com.livemachine.academy.data.model.Lesson
@@ -56,6 +58,7 @@ import com.livemachine.academy.ui.navigation.LessonRoute
 import com.livemachine.academy.ui.theme.Acid
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -63,9 +66,19 @@ class LessonViewModel(
     savedStateHandle: SavedStateHandle,
     course: CourseRepository,
     private val progressRepository: ProgressRepository,
+    entitlementRepository: EntitlementRepository,
+    commerceEnforced: Boolean,
 ) : ViewModel() {
     val lesson: Lesson? = course.lesson(savedStateHandle.toRoute<LessonRoute>().lessonId)
     val machine = lesson?.let { course.machineOfModule(it.moduleId) } ?: MachineCatalog.electribe
+
+    /** Leçon d'un module Premium alors que l'offre vérifiée est gratuite (paiements activés seulement). */
+    val premiumLocked: StateFlow<Boolean> = entitlementRepository.entitlements
+        .map { e ->
+            val index = machine.modules.indexOfFirst { it.id == lesson?.moduleId }
+            !CommerceRules.isModuleIncluded(index.coerceAtLeast(0), e, commerceEnforced)
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, commerceEnforced)
 
     /** Commandes de la fiche photo à repérer pour cette leçon. */
     val photoControls: List<IdentifiableControl> =
@@ -91,7 +104,7 @@ class LessonViewModel(
 
     companion object {
         val Factory = appViewModelFactory { c, handle ->
-            LessonViewModel(handle, c.courseRepository, c.progressRepository)
+            LessonViewModel(handle, c.courseRepository, c.progressRepository, c.entitlementRepository, c.commerceEnforced)
         }
     }
 }
@@ -106,11 +119,16 @@ fun LessonScreen(
 ) {
     val lesson = viewModel.lesson
     val progress by viewModel.progress.collectAsStateWithLifecycle()
+    val premiumLocked by viewModel.premiumLocked.collectAsStateWithLifecycle()
 
     Column(Modifier.fillMaxSize()) {
         AppTopBar(title = "Leçon", onBack = onBack)
         if (lesson == null) {
             EmptyState("Leçon introuvable", "Cette leçon n'existe pas.")
+            return@Column
+        }
+        if (premiumLocked) {
+            EmptyState("Leçon Premium", "Cette leçon fait partie de l'abonnement Premium (Paramètres › Ton offre).")
             return@Column
         }
         val completed = progress.isLessonDone(lesson.id)

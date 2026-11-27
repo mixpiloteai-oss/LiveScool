@@ -8,6 +8,8 @@ sealed interface AppError {
     data object RequiresPremium : AppError
     /** Trop de requêtes : réessayer plus tard. */
     data object RateLimited : AppError
+    /** Quota de l'offre atteint (questions IA, analyses audio) ; message rédigé par le serveur. */
+    data class QuotaExceeded(val message: String) : AppError
     /** Requête refusée par le serveur, avec un message affichable. */
     data class Rejected(val message: String) : AppError
     /** Fonction pas encore disponible dans cette version. */

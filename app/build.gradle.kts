@@ -13,11 +13,17 @@ android {
         applicationId = "com.livemachine.academy"
         minSdk = 26
         targetSdk = 35
-        versionCode = 19
-        versionName = "1.7.0"
+        versionCode = 20
+        versionName = "1.8.0"
         // Adresse publique du backend de l'assistant IA (jamais de clé API ici).
         val assistantUrl = System.getenv("LMA_ASSISTANT_URL") ?: (project.findProperty("lmaAssistantUrl") as String?) ?: ""
         buildConfigField("String", "ASSISTANT_URL", "\"$assistantUrl\"")
+        // Clé PUBLIQUE de vérification des jetons de droits (la clé privée reste sur le serveur).
+        val entitlementKey = System.getenv("LMA_ENTITLEMENT_PUBLIC_KEY") ?: (project.findProperty("lmaEntitlementPublicKey") as String?) ?: ""
+        buildConfigField("String", "ENTITLEMENT_PUBLIC_KEY", "\"$entitlementKey\"")
+        // Paiements réels désactivés par défaut : à n'activer qu'après les tests Google Play (licences de test).
+        val billingEnabled = (System.getenv("LMA_BILLING_ENABLED") ?: (project.findProperty("lmaBillingEnabled") as String?) ?: "false").toBoolean()
+        buildConfigField("boolean", "BILLING_ENABLED", billingEnabled.toString())
     }
 
     // Clé release fournie par variables d'environnement (voir README). Sans elles,
@@ -75,6 +81,8 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.datastore.preferences)
+    // Google Play Billing (abonnements Premium)
+    implementation(libs.android.billing.ktx)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.exifinterface)
     debugImplementation(libs.androidx.compose.ui.tooling)

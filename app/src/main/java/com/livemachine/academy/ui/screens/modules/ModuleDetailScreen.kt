@@ -34,7 +34,9 @@ import com.livemachine.academy.data.model.UserProgress
 import com.livemachine.academy.data.repository.CourseRepository
 import com.livemachine.academy.data.repository.ProgressRepository
 import com.livemachine.academy.data.repository.SettingsRepository
+import com.livemachine.academy.data.commerce.EntitlementRepository
 import com.livemachine.academy.domain.ProgressRules
+import com.livemachine.academy.domain.commerce.CommerceRules
 import com.livemachine.academy.ui.appViewModelFactory
 import com.livemachine.academy.ui.components.AppTopBar
 import com.livemachine.academy.ui.components.AwaitingManualNotice
@@ -54,6 +56,7 @@ import kotlinx.coroutines.flow.stateIn
 data class ModuleDetailState(
     val progress: UserProgress = UserProgress(),
     val unlocked: Boolean = true,
+    val premiumLocked: Boolean = false,
     val previousTitle: String? = null,
 )
 
@@ -62,23 +65,27 @@ class ModuleDetailViewModel(
     course: CourseRepository,
     progressRepository: ProgressRepository,
     settingsRepository: SettingsRepository,
+    entitlementRepository: EntitlementRepository,
+    commerceEnforced: Boolean,
 ) : ViewModel() {
     val module: CourseModule? = course.module(savedStateHandle.toRoute<ModuleRoute>().moduleId)
 
     val state: StateFlow<ModuleDetailState> =
-        combine(progressRepository.progress, settingsRepository.settings) { progress, settings ->
+        combine(progressRepository.progress, settingsRepository.settings, entitlementRepository.entitlements) { progress, settings, entitlements ->
             val modules = module?.let { course.machineOfModule(it.id)?.modules }.orEmpty()
             val index = modules.indexOfFirst { it.id == module?.id }
+            val included = CommerceRules.isModuleIncluded(index, entitlements, commerceEnforced)
             ModuleDetailState(
                 progress = progress,
-                unlocked = ProgressRules.isUnlocked(modules, index, progress, settings.unlockAllModules),
+                unlocked = included && ProgressRules.isUnlocked(modules, index, progress, settings.unlockAllModules),
+                premiumLocked = !included,
                 previousTitle = modules.getOrNull(index - 1)?.let { "Module ${it.number} · ${it.title}" },
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ModuleDetailState())
 
     companion object {
         val Factory = appViewModelFactory { c, handle ->
-            ModuleDetailViewModel(handle, c.courseRepository, c.progressRepository, c.settingsRepository)
+            ModuleDetailViewModel(handle, c.courseRepository, c.progressRepository, c.settingsRepository, c.entitlementRepository, c.commerceEnforced)
         }
     }
 }
@@ -122,8 +129,12 @@ fun ModuleDetailScreen(
                             Icon(Icons.Outlined.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
                             Spacer(Modifier.width(12.dp))
                             Text(
-                                "Module verrouillé. Valide d'abord ${state.previousTitle ?: "le module précédent"} : " +
-                                    "termine ses leçons ou réussis son quiz final. (Mode libre dans les Paramètres.)",
+                                if (state.premiumLocked) {
+                                    "Module Premium : il fait partie de l'abonnement (Paramètres › Ton offre)."
+                                } else {
+                                    "Module verrouillé. Valide d'abord ${state.previousTitle ?: "le module précédent"} : " +
+                                        "termine ses leçons ou réussis son quiz final. (Mode libre dans les Paramètres.)"
+                                },
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }

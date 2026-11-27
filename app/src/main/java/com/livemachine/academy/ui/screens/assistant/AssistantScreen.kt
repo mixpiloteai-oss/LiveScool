@@ -81,6 +81,8 @@ data class AssistantUiState(
     val error: String? = null,
     /** Dernière question restée sans réponse (pour « Réessayer »). */
     val pending: String? = null,
+    /** Quota de l'offre atteint : proposer Premium. */
+    val quotaReached: Boolean = false,
 )
 
 class AssistantViewModel(
@@ -150,7 +152,9 @@ class AssistantViewModel(
                 history.append(machine.id, ChatMessage(ChatMessage.ASSISTANT, result.value, System.currentTimeMillis()))
                 _state.update { it.copy(sending = false) }
             }
-            is AppResult.Failure -> _state.update { it.copy(sending = false, error = messageFor(result.error), pending = question) }
+            is AppResult.Failure -> _state.update {
+                it.copy(sending = false, error = messageFor(result.error), pending = question, quotaReached = result.error is AppError.QuotaExceeded)
+            }
         }
     }
 
@@ -158,6 +162,7 @@ class AssistantViewModel(
         fun messageFor(error: AppError): String = when (error) {
             AppError.Offline -> "Pas de connexion. Vérifie le réseau puis réessaie."
             AppError.RateLimited -> "Trop de questions d'un coup : réessaie dans quelques minutes."
+            is AppError.QuotaExceeded -> error.message + " Passe à Premium pour un quota supérieur."
             AppError.NotAvailable -> "L'assistant n'est pas disponible dans cette version."
             AppError.RequiresPremium -> "L'assistant fait partie de l'offre Premium."
             AppError.Unauthorized -> "Accès refusé par le serveur."
@@ -185,6 +190,7 @@ private val SUGGESTIONS = listOf(
 @Composable
 fun AssistantScreen(
     onBack: () -> Unit,
+    onOpenPremium: () -> Unit = {},
     viewModel: AssistantViewModel = viewModel(factory = AssistantViewModel.Factory),
 ) {
     val machine by viewModel.machine.collectAsStateWithLifecycle()
@@ -234,7 +240,10 @@ fun AssistantScreen(
                 item {
                     SectionCard {
                         Text(error, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
-                        if (state.pending != null) {
+                        if (state.quotaReached) {
+                            Spacer(Modifier.height(8.dp))
+                            OutlinedButton(onClick = onOpenPremium) { Text("Voir Premium") }
+                        } else if (state.pending != null) {
                             Spacer(Modifier.height(8.dp))
                             OutlinedButton(onClick = viewModel::retry) { Text("Réessayer") }
                         }
