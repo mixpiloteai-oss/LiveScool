@@ -30,7 +30,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.livemachine.academy.BuildConfig
+import com.livemachine.academy.data.commerce.EntitlementRepository
 import com.livemachine.academy.data.content.MachineCatalog
+import com.livemachine.academy.domain.commerce.Availability
+import com.livemachine.academy.domain.commerce.Entitlements
+import com.livemachine.academy.domain.commerce.Feature
+import com.livemachine.academy.domain.commerce.Plan
 import com.livemachine.academy.data.model.AppSettings
 import com.livemachine.academy.data.model.TextSize
 import com.livemachine.academy.data.repository.ProgressRepository
@@ -47,7 +52,11 @@ import kotlinx.coroutines.launch
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val progressRepository: ProgressRepository,
+    entitlementRepository: EntitlementRepository,
 ) : ViewModel() {
+    val entitlements: StateFlow<Entitlements> = entitlementRepository.entitlements
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), Entitlements.Free)
+
     val settings: StateFlow<AppSettings> = settingsRepository.settings
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AppSettings())
 
@@ -69,7 +78,7 @@ class SettingsViewModel(
     }
 
     companion object {
-        val Factory = appViewModelFactory { c, _ -> SettingsViewModel(c.settingsRepository, c.progressRepository) }
+        val Factory = appViewModelFactory { c, _ -> SettingsViewModel(c.settingsRepository, c.progressRepository, c.entitlementRepository) }
     }
 }
 
@@ -79,6 +88,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory),
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
+    val entitlements by viewModel.entitlements.collectAsStateWithLifecycle()
     var confirmReset by rememberSaveable { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize()) {
@@ -127,6 +137,18 @@ fun SettingsScreen(
                     Spacer(Modifier.width(16.dp))
                     Switch(checked = settings.unlockAllModules, onCheckedChange = viewModel::setUnlockAll)
                 }
+            }
+            SectionCard {
+                Eyebrow("Ton offre")
+                Spacer(Modifier.height(8.dp))
+                Text(if (entitlements.plan == Plan.PREMIUM) "Premium" else "Gratuite", style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "Tout le contenu actuel est inclus, hors ligne. Prévu plus tard : " +
+                        Feature.entries.filter { it.availability == Availability.PLANNED }.joinToString(", ") { it.label.lowercase() } + ".",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
             SectionCard {
                 Eyebrow("Progression")

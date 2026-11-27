@@ -4,7 +4,7 @@
 App Android native, APK installable, 100 % hors ligne : apprendre une vraie machine leçon par leçon (lire sur le téléphone, pratiquer sur la machine). Styles : hardtek, tribe, tribeCore, acidcore, mentalcore. Pas de cours Ableton ni import SD (déjà maîtrisés).
 
 ## Interdits
-Simulateur, WebView, site web, permission réseau.
+Simulateur, WebView, site web. Permission réseau : interdite tant que l'utilisateur n'a pas validé une fonction en ligne (voir `docs/COMMERCIAL.md`).
 
 ## Machines (`data/content/MachineCatalog.kt`)
 | Machine | id | Préfixe ids | Contenu |
@@ -29,17 +29,20 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - Ids immuables : leçon `<m>-l<n>`, exercice `-ex`, question `-q<n>`, étape `<id>#<i>`, quiz final `final-<module>`.
 - Module N ouvert si N-1 validé (leçons ou quiz final ≥ 80 %) ; mode libre dans Paramètres. Règles : `domain/ProgressRules.kt`.
 
-## Fait (v1.4.0)
+## Commercial (structure inactive)
+`domain/commerce` (`Feature`, `Plan`, `FeatureGate`), `domain/result` (`AppResult`), `data/commerce|account|sync|services` : implémentations locales (gratuit, invité, pas de synchro, IA/audio indisponibles), branchées dans `AppContainer`. Contenu actuel 100 % gratuit ; Premium prévu : synchro, IA, analyse audio. Pas de chatbot ni paiement. Audit et étapes : `docs/COMMERCIAL.md`.
+
+## Fait (v1.5.0)
 - Electribe : 9 modules × 6 leçons `VERIFIED`, 8 défis par style.
 - Circuit Tracks : 12 modules × 3 leçons `VERIFIED` (12 q./module), fiche 5 sections, 24 commandes photo, 4 défis, 7 ateliers (pattern, variation, automation, macros, 2 transitions, séquence live ; étapes cochables + validation), 9 termes.
 - Leçon : 8 rubriques, étapes cochables, exercice validé à la main, quiz corrigé (80 %), photo ciblée sur la leçon. Quiz final 10 q., révision des erreurs.
 - Photo : l'utilisateur photographie SA machine ; aucune image constructeur.
-- Tests : `CourseContentTest`, `CircuitTracksContentTest`, `MultiMachineTest`, `ProgressRepositoryTest`, `QuizSessionTest`, `ProgressRulesTest`.
+- Tests : `CourseContentTest`, `CircuitTracksContentTest`, `MultiMachineTest`, `ProgressRepositoryTest`, `CommerceTest`, `QuizSessionTest`, `ProgressRulesTest`.
 - CI : `android.yml` (tests, lint, APK debug + release) ; `screenshots.yml` (émulateur ; `variant`, `upgrade_from`, `script_mode=smoke` ; commite `docs/screenshots/`) ; `release.yml` (vérifie, refuse INTERNET, publie). Release publiée : v1.4.0.
 - Signature : `app/debug.keystore` partagée non secrète ; `LMA_KEYSTORE_*` prioritaire. APK ≤ 1.1.2 : désinstallation unique.
 
 ## Prochaine tâche
-Retours utilisateur Circuit Tracks (firmware, samples inversés, ateliers), puis Electribe 7.1/7.2 et Photo ; clé release secrète si publication.
+Décisions Play (`docs/COMMERCIAL.md`) : AAB + clé d'envoi secrète, confidentialité, avis marques. Puis retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
 
 ## Règles de travail
 - Aucune fonction inventée : toute info machine cite sa `ManualRef` ; `VERIFIED` seulement si vérifié.
