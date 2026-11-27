@@ -63,8 +63,13 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - Cloud Run `livescool` (europe-west1), URL `https://livescool-234303726601.europe-west1.run.app`, Buildpacks, contexte `/backend/assistant`, branche `^ccr-da6a4977-k0rjt6$` : chaque push redéploie. Secret `ANTHROPIC_API_KEY` (rôle « Accesseur de secrets » accordé à `234303726601-compute@developer.gserviceaccount.com`), `PLAY_PACKAGE_NAME`. `/health` → `configured` ; clé absente = 503 `provider_not_configured`.
 - Assistant validé sur téléphone. Variable de dépôt `LMA_ASSISTANT_URL` définie ; APK de test : run « Publier l'APK » 45993696327.
 
+## Priorité actuelle : 20 machines (décidée le 27/11/2026)
+- Google Play EN PAUSE : ni Play Console, ni Billing, ni publication. Code abonnements/compte/paiements conservé tel quel. Reprise Premium : étape 1 (clés serveur via Cloud Shell) déjà rédigée ; `release.yml` transmet `LMA_ENTITLEMENT_PUBLIC_KEY`/`LMA_BILLING_ENABLED`.
+- Catalogue cible : `docs/MACHINES.md` (20 machines, proposition en attente de validation). Electribe et Circuit Tracks conservées intégralement.
+- Sans manuel officiel : fiche seule + « cours en attente du manuel ». Jamais le manuel d'un modèle voisin.
+
 ## Prochaine tâche
-Backend (Premium) : `LMA_ENTITLEMENT_PRIVATE_KEY`, compte de service Play, `RTDN_SECRET`, puis `LMA_ENTITLEMENT_PUBLIC_KEY` ; créer `lma_premium` (mensuel/annuel) dans la Play Console ; tests internes avec `LMA_BILLING_ENABLED=true` et licences de test ; clé d'envoi, confidentialité, avis marques. Puis retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
+Après validation de la liste : catalogue des 20 machines fonctionnel (`MachineProfile` + catégorie, styles, statut du manuel ; écran catalogue ; illustration par catégorie ; progression `progress_<id>` + préfixe par machine), puis cours machine par machine selon les PDF fournis.
 
 ## Règles de travail
 - Aucune fonction inventée : toute info machine cite sa `ManualRef` ; `VERIFIED` seulement si vérifié.
