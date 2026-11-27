@@ -11,9 +11,6 @@ import com.livemachine.academy.data.model.UserProgress
 import com.livemachine.academy.domain.assistant.AssistantContextBuilder
 import com.livemachine.academy.domain.result.AppError
 import com.livemachine.academy.domain.result.AppResult
-import com.sun.net.httpserver.HttpExchange
-import com.sun.net.httpserver.HttpHandler
-import com.sun.net.httpserver.HttpServer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -24,7 +21,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
-import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.nio.file.Files
 
@@ -80,23 +76,44 @@ class AssistantTest {
 
     private val request = AssistantRequest(MachineInfo("circuit-tracks", "Novation Circuit Tracks"), null, "débutant", emptyList(), emptyList(), "Bonjour")
 
+    /** Mini serveur HTTP sur socket (com.sun.net.httpserver n'est pas disponible dans les tests Android). */
     private fun <T> withServer(status: Int, body: String, block: (String, () -> String) -> T): T {
         var received = ""
-        val server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
-        server.createContext(
-            "/v1/assistant",
-            HttpHandler { ex: HttpExchange ->
-                received = ex.requestBody.bufferedReader().readText()
-                val bytes = body.toByteArray()
-                ex.sendResponseHeaders(status, bytes.size.toLong())
-                ex.responseBody.use { out -> out.write(bytes) }
-            },
-        )
-        server.start()
+        val server = ServerSocket(0)
+        val thread = Thread {
+            runCatching {
+                server.accept().use { socket ->
+                    val input = socket.getInputStream()
+                    val head = StringBuilder()
+                    while (!head.endsWith("\r\n\r\n")) {
+                        val b = input.read()
+                        if (b < 0) break
+                        head.append(b.toChar())
+                    }
+                    val length = head.lines().firstOrNull { it.lowercase().startsWith("content-length:") }
+                        ?.substringAfter(':')?.trim()?.toInt() ?: 0
+                    val bodyBytes = ByteArray(length)
+                    var read = 0
+                    while (read < length) {
+                        val n = input.read(bodyBytes, read, length - read)
+                        if (n < 0) break
+                        read += n
+                    }
+                    received = String(bodyBytes, 0, read, Charsets.UTF_8)
+                    val bytes = body.toByteArray(Charsets.UTF_8)
+                    val out = socket.getOutputStream()
+                    out.write("HTTP/1.1 $status X\r\nContent-Type: application/json\r\nContent-Length: ${bytes.size}\r\nConnection: close\r\n\r\n".toByteArray())
+                    out.write(bytes)
+                    out.flush()
+                }
+            }
+        }
+        thread.start()
         try {
-            return block("http://127.0.0.1:${server.address.port}/") { received }
+            return block("http://127.0.0.1:${server.localPort}/") { received }
         } finally {
-            server.stop(0)
+            server.close()
+            thread.join(2_000)
         }
     }
 
