@@ -207,6 +207,7 @@ tap_text "Accès direct à chaque module" && shot 20-modules
 
 # Deuxième machine : Novation Circuit Tracks, puis retour à l'Electribe
 restart
+tap_text "Changer de machine" && shot 35-catalogue
 tap_text "Circuit Tracks" && shot 23-accueil-circuit-tracks
 tap_tab "Machine" && shot 24-fiche-circuit-tracks
 tap_text "Commencer l'apprentissage" && shot 25-parcours-circuit-tracks
@@ -224,7 +225,10 @@ tap_tab "Progrès" && tap_text "Paramètres" && scroll_to_and_tap "Gratuit ou Pr
 restart
 tap_tab "Progrès" && tap_text "Paramètres" && scroll_to_and_tap "Confidentialité et mes données" && shot 34-confidentialite
 restart
-tap_text "Electribe Sampler 2" && shot 26-retour-electribe
+tap_text "Changer de machine" && scroll_to_and_tap "TR-8S" && shot 36-accueil-machine-en-attente
+tap_tab "Machine" && shot 37-fiche-machine-en-attente
+restart
+tap_text "Changer de machine" && tap_text "Electribe Sampler 2" && shot 26-retour-electribe
 
 # Taille de texte « Très grande »
 restart

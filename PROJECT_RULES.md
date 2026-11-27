@@ -6,13 +6,17 @@ App Android native, APK installable, 100 % hors ligne : apprendre une vraie mach
 ## Interdits
 Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistant IA et l'analyse audio (permissions `INTERNET`, `RECORD_AUDIO` demandée au clic « Enregistrer », `BILLING` et `ACCESS_NETWORK_STATE` de Play Billing) ; tout le reste hors ligne. Toute autre permission fait échouer `release.yml`. Jamais d'enregistrement ni d'envoi audio sans action explicite.
 
-## Machines (`data/content/MachineCatalog.kt`)
+## Machines (`data/content/MachineCatalog.kt`, 20 machines, v2.0.0)
 | Machine | id | Préfixe ids | Contenu |
 |---|---|---|---|
 | Korg Electribe Sampler 2 (rose) | `electribe-sampler` (défaut) | aucun (`m1`, `m1-l1`) | `CourseContent`, `Module1..9Content`, `MachineContent`, `ChallengeContent` |
 | Novation Circuit Tracks | `circuit-tracks` | `ct-` | `CircuitTracksContent`, `CircuitTracksModulesA..D`, `CircuitTracksWorkshops`, `CircuitTracksDsl` (`ct()`, `ctLesson()`) |
+| 18 autres (liste `docs/MACHINES.md`) | ex. `roland-tr-8s` | ex. `tr8s-` (unique, jamais préfixe d'un autre) | `CatalogMachines` : fiche seule, « Cours en attente du manuel officiel » |
 
-Chaque `MachineProfile` a son parcours indépendant (modules, leçons, fiche, commandes photo, défis, ateliers, glossaire). Machine choisie à l'accueil (`selectedMachineId`), écrans filtrés par machine.
+- `MachineProfile` : `category` (`MachineCategory` : groovebox, sampler, boîte à rythmes, synthé, séquenceur, hybride), `kind`, `styles`, `pedagogy`, `liveUse`, `manuals` (`ManualSpec(fileName, title)` = PDF du modèle exact dans `docs/manual/`), `courseStatusLabel`.
+- UI : écran `ui/screens/catalog` (filtres par catégorie, sélection → retour), carte « Ta machine » + « Changer de machine » à l'accueil, fiche avec présentation et manuel attendu. Illustration générée `ui/components/MachineArt.kt` (dégradé + icône de catégorie, aucune image constructeur) ; vraie image = photo de l'utilisateur.
+- Progression : un DataStore `progress_<id>` par machine, créé automatiquement pour chaque entrée de `MachineCatalog.all`.
+- Ajouter un cours : PDF nommé selon `docs/manual/README.md` → `modules` dans le profil (ids préfixés), sections/commandes citant `ManualRef` (nouveau `ManualDoc` par manuel). Tests : `CatalogTest` (20 machines, fiches complètes, aucun cours sans manuel, README à jour).
 
 ## Sources obligatoires (`ManualRef(chapter, pages, doc)`)
 - `OWNERS_MANUAL` : manuel electribe/electribe sampler (Korg 2015), FR p. 20–38.
@@ -63,13 +67,13 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - Cloud Run `livescool` (europe-west1), URL `https://livescool-234303726601.europe-west1.run.app`, Buildpacks, contexte `/backend/assistant`, branche `^ccr-da6a4977-k0rjt6$` : chaque push redéploie. Secret `ANTHROPIC_API_KEY` (rôle « Accesseur de secrets » accordé à `234303726601-compute@developer.gserviceaccount.com`), `PLAY_PACKAGE_NAME`. `/health` → `configured` ; clé absente = 503 `provider_not_configured`.
 - Assistant validé sur téléphone. Variable de dépôt `LMA_ASSISTANT_URL` définie ; APK de test : run « Publier l'APK » 45993696327.
 
-## Priorité actuelle : 20 machines (décidée le 27/11/2026)
-- Google Play EN PAUSE : ni Play Console, ni Billing, ni publication. Code abonnements/compte/paiements conservé tel quel. Reprise Premium : étape 1 (clés serveur via Cloud Shell) déjà rédigée ; `release.yml` transmet `LMA_ENTITLEMENT_PUBLIC_KEY`/`LMA_BILLING_ENABLED`.
-- Catalogue cible : `docs/MACHINES.md` (20 machines, proposition en attente de validation). Electribe et Circuit Tracks conservées intégralement.
-- Sans manuel officiel : fiche seule + « cours en attente du manuel ». Jamais le manuel d'un modèle voisin.
+## Priorité actuelle : 20 machines
+- Google Play EN PAUSE : ni Play Console, ni Billing, ni publication. Code abonnements/compte/paiements conservé tel quel. Reprise Premium : clés serveur via Cloud Shell (rédigé) ; `release.yml` transmet `LMA_ENTITLEMENT_PUBLIC_KEY`/`LMA_BILLING_ENABLED`.
+- Fait (v2.0.0) : catalogue des 20 machines fonctionnel, 18 fiches « Cours en attente du manuel officiel ».
+- Manuels manquants : les 18 de `docs/manual/README.md` (nom de fichier exact attendu pour chacun).
 
 ## Prochaine tâche
-Après validation de la liste : catalogue des 20 machines fonctionnel (`MachineProfile` + catégorie, styles, statut du manuel ; écran catalogue ; illustration par catégorie ; progression `progress_<id>` + préfixe par machine), puis cours machine par machine selon les PDF fournis.
+Rédiger les cours machine par machine dès qu'un PDF est déposé (priorité suggérée : Digitakt II, TR-8S, TD-3). Puis retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
 
 ## Règles de travail
 - Aucune fonction inventée : toute info machine cite sa `ManualRef` ; `VERIFIED` seulement si vérifié.

@@ -17,9 +17,10 @@ class MultiMachineTest {
     private val circuit = MachineCatalog.CIRCUIT_TRACKS_ID
 
     @Test
-    fun `deux machines avec identifiants uniques`() {
+    fun `Electribe et Circuit Tracks en tete du catalogue`() {
         val ids = MachineCatalog.all.map { it.id }
-        assertEquals(listOf(electribe, circuit), ids)
+        assertEquals(listOf(electribe, circuit), ids.take(2))
+        assertEquals(ids.size, ids.toSet().size)
         assertEquals("Novation", MachineCatalog.circuitTracks.manufacturer)
         assertEquals("Korg", MachineCatalog.electribe.manufacturer)
     }

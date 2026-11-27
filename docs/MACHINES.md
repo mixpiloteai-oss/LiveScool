@@ -1,4 +1,4 @@
-# Catalogue des 20 machines — proposition (à valider)
+# Catalogue des 20 machines (validé, intégré en v2.0.0)
 
 Critères : marques différentes autant que possible, machines reconnues et jouées en live, catégories variées, styles free party (hardtek, tribe, tribecore, acidcore, mentalcore) + techno, house, électro. Manuel officiel du fabricant obligatoire pour rédiger un cours ; sans PDF : fiche seule, cours « en attente du manuel ».
 
@@ -26,7 +26,8 @@ Critères : marques différentes autant que possible, machines reconnues et jou�
 | 20 | Torso Electronics T-1 | Séquenceur algorithmique | Rythmes euclidiens, variations génératives | techno, tribe, expérimental | à fournir |
 
 Marques : 17 différentes (Elektron, Roland et Arturia ×2, fonctions distinctes).
-Catégories : groovebox ×4, sampler ×4, boîte à rythmes / percussion ×3, synthé ×6, hybride ×1 (OP-1), séquenceur ×2.
+Catégories : groovebox ×4, sampler ×4, boîte à rythmes / percussion ×3, synthé ×5, hybride ×2 (Tracker+, OP-1 field), séquenceur ×2.
+Noms de fichiers PDF attendus : `docs/manual/README.md`.
 
 Disponibilité commerciale : à revérifier au moment de la rédaction (certaines machines peuvent n'être vendues qu'en occasion) ; l'app enseigne la machine que l'utilisateur possède.
 Images : aucune photo constructeur (règle du projet) — illustration générée par catégorie + photo de SA machine par l'utilisateur.

@@ -34,6 +34,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.layout.fillMaxWidth
+import com.livemachine.academy.ui.components.MachineIllustration
 import com.livemachine.academy.ui.components.AppTopBar
 import com.livemachine.academy.ui.components.Eyebrow
 import com.livemachine.academy.ui.components.HeroBanner
@@ -54,6 +56,7 @@ fun HomeScreen(
     onOpenReview: () -> Unit,
     onOpenAssistant: () -> Unit = {},
     onOpenAudio: () -> Unit = {},
+    onOpenCatalog: () -> Unit = {},
     viewModel: OverviewViewModel = viewModel(factory = OverviewViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -67,26 +70,33 @@ fun HomeScreen(
             item {
                 Eyebrow("Ta machine", color = MaterialTheme.colorScheme.secondary)
                 Spacer(Modifier.height(8.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    state.machines.forEach { m ->
-                        val selected = m.id == state.machine.id
-                        Surface(
-                            onClick = { viewModel.selectMachine(m.id) },
-                            shape = RoundedCornerShape(16.dp),
-                            color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
-                            border = BorderStroke(2.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            Column(Modifier.padding(12.dp)) {
-                                Text(m.manufacturer, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
-                                Text(m.name, style = MaterialTheme.typography.titleMedium)
-                                Text(
-                                    if (m.hasCourse) "${m.lessons.size} leçons" else "Parcours à venir",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
+                val current = state.machine
+                Surface(
+                    onClick = onOpenCatalog,
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        MachineIllustration(current, size = 64.dp)
+                        Spacer(Modifier.width(12.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(current.manufacturer, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
+                            Text(current.name, style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                if (current.hasCourse) "${current.lessons.size} leçons" else current.courseStatusLabel,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                "Changer de machine (${state.machines.size})",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
                         }
+                        Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     }
                 }
             }

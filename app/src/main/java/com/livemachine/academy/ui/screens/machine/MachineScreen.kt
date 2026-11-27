@@ -2,6 +2,11 @@ package com.livemachine.academy.ui.screens.machine
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.Alignment
+import com.livemachine.academy.ui.components.MachineIllustration
+import com.livemachine.academy.ui.components.CourseStatusPill
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -79,6 +84,7 @@ fun MachineScreen(
     onOpenSettings: () -> Unit,
     onOpenPhoto: (String) -> Unit,
     onStartLearning: () -> Unit,
+    onOpenCatalog: () -> Unit = {},
     viewModel: MachineViewModel = viewModel(factory = MachineViewModel.Factory),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -89,8 +95,17 @@ fun MachineScreen(
         LazyColumn(contentPadding = ScreenPadding, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item {
                 HeroBanner {
-                    Eyebrow(machine.manufacturer, color = MaterialTheme.colorScheme.onPrimaryContainer)
-                    Text(machine.name, style = MaterialTheme.typography.headlineSmall)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        MachineIllustration(machine, size = 64.dp)
+                        Spacer(Modifier.width(14.dp))
+                        Column(Modifier.weight(1f)) {
+                            Eyebrow(machine.manufacturer, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                            Text(machine.name, style = MaterialTheme.typography.headlineSmall)
+                            Text("${machine.kind} · ${machine.category.label}", style = MaterialTheme.typography.labelMedium)
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    CourseStatusPill(machine)
                     Spacer(Modifier.height(12.dp))
                     state.photoFile?.let { file ->
                         UserMachinePhoto(file, state.photo.hasPhoto, state.photo.version, onAddPhoto = { onOpenPhoto(machine.id) })
@@ -98,10 +113,41 @@ fun MachineScreen(
                     Spacer(Modifier.height(12.dp))
                     Text(machine.shortDescription, style = MaterialTheme.typography.bodyLarge)
                     Spacer(Modifier.height(16.dp))
-                    Button(onClick = onStartLearning, modifier = Modifier.fillMaxWidth()) {
-                        Text("Commencer l'apprentissage")
-                        Spacer(Modifier.width(8.dp))
-                        Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = null)
+                    if (machine.hasCourse) {
+                        Button(onClick = onStartLearning, modifier = Modifier.fillMaxWidth()) {
+                            Text("Commencer l'apprentissage")
+                            Spacer(Modifier.width(8.dp))
+                            Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = null)
+                        }
+                    }
+                    OutlinedButton(onClick = onOpenCatalog, modifier = Modifier.fillMaxWidth()) {
+                        Text("Changer de machine")
+                    }
+                }
+            }
+            if (machine.pedagogy.isNotBlank()) {
+                item {
+                    SectionCard {
+                        Text("Présentation", style = MaterialTheme.typography.titleMedium)
+                        Spacer(Modifier.height(8.dp))
+                        InfoLine("Intérêt pédagogique", machine.pedagogy)
+                        InfoLine("En live", machine.liveUse)
+                        if (machine.styles.isNotEmpty()) InfoLine("Styles", machine.styles.joinToString(" · "))
+                    }
+                }
+            }
+            item {
+                SectionCard {
+                    Text("Manuel officiel", style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        if (machine.hasCourse) "Cours rédigé et vérifié à partir de :" else "${machine.courseStatusLabel}. Document attendu :",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    machine.manuals.forEach { manual ->
+                        Spacer(Modifier.height(6.dp))
+                        Text(manual.title.replaceFirstChar { it.uppercase() }, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                        Text("docs/manual/${manual.fileName}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -129,7 +175,7 @@ fun MachineScreen(
                 }
             }
             if (machine.sections.isEmpty()) {
-                item { AwaitingManualNotice(message = "La description de la façade sera rédigée à partir du manuel officiel de la machine.") }
+                item { AwaitingManualNotice(message = "La description de la façade et les cours seront rédigés uniquement à partir du manuel officiel de ce modèle exact.") }
             }
             items(machine.sections, key = { it.title }) { section ->
                 SectionCard {
@@ -148,4 +194,12 @@ fun MachineScreen(
             }
         }
     }
+}
+
+@Composable
+private fun InfoLine(label: String, text: String) {
+    if (text.isBlank()) return
+    Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+    Text(text, style = MaterialTheme.typography.bodyMedium)
+    Spacer(Modifier.height(8.dp))
 }

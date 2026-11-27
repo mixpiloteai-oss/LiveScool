@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object HomeRoute
 @Serializable data object MachineRoute
+@Serializable data object CatalogRoute
 @Serializable data object PathRoute
 @Serializable data object ModulesRoute
 @Serializable data class ModuleRoute(val moduleId: String)

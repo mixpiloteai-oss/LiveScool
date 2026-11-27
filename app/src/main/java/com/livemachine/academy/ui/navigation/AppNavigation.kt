@@ -31,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.livemachine.academy.ui.screens.catalog.CatalogScreen
 import com.livemachine.academy.ui.screens.challenges.ChallengesScreen
 import com.livemachine.academy.ui.screens.exercises.ExercisesScreen
 import com.livemachine.academy.ui.screens.glossary.GlossaryScreen
@@ -138,8 +139,10 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
                 onOpenReview = openReview,
                 onOpenAssistant = { navController.navigate(AssistantRoute()) },
                 onOpenAudio = { navController.navigate(AudioAnalysisRoute) },
+                onOpenCatalog = { navController.navigate(CatalogRoute) },
             )
         }
+        composable<CatalogRoute> { CatalogScreen(onBack = back, onSelected = back) }
         composable<AssistantRoute> { AssistantScreen(onBack = back, onOpenPremium = { navController.navigate(PremiumRoute) }) }
         composable<AudioAnalysisRoute> { AudioAnalysisScreen(onBack = back, onOpenPremium = { navController.navigate(PremiumRoute) }) }
         composable<PremiumRoute> { PremiumScreen(onBack = back) }
@@ -155,6 +158,7 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
                 onOpenSettings = { navController.navigate(SettingsRoute) },
                 onOpenPhoto = { navController.navigate(PhotoRoute(it)) },
                 onStartLearning = { navController.navigateTopLevel(PathRoute) },
+                onOpenCatalog = { navController.navigate(CatalogRoute) },
             )
         }
         composable<ModulesRoute> { ModulesScreen(onBack = back, onOpenModule = openModule) }
