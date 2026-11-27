@@ -72,7 +72,7 @@ export function createHandler({
     const installId = String(req.headers['x-lma-install'] ?? '').toLowerCase();
     const validInstall = INSTALL_ID.test(installId);
 
-    if (req.method === 'GET' && path === '/health') return send(200, { ok: true, provider: provider.name });
+    if (req.method === 'GET' && path === '/health') return send(200, { ok: true, provider: provider.name, configured: provider.configured !== false });
     if (req.method === 'GET' && path === '/v1/entitlement') {
       if (!commerce) return error(503, 'commerce_disabled', 'Offres non configurées sur ce serveur.');
       if (!validInstall) return error(400, 'install_required', 'Identifiant d\'installation manquant.');
@@ -181,11 +181,11 @@ export function createHandler({
 
 function providerFailure(e, error, log) {
   if (e instanceof ProviderError) {
-    log.warn?.(`assistant: ${e.code}`);
-    const status = e.code === 'rate_limited' ? 429 : e.code === 'refused' ? 422 : 502;
+    log.warn?.(`assistant: ${e.code} (${e.message})`);
+    const status = e.code === 'rate_limited' ? 429 : e.code === 'refused' ? 422 : e.code === 'provider_not_configured' ? 503 : 502;
     return error(status, e.code, e.retryable ? 'Assistant momentanément indisponible, réessaie.' : e.message);
   }
-  log.error?.('assistant: erreur inattendue', e?.name);
+  log.error?.(`assistant: erreur inattendue ${e?.name}: ${e?.message}`);
   return error(500, 'internal', 'Erreur interne.');
 }
 

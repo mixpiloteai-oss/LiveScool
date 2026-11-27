@@ -111,3 +111,24 @@ test('fournisseur Anthropic : requête et lecture de la réponse (client simulé
 test('fournisseur inconnu refusé', async () => {
   await assert.rejects(createProvider('inconnu', {}), /Fournisseur IA inconnu/);
 });
+
+test('clé API absente : 503 provider_not_configured et health le signale', async () => {
+  const provider = createAnthropicProvider({ apiKey: '' });
+  assert.equal(provider.configured, false);
+  await withServer(provider, async (url) => {
+    const health = await (await fetch(`${url}/health`)).json();
+    assert.equal(health.configured, false);
+    const res = await post(url, valid);
+    assert.equal(res.status, 503);
+    assert.equal((await res.json()).error.code, 'provider_not_configured');
+  });
+});
+
+test('erreur inattendue du SDK : 502 et non une erreur interne', async () => {
+  const client = { beta: { messages: { create: async () => { throw new TypeError('boom'); } } } };
+  await withServer(createAnthropicProvider({ client }), async (url) => {
+    const res = await post(url, valid);
+    assert.equal(res.status, 502);
+    assert.equal((await res.json()).error.code, 'provider_failure');
+  });
+});

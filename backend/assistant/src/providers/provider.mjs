@@ -16,7 +16,7 @@ export async function createProvider(name, env) {
   switch (name) {
     case 'anthropic': {
       const { createAnthropicProvider } = await import('./anthropic.mjs');
-      return createAnthropicProvider({ model: env.ASSISTANT_MODEL || undefined, effort: env.ASSISTANT_EFFORT || undefined });
+      return createAnthropicProvider({ model: env.ASSISTANT_MODEL || undefined, effort: env.ASSISTANT_EFFORT || undefined, apiKey: env.ANTHROPIC_API_KEY });
     }
     default:
       throw new Error(`Fournisseur IA inconnu : ${name}`);

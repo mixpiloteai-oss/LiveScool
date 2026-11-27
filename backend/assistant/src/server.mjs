@@ -15,6 +15,9 @@ import { createFakePlayClient, createGooglePlayClient } from './commerce/googleP
 //   PLAY_PACKAGE_NAME, GOOGLE_SERVICE_ACCOUNT_JSON (compte de service Play Console), RTDN_SECRET
 const env = process.env;
 const provider = await createProvider(env.ASSISTANT_PROVIDER || 'anthropic', env);
+if (provider.configured === false) {
+  console.error('ATTENTION : ANTHROPIC_API_KEY absente, l\'assistant répondra 503 provider_not_configured.');
+}
 
 const planConfig = loadPlanConfig(env);
 let commerce = null;
