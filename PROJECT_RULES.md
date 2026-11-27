@@ -60,7 +60,7 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - Signature : `app/debug.keystore` partagée non secrète ; `LMA_KEYSTORE_*` prioritaire. APK ≤ 1.1.2 : désinstallation unique.
 
 ## Déploiement backend
-- Cloud Run `livescool` (europe-west1), URL `https://livescool-234303726601.europe-west1.run.app`, Buildpacks, contexte `/backend/assistant`, branche `^ccr-da6a4977-k0rjt6$` : chaque push redéploie. Secret `ANTHROPIC_API_KEY`, `PLAY_PACKAGE_NAME`. `/health` → `configured` ; clé absente = 503 `provider_not_configured`.
+- Cloud Run `livescool` (europe-west1), URL `https://livescool-234303726601.europe-west1.run.app`, Buildpacks, contexte `/backend/assistant`, branche `^ccr-da6a4977-k0rjt6$` : chaque push redéploie. Secret `ANTHROPIC_API_KEY` (rôle « Accesseur de secrets » accordé à `234303726601-compute@developer.gserviceaccount.com`), `PLAY_PACKAGE_NAME`. `/health` → `configured` ; clé absente = 503 `provider_not_configured`.
 - Variable de dépôt `LMA_ASSISTANT_URL` définie ; APK de test : run « Publier l'APK » 45993696327.
 
 ## Prochaine tâche
