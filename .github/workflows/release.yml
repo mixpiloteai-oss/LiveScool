@@ -59,8 +59,8 @@ jobs:
             "$BT/aapt" dump badging "$apk" | grep -E "^package|sdkVersion|targetSdkVersion|launchable-activity"
             PERMS=$("$BT/aapt" dump permissions "$apk")
             echo "$PERMS"
-            # Permissions autorisées : INTERNET (assistant, analyse), RECORD_AUDIO (extrait au micro), BILLING (abonnements). Toute autre fait échouer.
-            OTHER=$(echo "$PERMS" | grep "uses-permission" | grep -v -e "android.permission.INTERNET" -e "android.permission.RECORD_AUDIO" -e "com.android.vending.BILLING" -e "DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" || true)
+            # Permissions autorisées : INTERNET (assistant, analyse), RECORD_AUDIO (extrait au micro), BILLING et ACCESS_NETWORK_STATE (ajoutées par Google Play Billing). Toute autre fait échouer.
+            OTHER=$(echo "$PERMS" | grep "uses-permission" | grep -v -e "android.permission.INTERNET" -e "android.permission.RECORD_AUDIO" -e "com.android.vending.BILLING" -e "android.permission.ACCESS_NETWORK_STATE" -e "DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" || true)
             if [ -n "$OTHER" ]; then echo "::error::Permission non prévue dans $apk : $(echo $OTHER | tr '\n' ' ')"; exit 1; fi
             "$BT/apksigner" verify --print-certs "$apk" | head -3
           done
