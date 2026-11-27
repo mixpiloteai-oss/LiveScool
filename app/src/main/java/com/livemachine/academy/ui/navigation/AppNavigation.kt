@@ -46,6 +46,7 @@ import com.livemachine.academy.ui.screens.quiz.QuizScreen
 import com.livemachine.academy.ui.screens.settings.SettingsScreen
 import kotlin.reflect.KClass
 import com.livemachine.academy.ui.screens.assistant.AssistantScreen
+import com.livemachine.academy.ui.screens.audio.AudioAnalysisScreen
 
 private data class TopLevelDestination(
     val route: Any,
@@ -134,9 +135,11 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier) {
                 onOpenChallenges = openChallenges,
                 onOpenReview = openReview,
                 onOpenAssistant = { navController.navigate(AssistantRoute()) },
+                onOpenAudio = { navController.navigate(AudioAnalysisRoute) },
             )
         }
         composable<AssistantRoute> { AssistantScreen(onBack = back) }
+        composable<AudioAnalysisRoute> { AudioAnalysisScreen(onBack = back) }
         composable<PathRoute> {
             PathScreen(
                 onOpenModule = openModule,

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.FitnessCenter
+import androidx.compose.material.icons.outlined.GraphicEq
 import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Route
@@ -52,6 +53,7 @@ fun HomeScreen(
     onOpenChallenges: () -> Unit,
     onOpenReview: () -> Unit,
     onOpenAssistant: () -> Unit = {},
+    onOpenAudio: () -> Unit = {},
     viewModel: OverviewViewModel = viewModel(factory = OverviewViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -136,6 +138,7 @@ fun HomeScreen(
                 item { Shortcut(Icons.Outlined.Replay, "Réviser mes erreurs", "${state.reviewCount} question(s) à revoir", onOpenReview) }
             }
             item { Shortcut(Icons.Outlined.AutoAwesome, "Assistant IA", "Questions sur ta ${state.machine.name}, idées de live", onOpenAssistant) }
+            item { Shortcut(Icons.Outlined.GraphicEq, "Analyse audio IA", "Tempo, kick, breaks et conseils sur ton extrait", onOpenAudio) }
             item { Shortcut(Icons.Outlined.FitnessCenter, "Exercices", "À faire sur la vraie machine", onOpenExercises) }
             if (state.workshops.isNotEmpty()) {
                 item { Shortcut(Icons.Outlined.EmojiEvents, "Ateliers et défis", "Création guidée et défis par style", onOpenChallenges) }

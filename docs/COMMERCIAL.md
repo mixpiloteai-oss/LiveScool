@@ -20,7 +20,7 @@
 | Compte facultatif | `data/account/AccountRepository` | `GuestAccountRepository` (invité) |
 | Synchro progression | `data/sync/ProgressSync` (par machine) | `LocalOnlyProgressSync` |
 | Assistant IA | `MusicAssistant` | **MVP actif** : `HttpAssistantClient` → `backend/assistant` (v1.6.0) |
-| Analyse audio | `data/services/PremiumServices.kt` | `UnavailableAudioAnalyzer` |
+| Analyse audio | `AudioAnalyzer` | **MVP actif** : `HttpAudioAnalysisClient` → `/v1/audio-analysis` (v1.7.0) |
 | Erreurs / réseau | `domain/result/AppResult`, `AppError` (`Offline`, `Unauthorized`, `RequiresPremium`, `NotAvailable`, `Unexpected`) | `appResultOf {}` |
 
 Branchement unique : `di/AppContainer`. Paramètres affiche l'offre (« Gratuite ») et les fonctions prévues. Test : `CommerceTest`.

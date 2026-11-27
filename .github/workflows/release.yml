@@ -54,8 +54,8 @@ jobs:
             "$BT/aapt" dump badging "$apk" | grep -E "^package|sdkVersion|targetSdkVersion|launchable-activity"
             PERMS=$("$BT/aapt" dump permissions "$apk")
             echo "$PERMS"
-            # Seule permission autorisée : INTERNET (assistant IA). Toute autre fait échouer la publication.
-            OTHER=$(echo "$PERMS" | grep "uses-permission" | grep -v "android.permission.INTERNET" | grep -v "DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" || true)
+            # Permissions autorisées : INTERNET (assistant, analyse) et RECORD_AUDIO (extrait au micro). Toute autre fait échouer.
+            OTHER=$(echo "$PERMS" | grep "uses-permission" | grep -v -e "android.permission.INTERNET" -e "android.permission.RECORD_AUDIO" -e "DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" || true)
             if [ -n "$OTHER" ]; then echo "ERREUR : permission non prévue : $OTHER"; exit 1; fi
             "$BT/apksigner" verify --print-certs "$apk" | head -3
           done

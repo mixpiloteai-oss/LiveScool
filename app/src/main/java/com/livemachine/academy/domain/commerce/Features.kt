@@ -29,7 +29,8 @@ enum class Feature(val label: String, val requiredPlan: Plan, val availability: 
     CLOUD_SYNC("Synchronisation du profil et de la progression", Plan.PREMIUM, Availability.PLANNED),
     // MVP gratuit pour tester l'assistant ; le passer en Premium = changer Plan.FREE en Plan.PREMIUM.
     AI_ASSISTANT("Assistant musical IA", Plan.FREE, Availability.AVAILABLE),
-    AUDIO_ANALYSIS("Analyse audio", Plan.PREMIUM, Availability.PLANNED),
+    // MVP gratuit ; le passer en Premium = changer Plan.FREE en Plan.PREMIUM.
+    AUDIO_ANALYSIS("Analyse audio", Plan.FREE, Availability.AVAILABLE),
 }
 
 /** Droits de l'utilisateur, issus plus tard d'un abonnement vérifié. */

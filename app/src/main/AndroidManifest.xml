@@ -3,6 +3,8 @@
 
     <!-- Seul l'assistant IA utilise le réseau (backend de l'app) ; tout le reste fonctionne hors ligne. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Micro : demandé seulement quand l'utilisateur appuie sur « Enregistrer » (analyse audio). -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <application
         android:name=".LiveMachineApp"
         android:allowBackup="true"

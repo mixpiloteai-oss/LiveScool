@@ -5,6 +5,9 @@ ne contient aucun secret, seulement l'adresse publique de ce serveur.
 
 - `POST /v1/assistant` : `{ machine:{id,name}, lesson?:{id,title}, level, context:[{title,text,ref}], history:[{role,text}], message }`
   → `{ reply, truncated }` ou `{ error:{code,message} }` (400, 413, 422, 429, 502, 500).
+- `POST /v1/audio-analysis` : `{ machine, style, goal, level, context, audio:{format:'wav', base64} }` → `{ measures, summary,
+  advice, adviceError }`. WAV PCM/flottant, 5–75 s, 6 Mo, 6 analyses / 10 min par IP. L'audio est décodé et mesuré
+  **en mémoire** (aucun fichier écrit), puis oublié ; l'IA ne reçoit que les mesures. Autre format → 415.
 - `GET /health`.
 - Limites : message 500 caractères, 6 messages d'historique, 5 extraits de contexte de 700 caractères, 24 Ko,
   20 questions / 10 min par IP. Aucun contenu de conversation n'est journalisé.
@@ -13,6 +16,7 @@ ne contient aucun secret, seulement l'adresse publique de ce serveur.
 
 ```bash
 npm ci && npm test
+npm run analyze -- morceau.wav      # mesures locales d'un ou plusieurs WAV
 ANTHROPIC_API_KEY=... npm start        # PORT=8080 ; ASSISTANT_MODEL, ASSISTANT_EFFORT facultatifs
 ```
 Déployer derrière HTTPS (Cloud Run, Fly.io, Render…), puis compiler l'app avec

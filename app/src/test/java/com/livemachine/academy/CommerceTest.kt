@@ -4,6 +4,8 @@ import com.livemachine.academy.data.account.AccountState
 import com.livemachine.academy.data.account.GuestAccountRepository
 import com.livemachine.academy.data.assistant.AssistantRequest
 import com.livemachine.academy.data.assistant.MachineInfo
+import com.livemachine.academy.data.audio.AudioAnalysisRequest
+import com.livemachine.academy.data.audio.AudioPayload
 import com.livemachine.academy.data.commerce.FreeEntitlementRepository
 import com.livemachine.academy.data.services.UnavailableAudioAnalyzer
 import com.livemachine.academy.data.services.UnavailableMusicAssistant
@@ -36,7 +38,7 @@ class CommerceTest {
     @Test
     fun `les fonctions prevues ne sont pas activees meme en Premium`() {
         val planned = Feature.entries.filter { it.availability == Availability.PLANNED }
-        assertTrue(planned.containsAll(listOf(Feature.CLOUD_SYNC, Feature.AUDIO_ANALYSIS, Feature.ACCOUNT)))
+        assertTrue(planned.containsAll(listOf(Feature.CLOUD_SYNC, Feature.ACCOUNT)))
         planned.forEach {
             assertEquals(Access.NotYetAvailable, FeatureGate.access(it, Entitlements.Free))
             assertEquals(Access.NotYetAvailable, FeatureGate.access(it, Entitlements(Plan.PREMIUM)))
@@ -46,7 +48,8 @@ class CommerceTest {
     @Test
     fun `les fonctions payantes sont separees et exigent Premium`() {
         val premium = Feature.entries.filter { it.requiredPlan == Plan.PREMIUM }
-        assertEquals(setOf(Feature.CLOUD_SYNC, Feature.AUDIO_ANALYSIS), premium.toSet())
+        assertEquals(setOf(Feature.CLOUD_SYNC), premium.toSet())
+        assertEquals(Access.Granted, FeatureGate.access(Feature.AUDIO_ANALYSIS, Entitlements.Free))
         // MVP : assistant disponible et gratuit
         assertEquals(Access.Granted, FeatureGate.access(Feature.AI_ASSISTANT, Entitlements.Free))
     }
@@ -62,7 +65,12 @@ class CommerceTest {
                 AssistantRequest(MachineInfo("circuit-tracks", "Novation Circuit Tracks"), null, "débutant", emptyList(), emptyList(), "?"),
             ),
         )
-        assertEquals(AppResult.Failure(AppError.NotAvailable), UnavailableAudioAnalyzer().analyze("x.wav"))
+        assertEquals(
+            AppResult.Failure(AppError.NotAvailable),
+            UnavailableAudioAnalyzer().analyze(
+                AudioAnalysisRequest(MachineInfo("circuit-tracks", "Novation Circuit Tracks"), "hardtek", "live", "débutant", emptyList(), AudioPayload("wav", "")),
+            ),
+        )
     }
 
     @Test

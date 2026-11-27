@@ -13,8 +13,8 @@ android {
         applicationId = "com.livemachine.academy"
         minSdk = 26
         targetSdk = 35
-        versionCode = 18
-        versionName = "1.6.0"
+        versionCode = 19
+        versionName = "1.7.0"
         // Adresse publique du backend de l'assistant IA (jamais de clé API ici).
         val assistantUrl = System.getenv("LMA_ASSISTANT_URL") ?: (project.findProperty("lmaAssistantUrl") as String?) ?: ""
         buildConfigField("String", "ASSISTANT_URL", "\"$assistantUrl\"")

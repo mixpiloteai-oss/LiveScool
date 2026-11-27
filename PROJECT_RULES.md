@@ -4,7 +4,7 @@
 App Android native, APK installable, 100 % hors ligne : apprendre une vraie machine leçon par leçon (lire sur le téléphone, pratiquer sur la machine). Styles : hardtek, tribe, tribeCore, acidcore, mentalcore. Pas de cours Ableton ni import SD (déjà maîtrisés).
 
 ## Interdits
-Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistant IA (permission `INTERNET`, validée par l'utilisateur) ; tout le reste hors ligne. Toute autre permission fait échouer `release.yml`.
+Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistant IA et l'analyse audio (permissions `INTERNET`, `RECORD_AUDIO` demandée au clic « Enregistrer ») ; tout le reste hors ligne. Toute autre permission fait échouer `release.yml`. Jamais d'enregistrement ni d'envoi audio sans action explicite.
 
 ## Machines (`data/content/MachineCatalog.kt`)
 | Machine | id | Préfixe ids | Contenu |
@@ -35,15 +35,20 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - URL du backend : `LMA_ASSISTANT_URL` (variable de dépôt GitHub / propriété `lmaAssistantUrl`) ; vide = « Assistant non configuré ». Clé API seulement sur le serveur.
 - Gratuit pendant le MVP (`Feature.AI_ASSISTANT`, `Plan.FREE`).
 
-## Commercial (structure inactive)
-`domain/commerce` (`Feature`, `Plan`, `FeatureGate`), `domain/result` (`AppResult`), `data/commerce|account|sync|services` : implémentations locales (gratuit, invité, pas de synchro, IA/audio indisponibles), branchées dans `AppContainer`. Contenu actuel 100 % gratuit ; Premium prévu : synchro, analyse audio. Pas de chatbot ni paiement. Audit et étapes : `docs/COMMERCIAL.md`.
+## Analyse audio IA (MVP v1.7.0)
+- App : `ui/screens/audio` (importer via sélecteur système, enregistrer au micro ≤ 60 s, écouter, choisir style/objectif, voir les données envoyées, case de consentement, envoyer) ; `data/audio` (`AudioDecoder` MediaCodec → mono 22 050 Hz, `AudioRecorder`, `WavCodec`, `TempAudioStore` cache supprimé après analyse/abandon/démarrage, `HttpAudioAnalysisClient`) ; règles pures `domain/audio/AudioClipRules` (5–60 s).
+- Backend `POST /v1/audio-analysis` (WAV base64 ≤ 6 Mo, 5–75 s, 6 req./10 min/IP) : `src/audio/wav.mjs` (décodage en mémoire, aucun fichier), `analyze.mjs` (niveaux, bandes, tempo par autocorrélation + affinage, stabilité, kick, graves entre kicks, énergie, breaks, sections ; liste « non mesuré »), `advice.mjs` (l'IA reçoit seulement les mesures : Mesures / Ce que ça suggère / Conseils / Non mesuré). Mesures renvoyées même si l'IA échoue. `npm run analyze -- f.wav`.
+- Gratuit pendant le MVP (`Feature.AUDIO_ANALYSIS`). Pas d'écoute en temps réel.
 
-## Fait (v1.6.0)
+## Commercial (structure inactive)
+`domain/commerce` (`Feature`, `Plan`, `FeatureGate`), `domain/result` (`AppResult`), `data/commerce|account|sync|services` : implémentations locales (gratuit, invité, pas de synchro, IA/audio indisponibles), branchées dans `AppContainer`. Contenu actuel 100 % gratuit ; Premium prévu : synchro. Pas de chatbot ni paiement. Audit et étapes : `docs/COMMERCIAL.md`.
+
+## Fait (v1.7.0)
 - Electribe : 9 modules × 6 leçons `VERIFIED`, 8 défis par style.
 - Circuit Tracks : 12 modules × 3 leçons `VERIFIED` (12 q./module), fiche 5 sections, 24 commandes photo, 4 défis, 7 ateliers (pattern, variation, automation, macros, 2 transitions, séquence live ; étapes cochables + validation), 9 termes.
 - Leçon : 8 rubriques, étapes cochables, exercice validé à la main, quiz corrigé (80 %), photo ciblée sur la leçon. Quiz final 10 q., révision des erreurs.
 - Photo : l'utilisateur photographie SA machine ; aucune image constructeur.
-- Tests : `CourseContentTest`, `CircuitTracksContentTest`, `MultiMachineTest`, `ProgressRepositoryTest`, `CommerceTest`, `AssistantTest`, `QuizSessionTest`, `ProgressRulesTest`.
+- Tests : `CourseContentTest`, `CircuitTracksContentTest`, `MultiMachineTest`, `ProgressRepositoryTest`, `CommerceTest`, `AssistantTest`, `AudioAnalysisTest`, `QuizSessionTest`, `ProgressRulesTest`.
 - CI : `android.yml` (tests, lint, APK debug + release) ; `screenshots.yml` (émulateur ; `variant`, `upgrade_from`, `script_mode=smoke` ; commite `docs/screenshots/`) ; `release.yml` (vérifie, refuse INTERNET, publie les APK ; AAB Play en artefact, alerte si signé avec la clé partagée). Release publiée : v1.4.0.
 - Signature : `app/debug.keystore` partagée non secrète ; `LMA_KEYSTORE_*` prioritaire. APK ≤ 1.1.2 : désinstallation unique.
 

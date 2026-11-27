@@ -10,6 +10,10 @@ import com.livemachine.academy.BuildConfig
 import com.livemachine.academy.data.account.AccountRepository
 import com.livemachine.academy.data.assistant.AssistantHistoryRepository
 import com.livemachine.academy.data.assistant.HttpAssistantClient
+import com.livemachine.academy.data.audio.AudioDecoder
+import com.livemachine.academy.data.audio.AudioRecorder
+import com.livemachine.academy.data.audio.HttpAudioAnalysisClient
+import com.livemachine.academy.data.audio.TempAudioStore
 import com.livemachine.academy.data.account.GuestAccountRepository
 import com.livemachine.academy.data.commerce.EntitlementRepository
 import com.livemachine.academy.data.commerce.FreeEntitlementRepository
@@ -62,10 +66,19 @@ class AppContainer(context: Context) {
     val progressSync: ProgressSync = LocalOnlyProgressSync()
     /** Adresse publique du backend (aucun secret) ; vide = assistant non configuré dans ce build. */
     val assistantConfigured: Boolean = BuildConfig.ASSISTANT_URL.isNotBlank()
+    val audioAnalyzer: AudioAnalyzer =
+        if (assistantConfigured) HttpAudioAnalysisClient(BuildConfig.ASSISTANT_URL) else UnavailableAudioAnalyzer()
+    val audioDecoder = AudioDecoder(appContext)
+    val audioRecorder = AudioRecorder(appContext)
+    val tempAudioStore = TempAudioStore(appContext.cacheDir)
+
+    init {
+        // Aucun audio ne survit à un redémarrage de l'app (fichiers temporaires d'une session interrompue).
+        tempAudioStore.clear()
+    }
     val musicAssistant: MusicAssistant =
         if (assistantConfigured) HttpAssistantClient(BuildConfig.ASSISTANT_URL) else UnavailableMusicAssistant()
     val assistantHistoryRepository = AssistantHistoryRepository(appContext.assistantStore)
-    val audioAnalyzer: AudioAnalyzer = UnavailableAudioAnalyzer()
     val settingsRepository = SettingsRepository(appContext.settingsStore)
     val photoRepository = MachinePhotoRepository(appContext, appContext.photoStore)
 }
