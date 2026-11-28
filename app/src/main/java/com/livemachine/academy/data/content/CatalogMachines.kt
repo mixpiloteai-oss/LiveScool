@@ -230,13 +230,19 @@ object CatalogMachines {
         listOf("TribeCore", "Breakcore", "Électro"),
         ManualSpec("polyend-tracker-plus.pdf", "manuel officiel du Tracker+ (Polyend)"),
     )
+    /** Cours rédigé d'après le guide officiel (v2.12.0). */
     val op1Field = pending(
         "teenage-engineering-op-1-field", "op1f-", "Teenage Engineering", "OP-1 field", HYBRID, "Synthé, sampler et enregistreur",
         "Synthétiseur, sampler et enregistreur multipiste portable.",
         "Découvrir une méthode de production « à la bande » et des synthèses variées.",
         "Boucles enregistrées et transformées en direct.",
         listOf("Électro", "Expérimental"),
-        ManualSpec("teenage-engineering-op-1-field.pdf", "guide officiel de l'OP-1 field (Teenage Engineering)"),
+        ManualSpec("teenage-engineering-op-1-field.pdf", "OP-1 field user guide, firmware 1.7.0 (Teenage Engineering, anglais)"),
+    ).copy(
+        note = OP1FieldContent.note,
+        sourcesLabel = OP1FieldContent.sourcesLabel,
+        modules = OP1FieldContent.modules,
+        sections = OP1FieldContent.sections,
     )
     val seqtrak = pending(
         "yamaha-seqtrak", "sqt-", "Yamaha", "SEQTRAK", GROOVEBOX, "Groovebox portable",

@@ -20,7 +20,7 @@ Critères : marques différentes autant que possible, machines reconnues et jou�
 | 14 | Make Noise 0-Coast | Synthé « west coast » | Autre approche de la synthèse (pliage d'onde, patch) | techno expérimentale, électro | à fournir |
 | 15 | Synthstrom Deluge | Groovebox hybride | Synthé + sampler + séquenceur sur grille, live complet | tribe, techno, breaks | ✅ cours rédigé (v2.7.0) |
 | 16 | Polyend Tracker+ | Tracker hybride | Séquençage en colonnes (tracker), samples + synthés | tribecore, breakcore, électro | à fournir |
-| 17 | Teenage Engineering OP-1 field | Synthé / sampler hybride | Workflow « bande », synthèse variée, portable | électro, expérimental | reçu, cours à rédiger |
+| 17 | Teenage Engineering OP-1 field | Synthé / sampler hybride | Workflow « bande », synthèse variée, portable | électro, expérimental | ✅ cours rédigé (v2.12.0) |
 | 18 | Yamaha SEQTRAK | Groovebox portable | Synthèse FM, sampler, séquenceur tout-en-un | house, électro, techno | à fournir |
 | 19 | Squarp Pyramid MK3 | Séquenceur | Pilote MIDI/CV de tout un set, polymétrie, effets MIDI | tous (centre du live) | à fournir |
 | 20 | Torso Electronics T-1 | Séquenceur algorithmique | Rythmes euclidiens, variations génératives | techno, tribe, expérimental | à fournir |

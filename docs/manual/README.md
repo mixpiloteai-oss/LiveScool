@@ -21,11 +21,10 @@ Renommer le PDF exactement comme indiqué : le nom est associé à la machine da
 | Roland TR-8S | `roland-tr-8s.pdf` | Mode d'emploi FR, 2018 (p. 2–24, pages = PDF) — cours rédigé (v2.9.0) ; original `TR-8S_fra03_W.pdf` |
 | Behringer TD-3 | `behringer-td-3.pdf` | Quick Start Guide V 5.0, multilingue (pages imprimées 2–107 ; le PDF montre 2 pages par feuille, page N ≈ PDF N/2 + 1 ; sections FR 24–25, 42–43, 64–67) — cours rédigé (v2.10.0) ; original `QSG_BE_0718-AAN_TD-3-SR_WW.pdf` |
 | ASM Hydrasynth Desktop | `asm-hydrasynth-desktop.pdf` | Owner's Manual Version 2.0 (Keyboard/Desktop, EN ; p. 2–121, pages = PDF) — cours rédigé (v2.11.0) ; original `Hydrasynth_KB_DR_Owners_Manual_2.2.0.pdf` |
+| Teenage Engineering OP-1 field | `teenage-engineering-op-1-field.pdf` | User guide firmware 1.7.0 (REV 10, EN ; pages du PDF 2–70, non numérotées) — cours rédigé (v2.12.0) ; original `69f248938d433104c4dd1846_original.pdf` |
 
-## Reçus, cours à rédiger (28/11/2026)
-| Machine | Fichier | Document | Original gardé |
-|---|---|---|---|
-| Teenage Engineering OP-1 field | `teenage-engineering-op-1-field.pdf` | User guide firmware 1.7.0 (REV 10, EN) | `69f248938d433104c4dd1846_original.pdf` |
+## Reçus, cours à rédiger
+Aucun (v2.12.0).
 
 Refusé : `PYRAMID_SEQUENCER_USER_GUIDE_V32-….pdf` — retranscription non officielle (2019, PyraOS 3.2), antérieure au Pyramid MK3.
 

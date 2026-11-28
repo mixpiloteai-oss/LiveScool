@@ -16,7 +16,7 @@ class CatalogTest {
     private val withCourse = setOf(
         MachineCatalog.ELECTRIBE_ID, MachineCatalog.CIRCUIT_TRACKS_ID, CatalogMachines.digitaktII.id, CatalogMachines.drumBruteImpact.id,
         CatalogMachines.miniBrute2S.id, CatalogMachines.octatrackMkII.id, CatalogMachines.dfam.id, CatalogMachines.take5.id, CatalogMachines.deluge.id, CatalogMachines.sp404MkII.id,
-        CatalogMachines.tr8s.id, CatalogMachines.td3.id, CatalogMachines.hydrasynthDesktop.id,
+        CatalogMachines.tr8s.id, CatalogMachines.td3.id, CatalogMachines.hydrasynthDesktop.id, CatalogMachines.op1Field.id,
     )
     private val pending = all.filter { it.id !in withCourse }
 
@@ -52,7 +52,7 @@ class CatalogTest {
     @Test
     fun `aucun cours sans manuel officiel`() {
         assertEquals(withCourse, all.filter { it.hasCourse }.map { it.id }.toSet())
-        assertEquals(7, pending.size)
+        assertEquals(6, pending.size)
         pending.forEach { m ->
             assertFalse(m.id, m.hasCourse)
             assertTrue(m.id, m.modules.isEmpty() && m.sections.isEmpty() && m.identifiableControls.isEmpty())
