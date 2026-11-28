@@ -66,13 +66,19 @@ object CatalogMachines {
         modules = DigitaktIIContent.modules,
         sections = DigitaktIIContent.sections,
     )
+    /** Cours rédigé d'après le manuel officiel (v2.4.0). */
     val octatrackMkII = pending(
         "elektron-octatrack-mkii", "ot2-", "Elektron", "Octatrack MKII", SAMPLER, "Sampler de performance",
-        "Sampler de performance conçu pour échantillonner, transformer et mixer en direct.",
+        "Sampler de performance : 8 pistes audio et 8 pistes MIDI, échantillonnage en direct, scènes et crossfader.",
         "Comprendre le live sampling, les scènes et le crossfader : une autre façon de construire un set.",
-        "Transitions par crossfader, rééchantillonnage en direct, pilotage d'autres machines.",
+        "Transitions par crossfader, rééchantillonnage en direct, boucles Pickup, pilotage d'autres machines.",
         listOf("Free party", "Techno", "Mentalcore"),
-        ManualSpec("elektron-octatrack-mkii.pdf", "manuel d'utilisation officiel de l'Octatrack MKII (Elektron)"),
+        ManualSpec("elektron-octatrack-mkii.pdf", "Octatrack MKII User Manual, OS 1.40C (Elektron, anglais)"),
+    ).copy(
+        note = OctatrackMkIIContent.note,
+        sourcesLabel = OctatrackMkIIContent.sourcesLabel,
+        modules = OctatrackMkIIContent.modules,
+        sections = OctatrackMkIIContent.sections,
     )
     val mpcOnePlus = pending(
         "akai-mpc-one-plus", "mpc1p-", "Akai Professional", "MPC One+", SAMPLER, "Station MPC autonome",

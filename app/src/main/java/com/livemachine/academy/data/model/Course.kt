@@ -36,6 +36,9 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Arturia MiniBrute 2S — Manuel utilisateur v1.0 (FR) ; pages imprimées (PDF = page + 6). */
     MINIBRUTE_2S_MANUAL("Manuel MiniBrute 2S", 6..170),
+
+    /** Elektron Octatrack MKII — User Manual, OS 1.40C (en anglais) ; pages imprimées = PDF. */
+    OCTATRACK_MKII_MANUAL("Manuel Octatrack MKII", 10..148),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */

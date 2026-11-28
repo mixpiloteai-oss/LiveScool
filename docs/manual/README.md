@@ -13,11 +13,11 @@ Renommer le PDF exactement comme indiqué : le nom est associé à la machine da
 | Elektron Digitakt II | `elektron-digitakt-ii.pdf` | User Manual OS 1.17, anglais (p. 10–118) — cours rédigé (v2.1.0) |
 | Arturia DrumBrute Impact | `arturia-drumbrute-impact.pdf` | Manuel utilisateur v1.0, français (pages imprimées 4–108, PDF = page + 6) — cours rédigé (v2.2.0) |
 | Arturia MiniBrute 2S | `arturia-minibrute-2s.pdf` | Manuel utilisateur v1.0, français (pages imprimées 6–170, PDF = page + 6) — cours rédigé (v2.3.0) |
+| Elektron Octatrack MKII | `elektron-octatrack-mkii.pdf` | User Manual OS 1.40C, anglais (p. 10–148) — cours rédigé (v2.4.0) ; complément `Octatrack-MKII-Quick-Guide_ENG_OS1.40C_260827.pdf` |
 
 ## Reçus, cours à rédiger (27/11/2026)
 | Machine | Fichier | Document | Compléments gardés |
 |---|---|---|---|
-| Elektron Octatrack MKII | `elektron-octatrack-mkii.pdf` | User Manual OS 1.40C (EN) | `Octatrack-MKII-Quick-Guide_ENG_OS1.40C_260827.pdf` |
 | Roland SP-404MKII | `roland-sp-404mkii.pdf` | Manuel de référence (FR) | `SP-404MKII_fra02_W.pdf` (mode d'emploi FR) |
 | Moog DFAM | `moog-dfam.pdf` | DFAM Manual (EN) | patch book, guides de synchro |
 | Sequential Take 5 | `sequential-take-5.pdf` | User's Guide v2.0, mai 2025 (EN) | `Take-5-User-Guide-1_1_FR.pdf` (v1.0, 2021) |
