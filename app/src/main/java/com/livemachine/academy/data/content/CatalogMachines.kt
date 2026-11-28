@@ -88,13 +88,19 @@ object CatalogMachines {
         listOf("House", "Électro", "Tribe"),
         ManualSpec("akai-mpc-one-plus.pdf", "guide d'utilisation officiel de la MPC One+ (Akai Professional)"),
     )
+    /** Cours rédigé d'après le manuel de référence (v2.8.0). */
     val sp404MkII = pending(
         "roland-sp-404mkii", "sp4-", "Roland", "SP-404MKII", SAMPLER, "Sampler à effets",
         "Sampler compact à pads, orienté effets et jeu immédiat.",
         "Travailler le jeu en direct et les effets sur des samples, sans séquençage complexe.",
         "Déclenchement de samples, effets en temps réel, rééchantillonnage.",
         listOf("Électro", "Breaks", "Tribe"),
-        ManualSpec("roland-sp-404mkii.pdf", "manuel de référence officiel du SP-404MKII (Roland)"),
+        ManualSpec("roland-sp-404mkii.pdf", "Manuel de référence SP-404MKII (Roland, français, logiciel 2.00+)"),
+    ).copy(
+        note = SP404MkIIContent.note,
+        sourcesLabel = SP404MkIIContent.sourcesLabel,
+        modules = SP404MkIIContent.modules,
+        sections = SP404MkIIContent.sections,
     )
     val tr8s = pending(
         "roland-tr-8s", "tr8s-", "Roland", "TR-8S", DRUM_MACHINE, "Boîte à rythmes",

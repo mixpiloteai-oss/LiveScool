@@ -18,7 +18,8 @@ Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistan
 | Moog DFAM | `moog-dfam` | `dfam-` | `DFAMContent`, `DFAMModulesA..B` (`dfam()` + `ctLesson()`), profil `CatalogMachines.dfam` |
 | Sequential Take 5 | `sequential-take-5` | `tk5-` | `Take5Content`, `Take5ModulesA..B` (`tk5()` + `ctLesson()`), profil `CatalogMachines.take5` |
 | Synthstrom Deluge | `synthstrom-deluge` | `dlg-` | `DelugeContent`, `DelugeModulesA..B` (`dlg()` + `ctLesson()`), profil `CatalogMachines.deluge` |
-| 11 autres (liste `docs/MACHINES.md`) | ex. `roland-tr-8s` | ex. `tr8s-` (unique, jamais préfixe d'un autre) | `CatalogMachines` : fiche seule, « Cours en attente du manuel officiel » |
+| Roland SP-404MKII | `roland-sp-404mkii` | `sp4-` | `SP404MkIIContent`, `SP404MkIIModulesA..B` (`sp4()` + `ctLesson()`), profil `CatalogMachines.sp404MkII` |
+| 10 autres (liste `docs/MACHINES.md`) | ex. `roland-tr-8s` | ex. `tr8s-` (unique, jamais préfixe d'un autre) | `CatalogMachines` : fiche seule, « Cours en attente du manuel officiel » |
 
 - `MachineProfile` : `category` (`MachineCategory` : groovebox, sampler, boîte à rythmes, synthé, séquenceur, hybride), `kind`, `styles`, `pedagogy`, `liveUse`, `manuals` (`ManualSpec(fileName, title)` = PDF du modèle exact dans `docs/manual/`), `courseStatusLabel`.
 - UI : écran `ui/screens/catalog` (filtres par catégorie, sélection → retour), carte « Ta machine » + « Changer de machine » à l'accueil, fiche avec présentation et manuel attendu. Illustration générée `ui/components/MachineArt.kt` (dégradé + icône de catégorie, aucune image constructeur) ; vraie image = photo de l'utilisateur.
@@ -36,6 +37,7 @@ Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistan
 - `DFAM_MANUAL` : DFAM Manual (Moog 2017, EN) p. 6–41 (pages imprimées = PDF). Montage Eurorack et réglages des presets (schémas) non recopiés.
 - `TAKE5_GUIDE` : Take 5 User's Guide v2.0 (Sequential, mai 2025, EN), pages imprimées 1–76 (PDF = page + 9). Version clavier ; Take 5 Module et SysEx non enseignés.
 - `DELUGE_GUIDE` : Deluge Official Guidebook OS 4.1.0 (Synthstrom, EN), pages imprimées 2–332 (PDF = page + 6). Audio/looping, Arranger, MIDI, CV non couverts.
+- `SP404MKII_MANUAL` : Manuel de référence SP-404MKII (Roland, FR, logiciel 2.00+) p. 2–139 (pages imprimées = PDF ; texte non extractible : pages rendues en images avec `pdftoppm -r 80` et lues). UTILITY, import/export, USB Audio, détail MFX non couverts.
 - PDF dans `docs/manual/` (et `/*.pdf`), ignorés par git, jamais committés. Upload GitHub = copier en local puis purger l'historique (avec accord ; fait le 27/11/2026 pour 17 PDF). Le conteneur est éphémère : PDF absents = les redemander avant de modifier une leçon.
 - Signalés dans les leçons : sauvegarde Global (manuel p. 32 / guide p. 7), AUTO POWER OFF « Off »/« Disable », Electribe 7.1/7.2 non documentés, Circuit Tracks samples inversés (p. 22/25) sans manipulation.
 
@@ -90,11 +92,12 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - v2.5.0 cours Moog DFAM (6 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `DFAMContentTest`.
 - v2.6.0 cours Sequential Take 5 (7 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `Take5ContentTest`.
 - v2.7.0 cours Synthstrom Deluge (7 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `DelugeContentTest`.
-- Manuels reçus, cours à rédiger : SP-404MKII (PDF de référence sans texte extractible : à lire en images ou fournir une version texte). Détail `docs/manual/README.md`.
+- v2.8.0 cours Roland SP-404MKII (7 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `SP404MkIIContentTest`.
+- Tous les manuels reçus ont leur cours (10 machines). Détail `docs/manual/README.md`.
 - Manuels manquants (10) : MPC One+, TR-8S, TD-3 (reçu RD-6 par erreur), Hydrasynth Desktop, 0-Coast, SEQTRAK, Tracker+, OP-1 field, Pyramid MK3, T-1.
 
 ## Prochaine tâche
-SP-404MKII (manuel de référence à lire en images, ou version texte à fournir), puis nouveaux manuels reçus ; même format que la Digitakt II. Puis commandes photo / défis Digitakt II, retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
+Attendre les manuels manquants (cours dans le même format que la Digitakt II dès réception). En attendant : commandes photo / défis Digitakt II, retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
 
 ## Règles de travail
 - Aucune fonction inventée : toute info machine cite sa `ManualRef` ; `VERIFIED` seulement si vérifié.

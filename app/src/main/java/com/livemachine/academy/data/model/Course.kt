@@ -48,6 +48,9 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Synthstrom Deluge — Official Guidebook OS 4.1.0 (en anglais) ; pages imprimées (PDF = page + 6). */
     DELUGE_GUIDE("Guide Deluge", 2..332),
+
+    /** Roland SP-404MKII — Manuel de référence (FR, version logicielle 2.00 ou ultérieure) ; pages imprimées = PDF. */
+    SP404MKII_MANUAL("Manuel de référence SP-404MKII", 2..139),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */
