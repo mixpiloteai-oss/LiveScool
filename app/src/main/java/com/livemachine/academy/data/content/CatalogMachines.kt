@@ -98,13 +98,19 @@ object CatalogMachines {
         listOf("Hardtek", "Techno", "House"),
         ManualSpec("roland-tr-8s.pdf", "manuel de référence officiel de la TR-8S (Roland)"),
     )
+    /** Cours rédigé d'après le manuel officiel (v2.2.0). */
     val drumBruteImpact = pending(
         "arturia-drumbrute-impact", "dbi-", "Arturia", "DrumBrute Impact", DRUM_MACHINE, "Boîte à rythmes analogique",
-        "Boîte à rythmes analogique compacte avec séquenceur.",
-        "Comprendre la synthèse de batterie analogique et le travail des accents.",
-        "Rythmes bruts et saturés, jeu en direct sur le séquenceur.",
+        "Boîte à rythmes analogique : dix instruments sur huit pads, séquenceur 64 pas, effets Color et distorsion du mix.",
+        "Comprendre la synthèse de batterie analogique, les accents, les effets Color et la polyrythmie.",
+        "Bande tactile Looper/Roller, Mute/Solo et distorsion pour des rythmes bruts joués en direct.",
         listOf("Hardtek", "TribeCore", "Mentalcore"),
-        ManualSpec("arturia-drumbrute-impact.pdf", "manuel d'utilisation officiel de la DrumBrute Impact (Arturia)"),
+        ManualSpec("arturia-drumbrute-impact.pdf", "Manuel utilisateur DrumBrute Impact v1.0 (Arturia, français)"),
+    ).copy(
+        note = DrumBruteImpactContent.note,
+        sourcesLabel = DrumBruteImpactContent.sourcesLabel,
+        modules = DrumBruteImpactContent.modules,
+        sections = DrumBruteImpactContent.sections,
     )
     val dfam = pending(
         "moog-dfam", "dfam-", "Moog", "DFAM", DRUM_MACHINE, "Percussion semi-modulaire",

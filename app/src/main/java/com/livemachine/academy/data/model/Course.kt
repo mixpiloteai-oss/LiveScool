@@ -30,6 +30,9 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Elektron Digitakt II — User Manual, OS 1.17 (en anglais). */
     DIGITAKT_II_MANUAL("Manuel Digitakt II", 10..118),
+
+    /** Arturia DrumBrute Impact — Manuel utilisateur v1.0 (FR, 2018) ; pages imprimées (PDF = page + 6). */
+    DRUMBRUTE_IMPACT_MANUAL("Manuel DrumBrute Impact", 4..108),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */
