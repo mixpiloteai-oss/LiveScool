@@ -16,7 +16,7 @@ Critères : marques différentes autant que possible, machines reconnues et jou�
 | 10 | Behringer TD-3 | Synthé basse acid | Séquenceur 303 (slide, accent), base de l'acidcore | acidcore, acid techno, tribe | à fournir |
 | 11 | Arturia MiniBrute 2S | Synthé analogique semi-modulaire | Brute Factor, séquenceur, patch | mentalcore, hardtek, techno | ✅ cours rédigé (v2.3.0) |
 | 12 | ASM Hydrasynth Desktop | Synthé numérique (wavetable) | Modulations avancées, leads et textures | mentalcore, techno, électro | à fournir |
-| 13 | Sequential Take 5 | Synthé polyphonique analogique | Accords, pads, stabs, synthèse soustractive poly | house, techno, trance | reçu, cours à rédiger |
+| 13 | Sequential Take 5 | Synthé polyphonique analogique | Accords, pads, stabs, synthèse soustractive poly | house, techno, trance | ✅ cours rédigé (v2.6.0) |
 | 14 | Make Noise 0-Coast | Synthé « west coast » | Autre approche de la synthèse (pliage d'onde, patch) | techno expérimentale, électro | à fournir |
 | 15 | Synthstrom Deluge | Groovebox hybride | Synthé + sampler + séquenceur sur grille, live complet | tribe, techno, breaks | reçu, cours à rédiger |
 | 16 | Polyend Tracker+ | Tracker hybride | Séquençage en colonnes (tracker), samples + synthés | tribecore, breakcore, électro | à fournir |

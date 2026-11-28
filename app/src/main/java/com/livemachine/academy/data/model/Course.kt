@@ -42,6 +42,9 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Moog DFAM — Manual (Moog 2017, en anglais) ; pages imprimées = PDF. */
     DFAM_MANUAL("Manuel DFAM", 6..41),
+
+    /** Sequential Take 5 — User's Guide v2.0 (mai 2025, en anglais) ; pages imprimées (PDF = page + 9). */
+    TAKE5_GUIDE("Guide Take 5", 1..76),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */

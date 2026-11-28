@@ -162,13 +162,19 @@ object CatalogMachines {
         listOf("Mentalcore", "Techno", "Électro"),
         ManualSpec("asm-hydrasynth-desktop.pdf", "manuel d'utilisation officiel de l'Hydrasynth Desktop (ASM)"),
     )
+    /** Cours rédigé d'après le guide officiel (v2.6.0). */
     val take5 = pending(
         "sequential-take-5", "tk5-", "Sequential", "Take 5", SYNTH, "Synthé analogique polyphonique",
         "Synthétiseur analogique polyphonique compact à 5 voix.",
         "Travailler les accords, nappes et stabs en synthèse soustractive polyphonique.",
         "Accords et stabs joués au clavier ou pilotés par un séquenceur.",
         listOf("House", "Techno", "Trance"),
-        ManualSpec("sequential-take-5.pdf", "guide d'utilisation officiel du Take 5 (Sequential)"),
+        ManualSpec("sequential-take-5.pdf", "Take 5 User's Guide v2.0 (Sequential, mai 2025, anglais)"),
+    ).copy(
+        note = Take5Content.note,
+        sourcesLabel = Take5Content.sourcesLabel,
+        modules = Take5Content.modules,
+        sections = Take5Content.sections,
     )
     val zeroCoast = pending(
         "makenoise-0-coast", "0c-", "Make Noise", "0-Coast", SYNTH, "Synthé « west coast »",
