@@ -20,7 +20,8 @@ Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistan
 | Synthstrom Deluge | `synthstrom-deluge` | `dlg-` | `DelugeContent`, `DelugeModulesA..B` (`dlg()` + `ctLesson()`), profil `CatalogMachines.deluge` |
 | Roland SP-404MKII | `roland-sp-404mkii` | `sp4-` | `SP404MkIIContent`, `SP404MkIIModulesA..B` (`sp4()` + `ctLesson()`), profil `CatalogMachines.sp404MkII` |
 | Roland TR-8S | `roland-tr-8s` | `tr8s-` | `TR8SContent`, `TR8SModulesA..B` (`tr8s()` + `ctLesson()`), profil `CatalogMachines.tr8s` |
-| 9 autres (liste `docs/MACHINES.md`) | ex. `roland-tr-8s` | ex. `tr8s-` (unique, jamais préfixe d'un autre) | `CatalogMachines` : fiche seule, « Cours en attente du manuel officiel » |
+| Behringer TD-3 | `behringer-td-3` | `td3-` | `TD3Content`, `TD3ModulesA..B` (`td3()` + `ctLesson()`), profil `CatalogMachines.td3` |
+| 8 autres (liste `docs/MACHINES.md`) | ex. `roland-tr-8s` | ex. `tr8s-` (unique, jamais préfixe d'un autre) | `CatalogMachines` : fiche seule, « Cours en attente du manuel officiel » |
 
 - `MachineProfile` : `category` (`MachineCategory` : groovebox, sampler, boîte à rythmes, synthé, séquenceur, hybride), `kind`, `styles`, `pedagogy`, `liveUse`, `manuals` (`ManualSpec(fileName, title)` = PDF du modèle exact dans `docs/manual/`), `courseStatusLabel`.
 - UI : écran `ui/screens/catalog` (filtres par catégorie, sélection → retour), carte « Ta machine » + « Changer de machine » à l'accueil, fiche avec présentation et manuel attendu. Illustration générée `ui/components/MachineArt.kt` (dégradé + icône de catégorie, aucune image constructeur) ; vraie image = photo de l'utilisateur.
@@ -40,6 +41,7 @@ Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistan
 - `DELUGE_GUIDE` : Deluge Official Guidebook OS 4.1.0 (Synthstrom, EN), pages imprimées 2–332 (PDF = page + 6). Audio/looping, Arranger, MIDI, CV non couverts.
 - `SP404MKII_MANUAL` : Manuel de référence SP-404MKII (Roland, FR, logiciel 2.00+) p. 2–139 (pages imprimées = PDF ; texte non extractible : pages rendues en images avec `pdftoppm -r 80` et lues). UTILITY, import/export, USB Audio, détail MFX non couverts.
 - `TR8S_MANUAL` : Mode d'emploi TR-8S (Roland 2018, FR) p. 2–24 (pages = PDF). Détails renvoyés au Manuel de référence (non fourni) non enseignés.
+- `TD3_GUIDE` : TD-3 Quick Start Guide V 5.0 (Behringer, multilingue), pages imprimées 2–107 (2 pages par feuille PDF). Sections FR + EN. Poly Chain, MIDI, triolets non couverts.
 - PDF dans `docs/manual/` (et `/*.pdf`), ignorés par git, jamais committés. Upload GitHub = copier en local puis purger l'historique (avec accord ; fait le 27/11/2026 pour 17 PDF). Le conteneur est éphémère : PDF absents = les redemander avant de modifier une leçon.
 - Signalés dans les leçons : sauvegarde Global (manuel p. 32 / guide p. 7), AUTO POWER OFF « Off »/« Disable », Electribe 7.1/7.2 non documentés, Circuit Tracks samples inversés (p. 22/25) sans manipulation.
 
@@ -97,11 +99,12 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - v2.8.0 cours Roland SP-404MKII (7 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `SP404MkIIContentTest`.
 - 28/11/2026 : reçus TR-8S, TD-3, Hydrasynth, OP-1 field (purgés de GitHub après accord) ; Pyramid refusé (non officiel, pas MK3).
 - v2.9.0 cours Roland TR-8S (6 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `TR8SContentTest`.
-- Manuels reçus, cours à rédiger : TD-3, Hydrasynth Desktop, OP-1 field.
+- v2.10.0 cours Behringer TD-3 (5 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `TD3ContentTest`.
+- Manuels reçus, cours à rédiger : Hydrasynth Desktop, OP-1 field.
 - Manuels manquants (6) : MPC One+, 0-Coast, SEQTRAK, Tracker+, Pyramid MK3 (manuel officiel), T-1.
 
 ## Prochaine tâche
-Cours TD-3, puis Hydrasynth Desktop, puis OP-1 field (même format que la Digitakt II). Puis : commandes photo / défis Digitakt II, retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
+Cours Hydrasynth Desktop, puis OP-1 field (même format que la Digitakt II). Puis : commandes photo / défis Digitakt II, retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
 
 ## Règles de travail
 - Aucune fonction inventée : toute info machine cite sa `ManualRef` ; `VERIFIED` seulement si vérifié.

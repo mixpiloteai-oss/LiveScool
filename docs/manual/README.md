@@ -19,11 +19,11 @@ Renommer le PDF exactement comme indiqué : le nom est associé à la machine da
 | Synthstrom Deluge | `synthstrom-deluge.pdf` | Official Guidebook OS 4.1.0, anglais (pages imprimées 2–332, PDF = page + 6) — cours rédigé (v2.7.0) |
 | Roland SP-404MKII | `roland-sp-404mkii.pdf` | Manuel de référence FR, logiciel 2.00+ (p. 2–139, pages imprimées = PDF ; texte non extractible, lu en images) — cours rédigé (v2.8.0) ; complément `SP-404MKII_fra02_W.pdf` (démarrage rapide) |
 | Roland TR-8S | `roland-tr-8s.pdf` | Mode d'emploi FR, 2018 (p. 2–24, pages = PDF) — cours rédigé (v2.9.0) ; original `TR-8S_fra03_W.pdf` |
+| Behringer TD-3 | `behringer-td-3.pdf` | Quick Start Guide V 5.0, multilingue (pages imprimées 2–107 ; le PDF montre 2 pages par feuille, page N ≈ PDF N/2 + 1 ; sections FR 24–25, 42–43, 64–67) — cours rédigé (v2.10.0) ; original `QSG_BE_0718-AAN_TD-3-SR_WW.pdf` |
 
 ## Reçus, cours à rédiger (28/11/2026)
 | Machine | Fichier | Document | Original gardé |
 |---|---|---|---|
-| Behringer TD-3 | `behringer-td-3.pdf` | Quick Start Guide V 5.0 (multilingue) | `QSG_BE_0718-AAN_TD-3-SR_WW.pdf` |
 | ASM Hydrasynth Desktop | `asm-hydrasynth-desktop.pdf` | Owner's Manual Version 2.0 (Keyboard/Desktop/Rack, EN) | `Hydrasynth_KB_DR_Owners_Manual_2.2.0.pdf` |
 | Teenage Engineering OP-1 field | `teenage-engineering-op-1-field.pdf` | User guide firmware 1.7.0 (REV 10, EN) | `69f248938d433104c4dd1846_original.pdf` |
 

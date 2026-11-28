@@ -144,13 +144,19 @@ object CatalogMachines {
         modules = DFAMContent.modules,
         sections = DFAMContent.sections,
     )
+    /** Cours rédigé d'après le Quick Start Guide officiel (v2.10.0). */
     val td3 = pending(
         "behringer-td-3", "td3-", "Behringer", "TD-3", SYNTH, "Synthé basse acid",
         "Synthétiseur basse analogique inspiré de la TB-303, avec séquenceur à accent et slide.",
         "Maîtriser la ligne acid : séquenceur, accent, slide, filtre résonant.",
         "Lignes acid jouées en direct sur le filtre et la résonance.",
         listOf("Acidcore", "Acid techno", "Tribe"),
-        ManualSpec("behringer-td-3.pdf", "guide d'utilisation officiel de la TD-3 (Behringer)"),
+        ManualSpec("behringer-td-3.pdf", "Quick Start Guide TD-3 V 5.0 (Behringer, multilingue)"),
+    ).copy(
+        note = TD3Content.note,
+        sourcesLabel = TD3Content.sourcesLabel,
+        modules = TD3Content.modules,
+        sections = TD3Content.sections,
     )
     /** Cours rédigé d'après le manuel officiel (v2.3.0). */
     val miniBrute2S = pending(

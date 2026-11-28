@@ -54,6 +54,9 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Roland TR-8S — Mode d'emploi (FR, 2018) ; pages imprimées = PDF. */
     TR8S_MANUAL("Mode d'emploi TR-8S", 2..24),
+
+    /** Behringer TD-3 — Quick Start Guide V 5.0 (multilingue) ; pages imprimées (le PDF montre 2 pages par feuille). */
+    TD3_GUIDE("Quick Start Guide TD-3", 2..107),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */

@@ -13,7 +13,7 @@ Critères : marques différentes autant que possible, machines reconnues et jou�
 | 7 | Roland TR-8S | Boîte à rythmes | Sons 808/909, kicks hardtek/techno, jeu live | hardtek, techno, house | ✅ cours rédigé (v2.9.0) |
 | 8 | Arturia DrumBrute Impact | Boîte à rythmes analogique | Synthèse de batterie analogique, distorsion, accents | hardtek, tribecore, mentalcore | ✅ cours rédigé (v2.2.0) |
 | 9 | Moog DFAM | Percussion semi-modulaire | Patch, synthèse percussive, séquenceur 8 pas | techno, industriel, mentalcore | ✅ cours rédigé (v2.5.0) |
-| 10 | Behringer TD-3 | Synthé basse acid | Séquenceur 303 (slide, accent), base de l'acidcore | acidcore, acid techno, tribe | reçu, cours à rédiger |
+| 10 | Behringer TD-3 | Synthé basse acid | Séquenceur 303 (slide, accent), base de l'acidcore | acidcore, acid techno, tribe | ✅ cours rédigé (v2.10.0) |
 | 11 | Arturia MiniBrute 2S | Synthé analogique semi-modulaire | Brute Factor, séquenceur, patch | mentalcore, hardtek, techno | ✅ cours rédigé (v2.3.0) |
 | 12 | ASM Hydrasynth Desktop | Synthé numérique (wavetable) | Modulations avancées, leads et textures | mentalcore, techno, électro | reçu, cours à rédiger |
 | 13 | Sequential Take 5 | Synthé polyphonique analogique | Accords, pads, stabs, synthèse soustractive poly | house, techno, trance | ✅ cours rédigé (v2.6.0) |
