@@ -15,7 +15,7 @@ class CatalogTest {
     /** Machines dont le cours est rédigé d'après leur manuel officiel. */
     private val withCourse = setOf(
         MachineCatalog.ELECTRIBE_ID, MachineCatalog.CIRCUIT_TRACKS_ID, CatalogMachines.digitaktII.id, CatalogMachines.drumBruteImpact.id,
-        CatalogMachines.miniBrute2S.id, CatalogMachines.octatrackMkII.id,
+        CatalogMachines.miniBrute2S.id, CatalogMachines.octatrackMkII.id, CatalogMachines.dfam.id,
     )
     private val pending = all.filter { it.id !in withCourse }
 
@@ -51,7 +51,7 @@ class CatalogTest {
     @Test
     fun `aucun cours sans manuel officiel`() {
         assertEquals(withCourse, all.filter { it.hasCourse }.map { it.id }.toSet())
-        assertEquals(14, pending.size)
+        assertEquals(13, pending.size)
         pending.forEach { m ->
             assertFalse(m.id, m.hasCourse)
             assertTrue(m.id, m.modules.isEmpty() && m.sections.isEmpty() && m.identifiableControls.isEmpty())

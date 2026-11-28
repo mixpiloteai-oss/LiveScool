@@ -39,6 +39,9 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Elektron Octatrack MKII — User Manual, OS 1.40C (en anglais) ; pages imprimées = PDF. */
     OCTATRACK_MKII_MANUAL("Manuel Octatrack MKII", 10..148),
+
+    /** Moog DFAM — Manual (Moog 2017, en anglais) ; pages imprimées = PDF. */
+    DFAM_MANUAL("Manuel DFAM", 6..41),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */

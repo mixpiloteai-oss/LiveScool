@@ -118,13 +118,19 @@ object CatalogMachines {
         modules = DrumBruteImpactContent.modules,
         sections = DrumBruteImpactContent.sections,
     )
+    /** Cours rédigé d'après le manuel officiel (v2.5.0). */
     val dfam = pending(
         "moog-dfam", "dfam-", "Moog", "DFAM", DRUM_MACHINE, "Percussion semi-modulaire",
         "Synthétiseur de percussion analogique semi-modulaire avec séquenceur 8 pas.",
         "Apprendre la synthèse percussive et le patch par câbles sur un instrument simple.",
         "Boucles percussives évolutives, synchronisées avec le reste du set.",
         listOf("Techno", "Industriel", "Mentalcore"),
-        ManualSpec("moog-dfam.pdf", "manuel officiel du DFAM (Moog)"),
+        ManualSpec("moog-dfam.pdf", "DFAM Manual (Moog, 2017, anglais)"),
+    ).copy(
+        note = DFAMContent.note,
+        sourcesLabel = DFAMContent.sourcesLabel,
+        modules = DFAMContent.modules,
+        sections = DFAMContent.sections,
     )
     val td3 = pending(
         "behringer-td-3", "td3-", "Behringer", "TD-3", SYNTH, "Synthé basse acid",

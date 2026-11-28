@@ -15,7 +15,8 @@ Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistan
 | Arturia DrumBrute Impact | `arturia-drumbrute-impact` | `dbi-` | `DrumBruteImpactContent`, `DrumBruteImpactModulesA..B` (`dbi()` + `ctLesson()`), profil `CatalogMachines.drumBruteImpact` |
 | Arturia MiniBrute 2S | `arturia-minibrute-2s` | `mb2s-` | `MiniBrute2SContent`, `MiniBrute2SModulesA..B` (`mb2s()` + `ctLesson()`), profil `CatalogMachines.miniBrute2S` |
 | Elektron Octatrack MKII | `elektron-octatrack-mkii` | `ot2-` | `OctatrackMkIIContent`, `OctatrackMkIIModulesA..B` (`ot()` + `ctLesson()`), profil `CatalogMachines.octatrackMkII` |
-| 14 autres (liste `docs/MACHINES.md`) | ex. `roland-tr-8s` | ex. `tr8s-` (unique, jamais préfixe d'un autre) | `CatalogMachines` : fiche seule, « Cours en attente du manuel officiel » |
+| Moog DFAM | `moog-dfam` | `dfam-` | `DFAMContent`, `DFAMModulesA..B` (`dfam()` + `ctLesson()`), profil `CatalogMachines.dfam` |
+| 13 autres (liste `docs/MACHINES.md`) | ex. `roland-tr-8s` | ex. `tr8s-` (unique, jamais préfixe d'un autre) | `CatalogMachines` : fiche seule, « Cours en attente du manuel officiel » |
 
 - `MachineProfile` : `category` (`MachineCategory` : groovebox, sampler, boîte à rythmes, synthé, séquenceur, hybride), `kind`, `styles`, `pedagogy`, `liveUse`, `manuals` (`ManualSpec(fileName, title)` = PDF du modèle exact dans `docs/manual/`), `courseStatusLabel`.
 - UI : écran `ui/screens/catalog` (filtres par catégorie, sélection → retour), carte « Ta machine » + « Changer de machine » à l'accueil, fiche avec présentation et manuel attendu. Illustration générée `ui/components/MachineArt.kt` (dégradé + icône de catégorie, aucune image constructeur) ; vraie image = photo de l'utilisateur.
@@ -30,6 +31,7 @@ Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistan
 - `DRUMBRUTE_IMPACT_MANUAL` : Manuel utilisateur DrumBrute Impact v1.0 (Arturia 2018, FR), pages imprimées 4–108 (PDF = page + 6). Réglages MIDI Control Center non enseignés.
 - `MINIBRUTE_2S_MANUAL` : Manuel utilisateur MiniBrute 2S v1.0 (Arturia, FR), pages imprimées 6–170 (PDF = page + 6). Réglages MIDI Control Center non enseignés.
 - `OCTATRACK_MKII_MANUAL` : Octatrack MKII User Manual OS 1.40C (Elektron, EN) p. 10–148 (pages imprimées = PDF). Pistes MIDI et éditeur audio non couverts.
+- `DFAM_MANUAL` : DFAM Manual (Moog 2017, EN) p. 6–41 (pages imprimées = PDF). Montage Eurorack et réglages des presets (schémas) non recopiés.
 - PDF dans `docs/manual/` (et `/*.pdf`), ignorés par git, jamais committés. Upload GitHub = copier en local puis purger l'historique (avec accord ; fait le 27/11/2026 pour 17 PDF). Le conteneur est éphémère : PDF absents = les redemander avant de modifier une leçon.
 - Signalés dans les leçons : sauvegarde Global (manuel p. 32 / guide p. 7), AUTO POWER OFF « Off »/« Disable », Electribe 7.1/7.2 non documentés, Circuit Tracks samples inversés (p. 22/25) sans manipulation.
 
@@ -81,11 +83,12 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - v2.2.0 cours DrumBrute Impact (7 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `DrumBruteImpactContentTest`.
 - v2.3.0 cours MiniBrute 2S (7 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `MiniBrute2SContentTest`.
 - v2.4.0 cours Octatrack MKII (7 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `OctatrackMkIIContentTest`.
-- Manuels reçus, cours à rédiger : SP-404MKII, DFAM, Take 5 (v2.0 EN), Deluge (OS 4.1). Détail `docs/manual/README.md`.
+- v2.5.0 cours Moog DFAM (6 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `DFAMContentTest`.
+- Manuels reçus, cours à rédiger : Take 5 (v2.0 EN), Deluge (OS 4.1), SP-404MKII (PDF de référence sans texte extractible : à lire en images ou fournir une version texte). Détail `docs/manual/README.md`.
 - Manuels manquants (10) : MPC One+, TR-8S, TD-3 (reçu RD-6 par erreur), Hydrasynth Desktop, 0-Coast, SEQTRAK, Tracker+, OP-1 field, Pyramid MK3, T-1.
 
 ## Prochaine tâche
-Cours suivant parmi les manuels reçus (suggestion : SP-404MKII, puis DFAM, Take 5, Deluge), même format que la Digitakt II. Puis commandes photo / défis Digitakt II, retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
+Cours suivant parmi les manuels reçus : Take 5, puis Deluge, puis SP-404MKII ; même format que la Digitakt II. Puis commandes photo / défis Digitakt II, retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
 
 ## Règles de travail
 - Aucune fonction inventée : toute info machine cite sa `ManualRef` ; `VERIFIED` seulement si vérifié.
