@@ -128,13 +128,19 @@ object CatalogMachines {
         listOf("Acidcore", "Acid techno", "Tribe"),
         ManualSpec("behringer-td-3.pdf", "guide d'utilisation officiel de la TD-3 (Behringer)"),
     )
+    /** Cours rédigé d'après le manuel officiel (v2.3.0). */
     val miniBrute2S = pending(
         "arturia-minibrute-2s", "mb2s-", "Arturia", "MiniBrute 2S", SYNTH, "Synthé analogique semi-modulaire",
-        "Synthétiseur analogique monophonique semi-modulaire avec séquenceur à pads.",
-        "Comprendre la synthèse soustractive analogique et le patch par câbles.",
-        "Basses et leads agressifs pilotés par le séquenceur.",
-        listOf("Mentalcore", "Hardtek", "Techno"),
-        ManualSpec("arturia-minibrute-2s.pdf", "manuel d'utilisation officiel du MiniBrute 2S (Arturia)"),
+        "Synthétiseur analogique monophonique semi-modulaire : deux VCO, filtre multimode, patchbay 48 points, séquenceur et arpégiateur.",
+        "Comprendre la synthèse soustractive analogique, la modulation par câbles et le séquençage d'une ligne.",
+        "Basses et leads agressifs pilotés par le séquenceur, filtre et Brute Factor joués en direct.",
+        listOf("Mentalcore", "Hardtek", "Acidcore", "Techno"),
+        ManualSpec("arturia-minibrute-2s.pdf", "Manuel utilisateur MiniBrute 2S v1.0 (Arturia, français)"),
+    ).copy(
+        note = MiniBrute2SContent.note,
+        sourcesLabel = MiniBrute2SContent.sourcesLabel,
+        modules = MiniBrute2SContent.modules,
+        sections = MiniBrute2SContent.sections,
     )
     val hydrasynthDesktop = pending(
         "asm-hydrasynth-desktop", "hyd-", "ASM", "Hydrasynth Desktop", SYNTH, "Synthé numérique à tables d'ondes",

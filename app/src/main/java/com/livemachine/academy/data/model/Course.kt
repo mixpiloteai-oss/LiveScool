@@ -33,6 +33,9 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Arturia DrumBrute Impact — Manuel utilisateur v1.0 (FR, 2018) ; pages imprimées (PDF = page + 6). */
     DRUMBRUTE_IMPACT_MANUAL("Manuel DrumBrute Impact", 4..108),
+
+    /** Arturia MiniBrute 2S — Manuel utilisateur v1.0 (FR) ; pages imprimées (PDF = page + 6). */
+    MINIBRUTE_2S_MANUAL("Manuel MiniBrute 2S", 6..170),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */

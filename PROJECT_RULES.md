@@ -13,7 +13,8 @@ Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistan
 | Novation Circuit Tracks | `circuit-tracks` | `ct-` | `CircuitTracksContent`, `CircuitTracksModulesA..D`, `CircuitTracksWorkshops`, `CircuitTracksDsl` (`ct()`, `ctLesson()`) |
 | Elektron Digitakt II | `elektron-digitakt-ii` | `dt2-` | `DigitaktIIContent`, `DigitaktIIModulesA..B` (`dt()` + `ctLesson()`), profil dans `CatalogMachines.digitaktII` |
 | Arturia DrumBrute Impact | `arturia-drumbrute-impact` | `dbi-` | `DrumBruteImpactContent`, `DrumBruteImpactModulesA..B` (`dbi()` + `ctLesson()`), profil `CatalogMachines.drumBruteImpact` |
-| 16 autres (liste `docs/MACHINES.md`) | ex. `roland-tr-8s` | ex. `tr8s-` (unique, jamais préfixe d'un autre) | `CatalogMachines` : fiche seule, « Cours en attente du manuel officiel » |
+| Arturia MiniBrute 2S | `arturia-minibrute-2s` | `mb2s-` | `MiniBrute2SContent`, `MiniBrute2SModulesA..B` (`mb2s()` + `ctLesson()`), profil `CatalogMachines.miniBrute2S` |
+| 15 autres (liste `docs/MACHINES.md`) | ex. `roland-tr-8s` | ex. `tr8s-` (unique, jamais préfixe d'un autre) | `CatalogMachines` : fiche seule, « Cours en attente du manuel officiel » |
 
 - `MachineProfile` : `category` (`MachineCategory` : groovebox, sampler, boîte à rythmes, synthé, séquenceur, hybride), `kind`, `styles`, `pedagogy`, `liveUse`, `manuals` (`ManualSpec(fileName, title)` = PDF du modèle exact dans `docs/manual/`), `courseStatusLabel`.
 - UI : écran `ui/screens/catalog` (filtres par catégorie, sélection → retour), carte « Ta machine » + « Changer de machine » à l'accueil, fiche avec présentation et manuel attendu. Illustration générée `ui/components/MachineArt.kt` (dégradé + icône de catégorie, aucune image constructeur) ; vraie image = photo de l'utilisateur.
@@ -26,6 +27,7 @@ Simulateur, WebView, site web, secret dans l'app. Réseau : seulement l'assistan
 - `CIRCUIT_TRACKS_GUIDE` : Circuit Tracks User Guide V2 (Novation, FR) p. 6–108, sans n° de firmware.
 - `DIGITAKT_II_MANUAL` : Digitakt II User Manual OS 1.17 (Elektron, EN) p. 10–118 (pages imprimées = PDF).
 - `DRUMBRUTE_IMPACT_MANUAL` : Manuel utilisateur DrumBrute Impact v1.0 (Arturia 2018, FR), pages imprimées 4–108 (PDF = page + 6). Réglages MIDI Control Center non enseignés.
+- `MINIBRUTE_2S_MANUAL` : Manuel utilisateur MiniBrute 2S v1.0 (Arturia, FR), pages imprimées 6–170 (PDF = page + 6). Réglages MIDI Control Center non enseignés.
 - PDF dans `docs/manual/` (et `/*.pdf`), ignorés par git, jamais committés. Upload GitHub = copier en local puis purger l'historique (avec accord ; fait le 27/11/2026 pour 17 PDF). Le conteneur est éphémère : PDF absents = les redemander avant de modifier une leçon.
 - Signalés dans les leçons : sauvegarde Global (manuel p. 32 / guide p. 7), AUTO POWER OFF « Off »/« Disable », Electribe 7.1/7.2 non documentés, Circuit Tracks samples inversés (p. 22/25) sans manipulation.
 
@@ -75,11 +77,12 @@ Kotlin 2.1.20, Compose + Material 3 (sombre, magenta), MVVM + StateFlow, Navigat
 - Google Play EN PAUSE : ni Play Console, ni Billing, ni publication. Code abonnements/compte/paiements conservé tel quel. Reprise Premium : clés serveur via Cloud Shell (rédigé) ; `release.yml` transmet `LMA_ENTITLEMENT_PUBLIC_KEY`/`LMA_BILLING_ENABLED`.
 - Fait : v2.0.0 catalogue des 20 machines ; v2.1.0 cours Digitakt II (9 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections ; pas encore de commandes photo, défis ni ateliers). Tests `DigitaktIIContentTest`.
 - v2.2.0 cours DrumBrute Impact (7 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `DrumBruteImpactContentTest`.
-- Manuels reçus, cours à rédiger : Octatrack MKII, SP-404MKII, DFAM, MiniBrute 2S, Take 5 (v2.0 EN), Deluge (OS 4.1). Détail `docs/manual/README.md`.
+- v2.3.0 cours MiniBrute 2S (7 modules × 3 leçons `VERIFIED`, 4 q./leçon, fiche 4 sections). Tests `MiniBrute2SContentTest`.
+- Manuels reçus, cours à rédiger : Octatrack MKII, SP-404MKII, DFAM, Take 5 (v2.0 EN), Deluge (OS 4.1). Détail `docs/manual/README.md`.
 - Manuels manquants (10) : MPC One+, TR-8S, TD-3 (reçu RD-6 par erreur), Hydrasynth Desktop, 0-Coast, SEQTRAK, Tracker+, OP-1 field, Pyramid MK3, T-1.
 
 ## Prochaine tâche
-Cours suivant parmi les manuels reçus (suggestion : MiniBrute 2S, puis Octatrack MKII), même format que la Digitakt II. Puis commandes photo / défis Digitakt II, retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
+Cours suivant parmi les manuels reçus (suggestion : Octatrack MKII, puis SP-404MKII), même format que la Digitakt II. Puis commandes photo / défis Digitakt II, retours Circuit Tracks, Electribe 7.1/7.2, texte Photo (« Write »).
 
 ## Règles de travail
 - Aucune fonction inventée : toute info machine cite sa `ManualRef` ; `VERIFIED` seulement si vérifié.
