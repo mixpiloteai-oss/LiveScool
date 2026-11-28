@@ -51,6 +51,9 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Roland SP-404MKII — Manuel de référence (FR, version logicielle 2.00 ou ultérieure) ; pages imprimées = PDF. */
     SP404MKII_MANUAL("Manuel de référence SP-404MKII", 2..139),
+
+    /** Roland TR-8S — Mode d'emploi (FR, 2018) ; pages imprimées = PDF. */
+    TR8S_MANUAL("Mode d'emploi TR-8S", 2..24),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */

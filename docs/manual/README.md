@@ -18,9 +18,16 @@ Renommer le PDF exactement comme indiqué : le nom est associé à la machine da
 | Sequential Take 5 | `sequential-take-5.pdf` | User's Guide v2.0, mai 2025, anglais (pages imprimées 1–76, PDF = page + 9) — cours rédigé (v2.6.0) ; complément `Take-5-User-Guide-1_1_FR.pdf` (v1.0, 2021) |
 | Synthstrom Deluge | `synthstrom-deluge.pdf` | Official Guidebook OS 4.1.0, anglais (pages imprimées 2–332, PDF = page + 6) — cours rédigé (v2.7.0) |
 | Roland SP-404MKII | `roland-sp-404mkii.pdf` | Manuel de référence FR, logiciel 2.00+ (p. 2–139, pages imprimées = PDF ; texte non extractible, lu en images) — cours rédigé (v2.8.0) ; complément `SP-404MKII_fra02_W.pdf` (démarrage rapide) |
+| Roland TR-8S | `roland-tr-8s.pdf` | Mode d'emploi FR, 2018 (p. 2–24, pages = PDF) — cours rédigé (v2.9.0) ; original `TR-8S_fra03_W.pdf` |
 
-## Reçus, cours à rédiger
-Aucun : tous les manuels reçus ont leur cours (v2.8.0).
+## Reçus, cours à rédiger (28/11/2026)
+| Machine | Fichier | Document | Original gardé |
+|---|---|---|---|
+| Behringer TD-3 | `behringer-td-3.pdf` | Quick Start Guide V 5.0 (multilingue) | `QSG_BE_0718-AAN_TD-3-SR_WW.pdf` |
+| ASM Hydrasynth Desktop | `asm-hydrasynth-desktop.pdf` | Owner's Manual Version 2.0 (Keyboard/Desktop/Rack, EN) | `Hydrasynth_KB_DR_Owners_Manual_2.2.0.pdf` |
+| Teenage Engineering OP-1 field | `teenage-engineering-op-1-field.pdf` | User guide firmware 1.7.0 (REV 10, EN) | `69f248938d433104c4dd1846_original.pdf` |
+
+Refusé : `PYRAMID_SEQUENCER_USER_GUIDE_V32-….pdf` — retranscription non officielle (2019, PyraOS 3.2), antérieure au Pyramid MK3.
 
 Reçu par erreur : `RD-6_QSG_WW.pdf` (Behringer **RD-6**, pas la TD-3) — non utilisé.
 

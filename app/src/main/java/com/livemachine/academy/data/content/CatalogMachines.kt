@@ -102,13 +102,19 @@ object CatalogMachines {
         modules = SP404MkIIContent.modules,
         sections = SP404MkIIContent.sections,
     )
+    /** Cours rédigé d'après le mode d'emploi officiel (v2.9.0). */
     val tr8s = pending(
         "roland-tr-8s", "tr8s-", "Roland", "TR-8S", DRUM_MACHINE, "Boîte à rythmes",
         "Boîte à rythmes Roland héritière des TR-808 et TR-909, avec import de samples.",
         "Construire des rythmes au séquenceur pas à pas et sculpter les kicks et percussions.",
         "Jeu instrument par instrument, variations et effets en direct.",
         listOf("Hardtek", "Techno", "House"),
-        ManualSpec("roland-tr-8s.pdf", "manuel de référence officiel de la TR-8S (Roland)"),
+        ManualSpec("roland-tr-8s.pdf", "Mode d'emploi TR-8S (Roland, 2018, français)"),
+    ).copy(
+        note = TR8SContent.note,
+        sourcesLabel = TR8SContent.sourcesLabel,
+        modules = TR8SContent.modules,
+        sections = TR8SContent.sections,
     )
     /** Cours rédigé d'après le manuel officiel (v2.2.0). */
     val drumBruteImpact = pending(
