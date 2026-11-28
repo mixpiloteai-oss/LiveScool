@@ -16,12 +16,12 @@ Renommer le PDF exactement comme indiqué : le nom est associé à la machine da
 | Elektron Octatrack MKII | `elektron-octatrack-mkii.pdf` | User Manual OS 1.40C, anglais (p. 10–148) — cours rédigé (v2.4.0) ; complément `Octatrack-MKII-Quick-Guide_ENG_OS1.40C_260827.pdf` |
 | Moog DFAM | `moog-dfam.pdf` | DFAM Manual (Moog 2017), anglais (p. 6–41, pages imprimées = PDF) — cours rédigé (v2.5.0) ; compléments gardés : patch book, guides de synchro |
 | Sequential Take 5 | `sequential-take-5.pdf` | User's Guide v2.0, mai 2025, anglais (pages imprimées 1–76, PDF = page + 9) — cours rédigé (v2.6.0) ; complément `Take-5-User-Guide-1_1_FR.pdf` (v1.0, 2021) |
+| Synthstrom Deluge | `synthstrom-deluge.pdf` | Official Guidebook OS 4.1.0, anglais (pages imprimées 2–332, PDF = page + 6) — cours rédigé (v2.7.0) |
 
 ## Reçus, cours à rédiger (27/11/2026)
 | Machine | Fichier | Document | Compléments gardés |
 |---|---|---|---|
 | Roland SP-404MKII | `roland-sp-404mkii.pdf` | Manuel de référence (FR) | `SP-404MKII_fra02_W.pdf` (mode d'emploi FR) |
-| Synthstrom Deluge | `synthstrom-deluge.pdf` | Official Guidebook OS 4.1.0 (EN) | — |
 
 Reçu par erreur : `RD-6_QSG_WW.pdf` (Behringer **RD-6**, pas la TD-3) — non utilisé.
 

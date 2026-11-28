@@ -184,13 +184,19 @@ object CatalogMachines {
         listOf("Techno expérimentale", "Électro"),
         ManualSpec("makenoise-0-coast.pdf", "manuel officiel du 0-Coast (Make Noise)"),
     )
+    /** Cours rédigé d'après le guide officiel (v2.7.0). */
     val deluge = pending(
         "synthstrom-deluge", "dlg-", "Synthstrom Audible", "Deluge", GROOVEBOX, "Groovebox hybride",
         "Groovebox portable : synthés, samples et séquenceur sur une grille de pads lumineux.",
         "Composer et arranger sur grille : de la boucle au morceau complet sur une seule machine.",
         "Lancement de clips et de sections, live complet autonome.",
         listOf("Tribe", "Techno", "Breaks"),
-        ManualSpec("synthstrom-deluge.pdf", "manuel officiel du Deluge (Synthstrom Audible)"),
+        ManualSpec("synthstrom-deluge.pdf", "Deluge Official Guidebook OS 4.1.0 (Synthstrom Audible, anglais)"),
+    ).copy(
+        note = DelugeContent.note,
+        sourcesLabel = DelugeContent.sourcesLabel,
+        modules = DelugeContent.modules,
+        sections = DelugeContent.sections,
     )
     val trackerPlus = pending(
         "polyend-tracker-plus", "trk-", "Polyend", "Tracker+", HYBRID, "Tracker hybride",

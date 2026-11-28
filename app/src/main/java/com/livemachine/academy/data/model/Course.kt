@@ -45,6 +45,9 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Sequential Take 5 — User's Guide v2.0 (mai 2025, en anglais) ; pages imprimées (PDF = page + 9). */
     TAKE5_GUIDE("Guide Take 5", 1..76),
+
+    /** Synthstrom Deluge — Official Guidebook OS 4.1.0 (en anglais) ; pages imprimées (PDF = page + 6). */
+    DELUGE_GUIDE("Guide Deluge", 2..332),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */
