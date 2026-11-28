@@ -57,6 +57,12 @@ enum class ManualDoc(val label: String, val validPages: IntRange) {
 
     /** Behringer TD-3 — Quick Start Guide V 5.0 (multilingue) ; pages imprimées (le PDF montre 2 pages par feuille). */
     TD3_GUIDE("Quick Start Guide TD-3", 2..107),
+
+    /** ASM Hydrasynth — Owner's Manual Version 2.0 (Keyboard / Desktop, EN) ; pages imprimées = PDF. */
+    HYDRASYNTH_MANUAL("Manuel Hydrasynth", 2..121),
+
+    /** Teenage Engineering OP-1 field — User guide, firmware 1.7.0 (REV 10, EN) ; pages du PDF (non numérotées). */
+    OP1_FIELD_GUIDE("Guide OP-1 field", 2..70),
 }
 
 /** Référence vers un document officiel (chapitre + pages). */

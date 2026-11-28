@@ -172,13 +172,19 @@ object CatalogMachines {
         modules = MiniBrute2SContent.modules,
         sections = MiniBrute2SContent.sections,
     )
+    /** Cours rédigé d'après le manuel officiel (v2.11.0). */
     val hydrasynthDesktop = pending(
         "asm-hydrasynth-desktop", "hyd-", "ASM", "Hydrasynth Desktop", SYNTH, "Synthé numérique à tables d'ondes",
         "Synthétiseur numérique polyphonique à tables d'ondes, aux modulations très étendues.",
         "Explorer la synthèse par tables d'ondes et la modulation avancée.",
         "Leads, textures et nappes évolutives.",
         listOf("Mentalcore", "Techno", "Électro"),
-        ManualSpec("asm-hydrasynth-desktop.pdf", "manuel d'utilisation officiel de l'Hydrasynth Desktop (ASM)"),
+        ManualSpec("asm-hydrasynth-desktop.pdf", "Hydrasynth Owner's Manual v2.0 (ASM, Keyboard/Desktop, anglais)"),
+    ).copy(
+        note = HydrasynthContent.note,
+        sourcesLabel = HydrasynthContent.sourcesLabel,
+        modules = HydrasynthContent.modules,
+        sections = HydrasynthContent.sections,
     )
     /** Cours rédigé d'après le guide officiel (v2.6.0). */
     val take5 = pending(
